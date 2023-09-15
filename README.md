@@ -1,1 +1,0 @@
-# Maria-Jacob_INTMCA_MiniProject_
