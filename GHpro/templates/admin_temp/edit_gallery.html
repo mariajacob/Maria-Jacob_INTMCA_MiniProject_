@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <!-- Add your custom CSS for styling -->
+
+<style>    
+    /* Your existing styles */
+    body {
+        background-color: #f4f4f4;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    h2 {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    
+    .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    .gallery-item {
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        overflow: hidden;
+        transition: transform 0.2s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    
+    .image {
+        max-width: 100%;
+        height: auto;
+        flex-grow: 1;
+    }
+    
+    .image-description {
+        padding: 10px;
+        text-align: center;
+    }
+    
+    /* Previous styles for buttons */
+    .image-buttons {
+        display: flex;
+        justify-content: center; /* Center-align the buttons horizontally */
+        align-items: center;
+        margin-top: 10px;
+    }
+    
+    .btn-edit {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px; /* Increase the button size */
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+        margin-right: 10px; /* Add a margin between the buttons */
+        font-size: 16px; /* Increase the font size */
+    }
+    
+    .btn-edit:hover {
+        background-color: #0056b3;
+    }
+    
+    .btn-delete {
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        padding: 10px 20px; /* Increase the button size */
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+        font-size: 16px; /* Increase the font size */
+    }
+    
+    .btn-delete:hover {
+        background-color: #c82333;
+    }
+    
+
+</style>    
+       
+</head>
+<body>
+    <div class="container">
+        <h2>Gallery</h2>
+        <div class="gallery">
+            {% for image in images %}
+            <div class="gallery-item">
+                <img src="{{ image.image.url }}" alt="{{ image.title }}" class="image">
+                <div class="image-description">
+                    <div class="image-title">{{ image.title }}</div>
+                    <div class="image-description-text">{{ image.description }}</div>
+                    <div class="image-buttons">
+                        <a href="#" class="btn btn-edit">Edit</a>
+                        <a href="#" class="btn btn-delete">Delete</a>
+                    </div>
+                    
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <style>
+        .header {
+            background-color: #00c6a9;
+            left: 0;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 1039;
+            height: 50px;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <!-- Add your JavaScript or additional CSS if needed -->
+</body>
+</html>

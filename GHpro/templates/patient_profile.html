@@ -1,0 +1,317 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/select2.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap-datetimepicker.min.css' %}">
+    <!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.min.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+    <div class="main-wrapper">
+        
+        <div class="page-wrapper">
+            <div class="content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="page-title">My Profile</h4>
+                    </div>
+                  {% comment %} <div class="col-sm-20 col-11 text-right m-b-30">
+                        <a href="{% url 'patient_profile' %}" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Edit Profile</a>
+                    </div>
+                </div> {% endcomment %}
+        <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}  
+                    <div class="card-box">
+                        <h3 class="card-title">Basic Informations</h3>
+                        <div class="row">
+                            <div class="col-md-12">
+                                {% comment %} <div class="profile-img-wrap">
+                                   
+                                    <img id="propic" src="" alt="profile pic" class="inline-block"/>
+                             
+                                    <img class="inline-block" src="/static/assets/img/user.jpg" alt="user">
+                              
+                                    <div class="fileupload btn">
+                                        <span class="btn-text">edit</span>
+                                        <input class="upload" name="profile_pic" type="file" >
+                                    </div>
+                                </div> {% endcomment %}
+                                <div class="profile-basic">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>First Name  </label>
+                                            <div class="form-group form-focus"> 
+                                                {% comment %} <label class="focus-label">First Name</label> {% endcomment %}
+                                                {% comment %} <input type="text" class="form-control floating" value="" name="first_name"> {% endcomment %}
+                                                <input type="text" class="form-control floating" value="{{ profile.first_name }}" name="first_name">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Last Name</label>
+                                            <div class="form-group form-focus"> 
+                                                {% comment %} <label class="focus-label">Last Name</label> {% endcomment %}
+                                                {% comment %} <input type="text" placeholder="last" class="form-control floating" value="" name="last_name"> {% endcomment %}
+                                                <input type="text" placeholder="last" class="form-control floating" value="{{ profile.last_name }}" name="last_name">
+                                            </div>
+                                        </div>
+                                     {% comment %} <div class="col-md-6">
+                                            <label>Birth Date </label>
+                                            <div class="form-group form-focus"> 
+                                               <input class="form-control floating " type="date" value="" name="birth_date">
+                                               <input class="form-control floating" type="date" value="{{ profile.birth_date|date:'Y-m-d' }}" name="birth_date">
+                                            </div>
+                                     </div>      
+                                       {% endcomment %}
+                                        
+                                        
+
+                                        <div class="col-md-6">
+                                            <label>Email</label>
+                                            <div class="form-group form-focus"> 
+                                                
+                                                {% comment %} <input type="text" class="form-control floating" value="{{ user.email }} " name="email"> {% endcomment %}
+                                                <input type="text" class="form-control floating" value="{{ profile.email }}" name="email">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="focus-label">Gender</label>
+                                            <div class="form-group form-focus select-focus">
+                                                <select class="select form-control floating" name="gender">
+                                                    <option value="" disabled selected>-Select Gender-</option>
+                                                    <option value="Male" {% if profile.gender == 'Male' %} selected {% endif %}>Male</option>
+                                                    <option value="Female" {% if profile.gender == 'Female' %} selected {% endif %}>Female</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="col-md-6">
+                                            <label>House Name  </label>
+                                            <div class="form-group form-focus"> 
+                                                {% comment %} <label class="focus-label">First Name</label> {% endcomment %}
+                                                {% comment %} <input type="text" class="form-control floating" value="" name="house_name"> {% endcomment %}
+                                                <input type="text" class="form-control floating" value="{{ profile.house_name }}" name="house_name">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-box">
+                        <h3 class="card-title">Contact Informations</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>House Number</label>
+                                <div class="form-group form-focus"> 
+                                    <input type="number" class="form-control floating" value="{{ profile.house_no }}" name="house_no">
+                                    {% comment %} <input type="number" class="form-control floating" value=" " name="house_no"> {% endcomment %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Address  </label>
+                                <div class="form-group form-focus"> 
+                                    <input type="text" class="form-control floating" value="{{ profile.address }}" name="address">
+                                    {% comment %} <input type="text" class="form-control floating" value=" " name="address"> {% endcomment %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label>Panchayat</label>
+                                <div class="form-group form-focus"> 
+                                     
+                                    <input type="text" class="form-control floating" value=" Parathodu" name="state" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Ward</label>
+                                <div class="form-group form-focus"> 
+                                    <input type="text" class="form-control floating" value="{{ profile.ward }}" name="ward">
+                                    {% comment %} <input type="text" class="form-control floating" value="" name="ward"> {% endcomment %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Pin Code  </label>
+                                <div class="form-group form-focus">
+                                    <input type="text" class="form-control floating" value="{{ profile.pin_code }}" name="pin_code">
+                                    {% comment %} <input type="text" class="form-control floating" value="" name="pin_code"> {% endcomment %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Phone Number</label>
+                                <div class="form-group form-focus"> 
+                                    <input type="text" class="form-control floating" value="{{ profile.phone_number }}" name="phone_number">
+                                    {% comment %} <input type="text" class="form-control floating" value="" name="phone_number"> {% endcomment %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-box">
+                        <h3 class="card-title">Medical History</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Current Diagnosis or Health Concern</label>
+                                <div class="form-group form-focus">
+                                    {% comment %} <input type="text" class="form-control floating" value="" name="current_diagnosis"> {% endcomment %}
+                                    <input type="text" class="form-control floating" value="{{ profile.current_diagnosis }}" name="current_diagnosis">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Past Medical Conditions</label>
+                                <div class="form-group form-focus">
+                                    {% comment %} <textarea class="form-control floating" name="past_med_condition"></textarea> {% endcomment %}
+                                    <textarea class="form-control floating" name="past_med_condition">{{ profile.past_med_condition }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Surgical History</label>
+                                <div class="form-group form-focus">
+                                    {% comment %} <textarea class="form-control floating" name="surgical_history"></textarea> {% endcomment %}
+                                    <textarea class="form-control floating" name="surgical_history">{{ profile.surgical_history }}</textarea>
+                                </div>
+                            </div>
+                           
+                            
+                            <div class="col-md-6">
+                                <label>Allergies (Medications, Food, Environmental)</label>
+                                <div class="form-group form-focus">
+                                    <textarea class="form-control floating" name="allergies">{{ profile.allergies }}</textarea>
+                                    {% comment %} <textarea class="form-control floating" name="allergies"></textarea> {% endcomment %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Height (in cm)</label>
+                                <div class="form-group form-focus">
+                                    {% comment %} <input type="number" class="form-control floating" value="" name="height"> {% endcomment %}
+                                    <input type="number" class="form-control floating" value="{{ profile.height }}" name="height">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Weight (in kg)</label>
+                                <div class="form-group form-focus">
+                                    <input type="number" class="form-control floating" value="{{ profile.weight }}" name="weight">
+                                    {% comment %} <input type="number" class="form-control floating" value="" name="weight"> {% endcomment %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Body Mass Index (BMI)</label>
+                                <div class="form-group form-focus">
+                                    <input type="text" class="form-control floating" value="{{ profile.bmi }}" name="bmi">
+                                    {% comment %} <input type="text" class="form-control floating" value="" name="bmi"> {% endcomment %}
+                                </div>
+                            </div>
+                            
+                            </div>
+                         </div>
+
+                         <div class="card-box">
+                            <h3 class="card-title">Laboratory and Diagnostic Test Results:
+                            </h3>
+                            
+               
+
+               
+                    </div> 
+               
+
+
+                <div class="card-box">
+                    <h3 class="card-title">Current Medications:</h3>
+                    <table class="table table-bordered" id="medicationTable">
+                        <thead>
+                            <tr>
+                                <th>Medication Names</th>
+                                <th>Dosage</th>
+                                <th>Frequency</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="form-group form-focus">
+                                        {% comment %} <input type="text" class="form-control" name="medication_names[]"> {% endcomment %}
+                                        <input type="text" class="form-control" value="{{ profile.medication_names }}" name="medication_names">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group form-focus">
+                                        {% comment %} <input type="text" class="form-control" name="dosage[]"> {% endcomment %}
+                                        <input type="text" class="form-control" value="{{ profile.dosage }}" name="dosage">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group form-focus">
+                                        {% comment %} <input type="text" class="form-control" name="frequency[]"> {% endcomment %}
+                                        <input type="text" class="form-control" value="{{ profile.frequency }}" name="frequency">
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-primary" onclick="addRow()">Add Medication</button>
+                </div>
+                </div>
+                
+                                   
+                        <div class="text-center m-t-20">
+                        <button class="btn btn-primary submit-btn" type="submit">Save</button>
+                    </div>
+        </form>
+            </div>
+            
+        </div>
+    </div>
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js'%}"></script>
+	<script src="{% static 'assets/js/popper.min.js'%}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js'%}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js'%}"></script>
+    <script src="{% static 'assets/js/app.js'%}"></script>
+    <script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+    
+    <script>
+        function addRow() {
+            var table = document.getElementById("medicationTable").getElementsByTagName('tbody')[0];
+            var newRow = table.insertRow(table.rows.length);
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+    
+            cell1.innerHTML = '<div class="form-group form-focus"><input type="text" class="form-control" name="medication_names[]"></div>';
+            cell2.innerHTML = '<div class="form-group form-focus"><input type="text" class="form-control" name="dosage[]"></div>';
+            cell3.innerHTML = '<div class="form-group form-focus"><input type="text" class="form-control" name="frequency[]"></div>';
+            cell4.innerHTML = '<button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button>';
+        }
+    
+        function removeRow(button) {
+            var row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    </script>
+    
+</body>
+
+
+<!-- profile23:03-->
+</html>
