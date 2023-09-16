@@ -13,13 +13,6 @@ from django.contrib.messages.views import SuccessMessageMixin
 from .models import CustomUser
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponseNotFound
-
-
-
-
-
-
-
 from django.contrib.auth import get_user_model
 # Create your views here.
 
@@ -69,80 +62,9 @@ def addpatient(request):
 #     return render(request,'edit_patient_profile.html')
 
 
-def ad_ashaworker(request):
-    ashaworkers = Ashaworker.objects.all()
-    return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers})
 
 
-# Import your form if you decide to use it
-
-# def patient_profile(request, profile_id=None):
-#     # Check if the user is editing an existing profile
-#     if profile_id is not None:
-#         profile = PatientProfile.objects.get(pk=profile_id)
-#     else:
-#         profile = None
-
-#     if request.method == "POST":
-#         # Process the form data and save/update the profile
-#         if profile:
-#             # Update existing profile
-#             profile.first_name = request.POST.get('first_name')
-#             profile.last_name = request.POST.get('last_name')
-#             profile.birth_date = request.POST.get('birth_date')
-#             profile.email = request.POST.get('email')
-#             profile.gender = request.POST.get('gender')
-#             profile.house_name = request.POST.get('house_name')
-#             profile.house_no = request.POST.get('house_no')
-#             profile.address = request.POST.get('address')
-#             profile.ward = request.POST.get('ward')
-#             profile.pin_code = request.POST.get('pin_code')
-#             profile.phone_number = request.POST.get('phone_number')
-#             profile.current_diagnosis = request.POST.get('current_diagnosis')
-#             profile.past_med_condition = request.POST.get('past_med_condition')
-#             profile.surgical_history = request.POST.get('surgical_history')
-#             profile.allergies = request.POST.get('allergies')
-#             profile.height = request.POST.get('height')
-#             profile.weight = request.POST.get('weight')
-#             profile.bmi = request.POST.get('bmi')
-#             profile.medication_names = request.POST.get('medication_names')
-#             profile.dosage = request.POST.get('dosage')
-#             profile.frequency = request.POST.get('frequency')
-            
-#             profile.save()
-#         else:
-#             # Create a new profile
-#             new_profile = PatientProfile(
-#                 first_name = request.POST.get('first_name'),
-#                 last_name = request.POST.get('last_name'),
-#                 birth_date = request.POST.get('birth_date'),
-#                 email = request.POST.get('email'),
-#                 gender = request.POST.get('gender'),
-#                 house_name = request.POST.get('house_name'),
-#                 house_no = request.POST.get('house_no'),
-#                 address = request.POST.get('address'),
-#                 ward = request.POST.get('ward'),
-#                 pin_code = request.POST.get('pin_code'),
-#                 phone_number = request.POST.get('phone_number'),
-#                 current_diagnosis = request.POST.get('current_diagnosis'),
-#                 past_med_condition = request.POST.get('past_med_condition'),
-#                 surgical_history = request.POST.get('surgical_history'),
-#                 allergies = request.POST.get('allergies'),
-#                 height = request.POST.get('height'),
-#                 weight = request.POST.get('weight'),
-#                 bmi = request.POST.get('bmi'),
-#                 medication_names = request.POST.get('medication_names'),
-#                 dosage = request.POST.get('dosage'),
-#                 frequency = request.POST.get('frequency'),
-#             )
-#             new_profile.save()
-#         return redirect('success_page')  # Redirect to a success page
-
-#     return render(request, 'patient_profile.html', {'profile': profile})
-
-
-
-def patient_profile(request):
+def edit_patient_profile(request):
     
     user = request.user
     profile = PatientProfile.objects.get(user=user)
@@ -221,21 +143,28 @@ def patient_profile(request):
             
 
         # messages.success(request, 'Profile updated successfully.')
-        return redirect('patient_profile')  # Redirect to the profile page
+        return redirect('print_patient_profile')  # Redirect to the profile page
     context = {
         'user': user,
         'profile': profile
     }
 
-    return render(request, 'patient_profile.html',context) 
+    return render(request, 'edit_patient_profile.html',context) 
+
+
+def print_patient_profile(request):
+    # profile = PatientProfile.objects.filter(user=request.user).first()  # Use .filter().first() to get a single object
+    # # profile = PatientProfile.objects.all()
+    # return render(request, 'print_patient_profile.html', {'profile': profile})
+    profile = PatientProfile.objects.filter(user=request.user).first()  # Use .filter().first() to get a single object
+    return render(request, 'print_patient_profile.html', {'profile': [profile]})
+
+
+
 
 # def patient_profile(request):
 #     pros = Ashaworker.objects.all()
 #     return render(request, 'patient_profile.html', {'pros': pros})
-
-
-
-
 
 def add_asha(request):
     if request.method == 'POST':
@@ -289,10 +218,10 @@ def add_asha(request):
 
     return render(request, 'admin_temp/add_asha.html')
 
-       
+def ad_ashaworker(request):
+    ashaworkers = Ashaworker.objects.all()
+    return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers})
     
-
-
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Ashaworker
 def edit_asha(request, asha_id):
@@ -347,16 +276,9 @@ def delete_asha(request, asha_id):
     return render(request, 'admin_temp/delete_asha.html', {'ashaworker': ashaworker})
 
 
-
-
 def ad_appointment(request):
     appo = Appointment.objects.all()
     return render(request, 'admin_temp/appointments.html', {'appo': appo})   
-
-# def user_details_appointment(request):
-#     obj = Appointment.objects.all()
-#     return render(request, 'patient_profile.html', {'profile': profile})   
-
 
 def appointment_form(request):
     time_slots = []  # Initialize an empty list for time slots

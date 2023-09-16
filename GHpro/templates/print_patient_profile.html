@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Profile</title>
+    <style>
+        /* Add your custom CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7eddf;
+            color: #ecf0f1; /* Default text color for the page */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ensure the page takes up the full viewport height */
+        }
+        .profile-box {
+            background-color:white;
+            border: 3px solid #080808;
+            border-radius:30px;
+            padding: 80px;
+            box-shadow: 30px 30px 50px rgba(10, 0, 10, 0);
+            text-align: center;
+        }
+        .profile-picture {
+            max-width: 150px;
+            height: auto;
+            border-radius: 50%;
+            color:black;
+        }
+        h1, h2, p {
+            color: #00c6a9; /* Text color within the profile box */
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-box">
+        {% for pro in profile %}
+        <!-- Profile Picture -->
+        <img src="{{ pro.profile.picture.url }}" alt="{{ pro.first_name }}" class="profile-picture">
+        <!-- User Information -->
+        <h1>My Profile</h1>
+        <h2>{{ pro.first_name }} {{ pro.last_name }}</h2>
+        <p>Gender: {{ pro.gender }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Address: {{ pro.address}}</p>
+        <p>About Me: {{ user.profile.bio }}</p>
+        <p>Ward: {{ pro.ward }}</p>
+        <div class="col-sm-8 col-9 text-right m-b-20">
+            <a href="{% url 'edit_patient_profile' %}" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i>Edit Profile</a>
+        </div>
+        {% endfor %}
+
+    </div>
+    <!-- Add additional content or sections here -->
+    <footer>
+        <!-- Footer content goes here -->
+    </footer>
+</body>
+</html>

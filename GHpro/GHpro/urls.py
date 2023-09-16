@@ -41,8 +41,8 @@ urlpatterns = [
     # path('patient_profile', views.patient_profile, name="patient_profile"),
     # path('edit_patient_profile', views.edit_patient_profile, name="edit_patient_profile"),
     
-    path('patient_profile', views.patient_profile, name='patient_profile'),
-
+    path('edit_patient_profile', views.edit_patient_profile, name='edit_patient_profile'),
+    path('print_patient_profile', views.print_patient_profile, name='print_patient_profile'),
     # path('edit_patient_profile',views.edit_patient_profile, name='edit_patient_profile'),
     
 
