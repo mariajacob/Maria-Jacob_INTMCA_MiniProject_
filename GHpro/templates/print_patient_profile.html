@@ -1,61 +1,209 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>User Profile</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Profile</title>
     <style>
-        /* Add your custom CSS styles here */
-        body {
+      body {
             font-family: Arial, sans-serif;
-            background-color: #f7eddf;
-            color: #ecf0f1; /* Default text color for the page */
-            margin: 0; /* Remove default margin */
-            padding: 0; /* Remove default padding */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh; /* Ensure the page takes up the full viewport height */
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
         }
-        .profile-box {
-            background-color:white;
-            border: 3px solid #080808;
-            border-radius:30px;
-            padding: 80px;
-            box-shadow: 30px 30px 50px rgba(10, 0, 10, 0);
+        
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        h1 {
             text-align: center;
+            color: #333;
         }
-        .profile-picture {
-            max-width: 150px;
-            height: auto;
-            border-radius: 50%;
-            color:black;
+
+        .profile-photo-container {
+            display: flex;
+            align-items: center;
         }
-        h1, h2, p {
-            color: #00c6a9; /* Text color within the profile box */
+
+        .profile-photo img {
+            width: 200px;
+            height: 200px; /* Set the width and height to make it square */
+            border-radius: 0; /* Remove border-radius to make it square */
+            border: 3px solid #fff;
         }
+
+        .profile-details {
+            display: flex;
+            flex-direction: column;
+            margin-left:50px;
+        }
+
+.section {
+    background-color: #f7f7f7;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.section h2 {
+    color: #333;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+.edit-profile-button {
+            text-align: center; /* Center-align the button */
+        }
+
+        .edit-profile-button a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF; /* Blue color */
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer; /* Add cursor style */
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+
+        .edit-profile-button a:hover {
+            background-color: #000000; /* New background color on hover */
+        }
+
+
     </style>
 </head>
 <body>
-    <div class="profile-box">
-        {% for pro in profile %}
-        <!-- Profile Picture -->
-        <img src="{{ pro.profile.picture.url }}" alt="{{ pro.first_name }}" class="profile-picture">
-        <!-- User Information -->
+    <div class="container">
         <h1>My Profile</h1>
-        <h2>{{ pro.first_name }} {{ pro.last_name }}</h2>
-        <p>Gender: {{ pro.gender }}</p>
-        <p>Email: {{ user.email }}</p>
-        <p>Address: {{ pro.address}}</p>
-        <p>About Me: {{ user.profile.bio }}</p>
-        <p>Ward: {{ pro.ward }}</p>
-        <div class="col-sm-8 col-9 text-right m-b-20">
-            <a href="{% url 'edit_patient_profile' %}" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i>Edit Profile</a>
+        <hr>
+         <!-- Profile Photo -->
+    {% for pro in profile %}
+         <div class="section profile-photo-container">
+           
+            <div class="profile-photo">
+                <img src="ash.jpg" alt="Patient's Profile Photo">
+            </div>
+            <div class="profile-details">
+                <p><strong>Full Name:</strong> {{ pro.first_name }} {{ pro.last_name }}</p>
+                <p><strong>Email Address:</strong> {{ user.email }}</p>
+            </div>
+        </div>
+        <!-- Patient Information -->
+        <div class="section">
+            <h2>Basic Informations</h2>
+            <p><strong>Full Name:</strong> {{ pro.first_name }} {{ pro.last_name }}</p>
+            <p><strong>Date of Birth:</strong> [Date of Birth]</p>
+            <p><strong>Gender:</strong>  {{ pro.gender }}</p>
+            <p><strong>House Name</strong> {{ pro.house_name }}</p>
+        </div>
+        
+        <!--  Contact Information -->
+        <div class="section">
+            <h2>Emergency Contact Information</h2>
+            <p><strong>House Number:</strong> {{ pro.house_no }}</p>
+            <p><strong>Address:</strong> {{ pro.address }}</p>
+            <p><strong>Panchayat:</strong> Parathodu</p>
+            <p><strong>Ward:</strong> {{ pro.ward }} </p>
+            <p><strong>Pin Code:</strong> {{ pro.pin_code }}</p>
+            <p><strong>Phone Number:</strong> {{ pro.phone_number }} </p>
+        </div>
+       
+        <!-- Medical History -->
+        <div class="section">
+            <h2>Medical History</h2>
+            <p><strong>Current Diagnosis or Health Concern:</strong>{{ pro.current_diagnosis }}</p>
+            <p><strong>Past Medical Conditions:</strong> {{ pro.past_med_condition }}</p>
+            <p><strong>Surgical Historys:</strong> {{ pro.surgical_history }} </p>
+            <p><strong>Allergies (Medications, Food, Environmental)</strong> {{ pro.allergies }}</p>
+            <p><strong>Height (in cm):</strong> {{ pro.height }}</p>
+            <p><strong>Weight (in kg):</strong> {{ pro.weight }}</p>
+            <p><strong>Body Mass Index (BMI):</strong> {{ pro.bmi }}</p>
+        </div>
+
+        <!-- Laboratory and Diagnostic Test Results:-->
+        <div class="section">
+            {% comment %} <h2>Insurance Information</h2>
+            <p><strong>Insurance Provider:</strong> [Name of Insurance Provider]</p>
+            <p><strong>Policy Number:</strong> [Policy Number]</p>
+            <p><strong>Group Number:</strong> [Group Number]</p> {% endcomment %}
+        </div>
+
+        <!-- Current Medications -->
+        <div class="section">
+            <h2>Current Medications</h2>
+            <table class="table table-bordered" id="medicationTable">
+                <thead>
+                    <tr>
+                        <th>Medication Names</th>
+                        <th>Dosage</th>
+                        <th>Frequency</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="form-group form-focus">
+                                {% comment %} <input type="text" class="form-control" name="medication_names[]"> {% endcomment %}
+                                <input type="text" class="form-control" value="{{ pro.medication_names }}" name="medication_names">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group form-focus">
+                                {% comment %} <input type="text" class="form-control" name="dosage[]"> {% endcomment %}
+                                <input type="text" class="form-control" value="{{ pro.dosage }}" name="dosage">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group form-focus">
+                                {% comment %} <input type="text" class="form-control" name="frequency[]"> {% endcomment %}
+                                <input type="text" class="form-control" value="{{ pro.frequency }}" name="frequency">
+                            </div>
+                        </td>
+                       
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        {% comment %} <!-- Medical Notes -->
+        <div class="section">
+            <h2>Medical Notes</h2>
+            <p>[Provide space for medical notes or additional information]</p>
+        </div>
+
+        <!-- Appointments -->
+        <div class="section">
+            <h2>Appointments</h2>
+            <ul>
+                <li>[Display a list of upcoming and past appointments]</li>
+            </ul>
+        </div>
+
+        <!-- Billing and Payment -->
+        <div class="section">
+            <h2>Billing and Payment</h2>
+            <p>[Include information on billing and payment options]</p>
+        </div> {% endcomment %}
+
+        <!-- Edit Profile Button -->
+        <div class="section edit-profile-button">
+            <a href="{% url 'edit_patient_profile' %}" class="edit-button">Edit Profile</a>
         </div>
         {% endfor %}
-
     </div>
-    <!-- Add additional content or sections here -->
-    <footer>
-        <!-- Footer content goes here -->
-    </footer>
 </body>
 </html>
