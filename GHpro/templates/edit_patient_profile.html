@@ -35,49 +35,46 @@
                         <a href="{% url 'patient_profile' %}" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Edit Profile</a>
                     </div>
                 </div> {% endcomment %}
-        <form method="post" enctype="multipart/form-data">
+                <form method="post" id="profileform" enctype="multipart/form-data">
                 {% csrf_token %}  
-                    <div class="card-box">
+                <div class="card-box">
                         <h3 class="card-title">Basic Informations</h3>
                         <div class="row">
                             <div class="col-md-12">
-                                {% comment %} <div class="profile-img-wrap">
-                                   
-                                    <img id="propic" src="" alt="profile pic" class="inline-block"/>
-                             
-                                    <img class="inline-block" src="/static/assets/img/user.jpg" alt="user">
-                              
+                                <div class="profile-photo">
+                                    {% if profile.profile_pic %}
+                                        <img src="{{ profile.profile_pic.url }}" >
+                                    {% else %}
+                                        <img src="/path/to/default/profile_pic.jpg" >
+                                    {% endif %}
+                                    <br> <!-- Add this line -->
                                     <div class="fileupload btn">
-                                        <span class="btn-text">edit</span>
-                                        <input class="upload" name="profile_pic" type="file" >
+                                        <input class="upload" name="profile_pic" type="file">
+                                        <span class="btn-text">Edit</span>
                                     </div>
-                                </div> {% endcomment %}
-                                <div class="profile-basic">
+                                </div>  
+                                   
+                        <div class="profile-basic">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label>First Name  </label>
-                                            <div class="form-group form-focus"> 
-                                                {% comment %} <label class="focus-label">First Name</label> {% endcomment %}
-                                                {% comment %} <input type="text" class="form-control floating" value="" name="first_name"> {% endcomment %}
-                                                <input type="text" class="form-control floating" value="{{ profile.first_name }}" name="first_name">
+                                            {% comment %} <div class="form-group form-focus"> 
+                                                
+                                                <input type="text" id="first_name" class="form-control floating" value="{{ profile.first_name }}" name="first_name">
+                                            </div> {% endcomment %}
+                                            <div class="form-group form-focus">
+                                                <input type="text" class="form-control floating" id="first_name_input" value="{{ profile.first_name }}" name="first_name">
+                                                <span id="first_name_error" class="text-danger"></span>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label>Last Name</label>
-                                            <div class="form-group form-focus"> 
-                                                {% comment %} <label class="focus-label">Last Name</label> {% endcomment %}
-                                                {% comment %} <input type="text" placeholder="last" class="form-control floating" value="" name="last_name"> {% endcomment %}
-                                                <input type="text" placeholder="last" class="form-control floating" value="{{ profile.last_name }}" name="last_name">
+                                            <div class="form-group form-focus">
+                                                <input type="text" class="form-control floating" id="last_name_input" placeholder="last" value="{{ profile.last_name }}" name="last_name">
+                                                <span id="last_name_error" class="text-danger"></span>
                                             </div>
                                         </div>
-                                     {% comment %} <div class="col-md-6">
-                                            <label>Birth Date </label>
-                                            <div class="form-group form-focus"> 
-                                               <input class="form-control floating " type="date" value="" name="birth_date">
-                                               <input class="form-control floating" type="date" value="{{ profile.birth_date|date:'Y-m-d' }}" name="birth_date">
-                                            </div>
-                                     </div>      
-                                       {% endcomment %}
+                                        
                                         
                                         
 
@@ -86,7 +83,7 @@
                                             <div class="form-group form-focus"> 
                                                 
                                                 {% comment %} <input type="text" class="form-control floating" value="{{ user.email }} " name="email"> {% endcomment %}
-                                                <input type="text" class="form-control floating" value="{{ profile.email }}" name="email">
+                                                <input type="text" class="form-control floating" value="{{ profile.email }}" name="email" readonly>
                                             </div>
                                         </div>
 
@@ -102,13 +99,13 @@
                                         </div>
                                     
                                         <div class="col-md-6">
-                                            <label>House Name  </label>
-                                            <div class="form-group form-focus"> 
-                                                {% comment %} <label class="focus-label">First Name</label> {% endcomment %}
-                                                {% comment %} <input type="text" class="form-control floating" value="" name="house_name"> {% endcomment %}
-                                                <input type="text" class="form-control floating" value="{{ profile.house_name }}" name="house_name">
+                                            <label>House Name</label>
+                                            <div class="form-group form-focus">
+                                                <input type="text" class="form-control floating" id="house_name_input" value="{{ profile.house_name }}" name="house_name">
+                                                <span id="house_name_error" class="text-danger"></span>
                                             </div>
                                         </div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -125,12 +122,13 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label>Address  </label>
-                                <div class="form-group form-focus"> 
-                                    <input type="text" class="form-control floating" value="{{ profile.address }}" name="address">
-                                    {% comment %} <input type="text" class="form-control floating" value=" " name="address"> {% endcomment %}
+                                <label>Address</label>
+                                <div class="form-group form-focus">
+                                    <input type="text" class="form-control floating" id="address_input" value="{{ profile.address }}" name="address">
+                                    <span id="address_error" class="text-danger"></span>
                                 </div>
                             </div>
+                            
                             
                             <div class="col-md-6">
                                 <label>Panchayat</label>
@@ -142,24 +140,26 @@
                             <div class="col-md-6">
                                 <label>Ward</label>
                                 <div class="form-group form-focus"> 
-                                    <input type="text" class="form-control floating" value="{{ profile.ward }}" name="ward">
+                                    <input type="number" class="form-control floating" value="{{ profile.ward }}" name="ward">
                                     {% comment %} <input type="text" class="form-control floating" value="" name="ward"> {% endcomment %}
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label>Pin Code  </label>
+                                <label>Pin Code</label>
                                 <div class="form-group form-focus">
-                                    <input type="text" class="form-control floating" value="{{ profile.pin_code }}" name="pin_code">
-                                    {% comment %} <input type="text" class="form-control floating" value="" name="pin_code"> {% endcomment %}
+                                    <input type="number" class="form-control floating" id="pin_code_input" value="{{ profile.pin_code }}" name="pin_code">
+                                    <span id="pin_code_error" class="text-danger"></span>
                                 </div>
                             </div>
+                            
                             <div class="col-md-6">
                                 <label>Phone Number</label>
-                                <div class="form-group form-focus"> 
-                                    <input type="text" class="form-control floating" value="{{ profile.phone_number }}" name="phone_number">
-                                    {% comment %} <input type="text" class="form-control floating" value="" name="phone_number"> {% endcomment %}
+                                <div class="form-group form-focus">
+                                    <input type="number" class="form-control floating" id="phone_number_input" value="{{ profile.phone_number }}" name="phone_number">
+                                    <span id="phone_number_error" class="text-danger"></span>
                                 </div>
                             </div>
+                            
                         </div>
                     </div>
                     <div class="card-box">
@@ -168,51 +168,61 @@
                             <div class="col-md-6">
                                 <label>Current Diagnosis or Health Concern</label>
                                 <div class="form-group form-focus">
-                                    {% comment %} <input type="text" class="form-control floating" value="" name="current_diagnosis"> {% endcomment %}
-                                    <input type="text" class="form-control floating" value="{{ profile.current_diagnosis }}" name="current_diagnosis">
+                                    <input type="text" class="form-control floating" id="current_diagnosis_input" value="{{ profile.current_diagnosis }}" name="current_diagnosis">
+                                    <span id="current_diagnosis_error" class="text-danger"></span>
                                 </div>
                             </div>
+                            
                             <div class="col-md-6">
                                 <label>Past Medical Conditions</label>
                                 <div class="form-group form-focus">
-                                    {% comment %} <textarea class="form-control floating" name="past_med_condition"></textarea> {% endcomment %}
-                                    <textarea class="form-control floating" name="past_med_condition">{{ profile.past_med_condition }}</textarea>
+                                    <textarea class="form-control floating" id="past_med_condition_input" name="past_med_condition">{{ profile.past_med_condition }}</textarea>
+                                    <span id="past_med_condition_error" class="text-danger"></span>
                                 </div>
                             </div>
+                            
                             <div class="col-md-6">
                                 <label>Surgical History</label>
                                 <div class="form-group form-focus">
-                                    {% comment %} <textarea class="form-control floating" name="surgical_history"></textarea> {% endcomment %}
-                                    <textarea class="form-control floating" name="surgical_history">{{ profile.surgical_history }}</textarea>
+                                    <textarea class="form-control floating" id="surgical_history_input" name="surgical_history">{{ profile.surgical_history }}</textarea>
+                                    <span id="surgical_history_error" class="text-danger"></span>
                                 </div>
                             </div>
-                           
                             
                             <div class="col-md-6">
                                 <label>Allergies (Medications, Food, Environmental)</label>
                                 <div class="form-group form-focus">
-                                    <textarea class="form-control floating" name="allergies">{{ profile.allergies }}</textarea>
-                                    {% comment %} <textarea class="form-control floating" name="allergies"></textarea> {% endcomment %}
+                                    <textarea class="form-control floating" id="allergies_input" name="allergies">{{ profile.allergies }}</textarea>
+                                    <span id="allergies_error" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label>Height (in cm)</label>
-                                <div class="form-group form-focus">
-                                    {% comment %} <input type="number" class="form-control floating" value="" name="height"> {% endcomment %}
-                                    <input type="number" class="form-control floating" value="{{ profile.height }}" name="height">
+                                <div class="form-group form-focus"> 
+                                    <input type="text" class="form-control floating" id="height_input" value="{{ profile.height }}" name="height">
+                                    <span id="height_error" class="text-danger"></span>
                                 </div>
                             </div>
+                            
                             <div class="col-md-6">
                                 <label>Weight (in kg)</label>
-                                <div class="form-group form-focus">
-                                    <input type="number" class="form-control floating" value="{{ profile.weight }}" name="weight">
-                                    {% comment %} <input type="number" class="form-control floating" value="" name="weight"> {% endcomment %}
+                                <div class="form-group form-focus"> 
+                                    <input type="text" class="form-control floating" id="weight_input" value="{{ profile.weight }}" name="weight">
+                                    <span id="weight_error" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label>Body Mass Index (BMI)</label>
+                                <div class="form-group form-focus"> 
+                                    <input type="text" class="form-control floating" id="bmi_input" value="{{ profile.bmi }}" name="bmi">
+                                    <span id="bmi_error" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label>Body Mass Index (BMI)</label>
+                                <label>Current Medications</label>
                                 <div class="form-group form-focus">
-                                    <input type="text" class="form-control floating" value="{{ profile.bmi }}" name="bmi">
+                                    <input type="text" class="form-control floating" value="{{ profile.medication_names }}" name="medication_names">
                                     {% comment %} <input type="text" class="form-control floating" value="" name="bmi"> {% endcomment %}
                                 </div>
                             </div>
@@ -220,59 +230,11 @@
                             </div>
                          </div>
 
-                         <div class="card-box">
+                         {% comment %} <div class="card-box">
                             <h3 class="card-title">Laboratory and Diagnostic Test Results:
-                            </h3>
-                            
+                            </h3> {% endcomment %}
+                </div> 
                
-
-               
-                    </div> 
-               
-
-
-                <div class="card-box">
-                    <h3 class="card-title">Current Medications:</h3>
-                    <table class="table table-bordered" id="medicationTable">
-                        <thead>
-                            <tr>
-                                <th>Medication Names</th>
-                                <th>Dosage</th>
-                                <th>Frequency</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="form-group form-focus">
-                                        {% comment %} <input type="text" class="form-control" name="medication_names[]"> {% endcomment %}
-                                        <input type="text" class="form-control" value="{{ profile.medication_names }}" name="medication_names">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group form-focus">
-                                        {% comment %} <input type="text" class="form-control" name="dosage[]"> {% endcomment %}
-                                        <input type="text" class="form-control" value="{{ profile.dosage }}" name="dosage">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group form-focus">
-                                        {% comment %} <input type="text" class="form-control" name="frequency[]"> {% endcomment %}
-                                        <input type="text" class="form-control" value="{{ profile.frequency }}" name="frequency">
-                                    </div>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <button type="button" class="btn btn-primary" onclick="addRow()">Add Medication</button>
-                </div>
-                </div>
-                
-                                   
                         <div class="text-center m-t-20">
                         <button class="btn btn-primary submit-btn" type="submit">Save</button>
                     </div>
@@ -290,25 +252,218 @@
     <script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
     
     <script>
-        function addRow() {
-            var table = document.getElementById("medicationTable").getElementsByTagName('tbody')[0];
-            var newRow = table.insertRow(table.rows.length);
-            var cell1 = newRow.insertCell(0);
-            var cell2 = newRow.insertCell(1);
-            var cell3 = newRow.insertCell(2);
-            var cell4 = newRow.insertCell(3);
+        // Function to perform validation on the "First Name" input
+        const firstnameInput = document.getElementById('first_name_input');
+        const firstNameError = document.getElementById('first_name_error');
+
+        const lastNameInput = document.getElementById('last_name_input');
+        const lastNameError = document.getElementById('last_name_error');
+
+        const houseNameInput = document.getElementById('house_name_input');
+        const houseNameError = document.getElementById('house_name_error');
     
-            cell1.innerHTML = '<div class="form-group form-focus"><input type="text" class="form-control" name="medication_names[]"></div>';
-            cell2.innerHTML = '<div class="form-group form-focus"><input type="text" class="form-control" name="dosage[]"></div>';
-            cell3.innerHTML = '<div class="form-group form-focus"><input type="text" class="form-control" name="frequency[]"></div>';
-            cell4.innerHTML = '<button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button>';
+        const addressInput = document.getElementById('address_input');
+        const addressError = document.getElementById('address_error');
+
+        
+        const pinCodeInput = document.getElementById('pin_code_input');
+        const pinCodeError = document.getElementById('pin_code_error');
+
+        const phoneInput = document.getElementById('phone_number_input');
+        const phoneError = document.getElementById('phone_number_error');
+
+        
+
+        function validateFirstName() {
+            var firstname = firstnameInput.value;
+            var validCharacters = /^[A-Za-z]+$/; // Regular expression for characters only
+    
+            if (!validCharacters.test(firstname)) {
+                firstNameError.textContent = "Only characters are allowed.";
+                firstnameInput.classList.add('is-invalid');
+                return false; // Validation failed
+            } else {
+                firstNameError.textContent = ""; // Clear the error message
+                firstnameInput.classList.remove('is-invalid');
+                return true; // Validation passed
+            }
         }
     
-        function removeRow(button) {
-            var row = button.parentNode.parentNode;
-            row.parentNode.removeChild(row);
+
+        function validateLastName() {
+            var lastName = lastNameInput.value;
+            var validCharacters = /^[A-Za-z]+$/; // Regular expression for characters only
+        
+            if (!validCharacters.test(lastName)) {
+                lastNameError.textContent = "Only characters are allowed.";
+                lastNameInput.classList.add('is-invalid');
+                return false; // Validation failed
+            } else {
+                lastNameError.textContent = ""; // Clear the error message
+                lastNameInput.classList.remove('is-invalid');
+                return true; // Validation passed
+            }
         }
+
+        function validateHouseName() {
+            var houseName = houseNameInput.value;
+            var validCharacters = /^[A-Za-z]+$/; // Regular expression for characters only
+    
+            if (!validCharacters.test(houseName)) {
+                houseNameError.textContent = "Only characters are allowed.";
+                houseNameInput.classList.add('is-invalid');
+                return false; // Validation failed
+            } else {
+                houseNameError.textContent = ""; // Clear the error message
+                houseNameInput.classList.remove('is-invalid');
+                return true; // Validation passed
+            }
+        }
+        function validateAddress() {
+            var address = addressInput.value;
+            var validCharacters = /^[A-Za-z,.\s-]+$/;
+
+            if(!validCharacters.test(address)) {
+                addressError.textContent = "Only characters are allowed.";
+                addressInput.classList.add('is-invalid');
+                return false; // Validation failed
+            } else {
+                addressError.textContent = ""; // Clear the error message
+                addressInput.classList.remove('is-invalid');
+                return true; // Validation passed
+            }
+        }
+        function validatePinCode() {
+            var pinCode = pinCodeInput.value;
+            var validPinCode = /^\d{6}$/; // Regular expression for 6-digit numbers
+    
+            if (!validPinCode.test(pinCode)) {
+                pinCodeError.textContent = "Enter a 6-digit pin code.";
+                pinCodeInput.classList.add('is-invalid');
+                return false; // Validation failed
+            } else {
+                pinCodeError.textContent = ""; // Clear the error message
+                pinCodeInput.classList.remove('is-invalid');
+                return true; // Validation passed
+            }
+        }
+
+        function validatePhoneNumber() {
+            var phoneNumber = phoneInput.value;
+            var validPhoneNumber = /^\d{10}$/; // Regular expression for numbers only
+    
+            if (!validPhoneNumber.test(phoneNumber)) {
+                phoneError.textContent = "Only 10 numbers are allowed.";
+                phoneInput.classList.add('is-invalid');
+                return false; // Validation failed
+            } else {
+                phoneError.textContent = ""; // Clear the error message
+                phoneInput.classList.remove('is-invalid');
+                return true; // Validation passed
+            }
+        }
+       
+        function validateAlphabeticInput(inputId, errorId) {
+            const input = document.getElementById(inputId);
+            const error = document.getElementById(errorId);
+            const inputValue = input.value;
+            const validCharacters = /^[A-Za-z\s]+$/; // Regular expression for alphabetic characters and spaces
+    
+            if (!validCharacters.test(inputValue)) {
+                error.textContent = "Only alphabetic characters and spaces are allowed.";
+                input.classList.add('is-invalid');
+                return false; // Validation failed
+            } else {
+                error.textContent = ""; // Clear the error message
+                input.classList.remove('is-invalid');
+                return true; // Validation passed
+            }
+        }
+        function validateNumericField(inputElement, errorElement, fieldName) {
+            var fieldValue = inputElement.value;
+            var validNumeric = /^\d+$/; // Regular expression for numeric values
+            
+            if (!validNumeric.test(fieldValue)) {
+                errorElement.textContent = fieldName + " should contain only numeric values.";
+                inputElement.classList.add('is-invalid');
+                return false; // Validation failed
+            } else {
+                errorElement.textContent = ""; // Clear the error message
+                inputElement.classList.remove('is-invalid');
+                return true; // Validation passed
+            }
+        }
+
+        
+        const currentDiagnosisInput = document.getElementById('current_diagnosis_input');
+        const pastMedConditionInput = document.getElementById('past_med_condition_input');
+        const surgicalHistoryInput = document.getElementById('surgical_history_input');
+        const allergiesInput = document.getElementById('allergies_input');
+
+
+
+        const heightInput = document.getElementById('height_input');
+        const heightError = document.getElementById('height_error');
+
+
+        const weightInput = document.getElementById('weight_input');
+        const weightError = document.getElementById('weight_error');
+
+        const bmiInput = document.getElementById('bmi_input');
+        const bmiError = document.getElementById('bmi_error');
+
+
+
+        currentDiagnosisInput.addEventListener('keyup', () => validateAlphabeticInput('current_diagnosis_input', 'current_diagnosis_error'));
+        pastMedConditionInput.addEventListener('keyup', () => validateAlphabeticInput('past_med_condition_input', 'past_med_condition_error'));
+        surgicalHistoryInput.addEventListener('keyup', () => validateAlphabeticInput('surgical_history_input', 'surgical_history_error'));
+        allergiesInput.addEventListener('keyup', () => validateAlphabeticInput('allergies_input', 'allergies_error'));
+        
+        heightInput.addEventListener('keyup', function() {
+            validateNumericField(heightInput, heightError, "Height (in cm)");
+        });
+        weightInput.addEventListener('keyup', function() {
+            validateNumericField(weightInput, weightError, "Weight (in kg)");
+        });
+        bmiInput.addEventListener('keyup', function() {
+            validateNumericField(bmiInput, bmiError, "Body Mass Index (BMI)");
+        });
+        // Attach keyup event listener to the "First Name" input field
+        firstnameInput.addEventListener('keyup', validateFirstName);
+        lastNameInput.addEventListener('keyup', validateLastName);
+        houseNameInput.addEventListener('keyup', validateHouseName);
+        addressInput.addEventListener('keyup', validateAddress);
+        pinCodeInput.addEventListener('keyup', validatePinCode);
+         phoneInput.addEventListener('keyup', validatePhoneNumber);
+
+         
+         
+        const profileForm = document.getElementById('profileform');
+        
+        profileForm.addEventListener('submit', function (event) {
+            const isFirstNameValid = validateFirstName();
+            const isLastNameValid = validateLastName();
+            const isHouseNameValid = validateHouseName();
+            const isAddressValid = validateAddress();
+            const isPinCodeValid = validatePinCode();
+            const isPhoneNumberValid = validatePhoneNumber();
+            
+        const isCurrentDiagnosisValid = validateAlphabeticInput('current_diagnosis_input', 'current_diagnosis_error');
+        const isPastMedConditionValid = validateAlphabeticInput('past_med_condition_input', 'past_med_condition_error');
+        const isSurgicalHistoryValid = validateAlphabeticInput('surgical_history_input', 'surgical_history_error');
+        const isAllergiesValid = validateAlphabeticInput('allergies_input', 'allergies_error');
+
+        const isheightInputValid = validateNumericField('height_input', 'height_error');
+        const isweightInputValid = validateNumericField('weight_input', 'weight_error');
+        const isbmiInputValid = validateNumericField('bmi_input', 'bmi_error');
+            
+            if (!isFirstNameValid || !isLastNameValid || !isHouseNameValid || !isAddressValid ||!isPinCodeValid ||!isPhoneNumberValid ||!isCurrentDiagnosisValid 
+            || !isPastMedConditionValid || !isSurgicalHistoryValid || !isAllergiesValid ||!isheightInputValid ||!isweightInputValid ||!isbmiInputValid ) {
+                event.preventDefault(); // Prevent form submission if validation failed
+            }
+        });
     </script>
+    
     
 </body>
 

@@ -206,62 +206,67 @@
             <h4>
               BOOK <span>APPOINTMENT</span>
             </h4>
+            
             <div class="form-row">
-              
+            
               <!-- Patient Information -->
+              
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">First Name</label>
-                <input type="text" name="first_name" class="form-control" id="inputPatientName" value="{{ first_name }}">
+                <input type="text" name="first_name" class="form-control" id="inputPatientName" value="{{ pro.first_name }}">
               </div>
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">Last Name</label>
-                <input type="text" name="last_name" class="form-control" id="inputPatientName" value="{{ appointment.last_name }}">
+                <input type="text" name="last_name" class="form-control" id="inputPatientName" value="{{ pro.last_name }}">
               </div>
               <div class="form-group col-lg-4">
                 <label for="inputEmail">Email</label>
-                <input type="email" name="email" class="form-control" id="inputEmail" value="{{ appointment.email }}">
+                <input type="email" name="email" class="form-control" id="inputEmail" value="{{ user.email }}">
               </div>
               
               
 
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">Gender</label>
-                <input type="text" name="gender" class="form-control" id="gender" value="{{ appointment.gender }}">
+                <input type="text" name="gender" class="form-control" id="gender" value="{{ pro.gender }}">
               </div>
 
               <div class="form-group col-lg-4">
                 <label for="inputAddress">Address</label>
-                <textarea class="form-control" name="address" class="form-control" id="inputAddress" value="{{ appointment.address }}" ></textarea>
+                <textarea class="form-control" name="address" class="form-control" id="inputAddress" value="{{ pro.address }}" ></textarea>
               </div>
-
+              <div class="form-group col-lg-4">
+                <label for="inputPatientName">Panchayat</label>
+                <input type="text" name="panchayat" class="form-control" id="ward" value="Parathodu" readonly>
+              </div>
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">Ward</label>
-                <input type="text" name="ward" class="form-control" id="ward" value="{{ appointment.ward }}">
+                <input type="text" name="ward" class="form-control" id="ward" value="{{ pro.ward }}">
               </div>
    
-
-            </div>
-            <!-- Contact Information -->
-            <div class="form-row">
-              
-
               <div class="form-group col-lg-4">
                 <label for="inputPhoneNumber">Phone Number</label>
-                <input type="number" name="phone_number" class="form-control" id="inputPhoneNumber" value="{{ appointment.phone_number }}">
+                <input type="number" name="phone_number" class="form-control" id="inputPhoneNumber" value="{{ pro.phone_number }}">
               </div>
+            
+            <!-- Contact Information -->
+            
+              
+
+              
               {% comment %} <div class="form-group col-lg-4">
                 <label for="idProof">Upload ID Proof</label>
                 <input type="file" class="form-control" name="id_proof" id="idProof" accept=".pdf, .jpg, .jpeg, .png">
               </div> {% endcomment %}
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">House Name</label>
-                <input type="number" name="house_name" class="form-control" id="housename" value="{{ appointment.house_name }}">
+                <input type="number" name="house_name" class="form-control" id="housename" value="{{ pro.house_name }}">
               </div>
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">House Number</label>
-                <input type="number" name="house_no" class="form-control" id="houseno" value="{{ appointment.house_no }}">
+                <input type="number" name="house_no" class="form-control" id="houseno" value="{{ pro.house_no }}">
               </div>
-          
+             
               <div class="form-group col-lg-4">
                 <label for="inputMedicalConditions">Existing Medical Conditions</label>
                 <textarea class="form-control"  name="medical_conditions" id="inputMedicalConditions" rows="3" placeholder="Enter existing medical conditions"></textarea>
@@ -285,34 +290,8 @@
             <label for="inputSymptoms">Symptoms/Reason for Visit</label>
             <textarea class="form-control" name="symptoms" id="inputSymptoms" rows="3" placeholder="Describe symptoms or reason for the visit"></textarea>
           </div>
-            </div>
-            <!-- Medical Information -->
-            <div class="form-row">
-              
-              
-              
-            </div>
-            <!-- Symptoms/Reason for Visit -->
-            
-            <!-- Preferred Date and Time -->
-            <div class="form-row">
-              <div class="form-group col-lg-6">
-                <label for="inputPreferredDate">Preferred Date</label>
-                <input type="date" class="form-control" name="preferred_date" id="inputPreferredDate">
-              </div>
-              
-            <div class="form-group col-lg-6">
-              <label for="preferredTime">Preferred Time</label>
-              <select class="form-control" name="preferred_time" id="preferredTime">
-                <option value="">Select Preferred Time</option>
-                {% for time_slot in time_slots %}
-                  <option value="{{ time_slot }}">{{ time_slot }}</option>
-                {% endfor %}
-              </select>
-</div>
-
-            </div>
-            <!-- ... (other fields) ... -->
+        </div>
+        
             <div class="btn-box">
               <button type="submit" class="btn">Schedule Now</button>
             </div>

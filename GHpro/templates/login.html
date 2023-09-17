@@ -244,18 +244,7 @@
       }
     }
 
-    {% comment %} function validatePhoneNumber() {
-      const phoneNumberValue = phoneNumberInput.value;
-      const phoneNumberError = document.getElementById('phoneNumberError');
-      
-      if (!/^\d{1,10}$/.test(phoneNumberValue)) {
-        phoneNumberError.textContent = 'Phone number should be numeric and not exceed 10 digits.';
-        return false;
-      } else {
-        phoneNumberError.textContent = '';
-        return true;
-      }
-    } {% endcomment %}
+    
 
     function validatePassword() {
       const passwordValue = passwordInput.value;

@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 # Create your models here.
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -106,33 +108,6 @@ class Ashaworker(models.Model):
     def __str__(self):
         return self.email
     
-
-
-
-class Appointment(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
-    first_name = models.CharField(max_length=255,blank=True, null=True)
-    last_name = models.CharField(max_length=255,blank=True, null=True)
-    email = models.EmailField(unique=True)
-    # date_of_birth = models.DateField()
-    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
-    address = models.TextField()
-    ward = models.CharField(max_length=255,blank=True, null=True)
-    phone_number = models.CharField(max_length=15)
-    house_name = models.CharField(max_length=15,blank=True, null=True)
-    house_no = models.CharField(max_length=15,blank=True, null=True)
-    # id_proof = models.FileField(upload_to='id_proofs/')
-    medical_conditions = models.TextField()
-    urgency = models.CharField(max_length=50, choices=[('Routine check-up', 'Routine check-up'), ('Non-urgent medical check-up', 'Non-urgent medical check-up'), ('Urgent medical check-up', 'Urgent medical check-up')])
-    medications = models.TextField()
-    symptoms = models.TextField()
-    preferred_date = models.DateField(blank=True, null=True)
-    preferred_time = models.TimeField(max_length=20, choices=[('09:00 AM', '09:00 AM'), ('10:00 AM', '10:00 AM'), ('11:00 AM', '11:00 AM'), ('12:00 PM', '12:00 PM'), ('01:00 PM', '01:00 PM')],blank=True, null=True)
-    
-    def __str__(self):
-        return self.patient_name
-
-
 class Image(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
@@ -173,3 +148,32 @@ class PatientProfile(models.Model):
     
     def _str_(self):
         return self.first_name
+
+
+
+# class Appointment(models.Model):
+#     patient_profile = models.ForeignKey(PatientProfile, on_delete=models.CASCADE)
+
+
+class Appointment(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    first_name = models.CharField(max_length=255,blank=True, null=True)
+    last_name = models.CharField(max_length=255,blank=True, null=True)
+    email = models.EmailField(unique=True)
+    # date_of_birth = models.DateField()
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
+    address = models.TextField()
+    ward = models.CharField(max_length=255,blank=True, null=True)
+    phone_number = models.CharField(max_length=15)
+    house_name = models.CharField(max_length=15,blank=True, null=True)
+    house_no = models.CharField(max_length=15,blank=True, null=True)
+    # id_proof = models.FileField(upload_to='id_proofs/')
+    medical_conditions = models.TextField()
+    urgency = models.CharField(max_length=50, choices=[('Routine check-up', 'Routine check-up'), ('Non-urgent medical check-up', 'Non-urgent medical check-up'), ('Urgent medical check-up', 'Urgent medical check-up')])
+    medications = models.TextField()
+    symptoms = models.TextField()
+    # preferred_date = models.DateField(blank=True, null=True)
+    # preferred_time = models.TimeField(max_length=20, choices=[('09:00 AM', '09:00 AM'), ('10:00 AM', '10:00 AM'), ('11:00 AM', '11:00 AM'), ('12:00 PM', '12:00 PM'), ('01:00 PM', '01:00 PM')],blank=True, null=True)
+    
+    def __str__(self):
+        return self.patient_name

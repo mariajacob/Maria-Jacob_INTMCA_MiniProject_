@@ -4,6 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+ 
+   
+   
+
+
+
+
+
     <title>Patient Profile</title>
     <style>
       body {
@@ -11,6 +23,7 @@
             margin: 0;
             padding: 0;
             background-color: #f0f0f0;
+            
         }
         
         .container {
@@ -26,9 +39,9 @@
             margin-bottom: 20px;
         }
 
-        h1 {
+        h1,h2,h3 {
             text-align: center;
-            color: #333;
+          
         }
 
         .profile-photo-container {
@@ -93,8 +106,15 @@
     {% for pro in profile %}
          <div class="section profile-photo-container">
            
+            {% comment %} <div class="profile-photo">
+                <img src="{{ pro.profile_pic.url }}"  alt="Patient's Profile Photo">
+            </div> {% endcomment %}
             <div class="profile-photo">
-                <img src="ash.jpg" alt="Patient's Profile Photo">
+                {% if pro.profile_pic %}
+                    <img src="{{ pro.profile_pic.url }}" alt="Patient's Profile Photo">
+                {% else %}
+                    <img src="/path/to/default/profile_pic.jpg" alt="Default Profile Photo">
+                {% endif %}
             </div>
             <div class="profile-details">
                 <p><strong>Full Name:</strong> {{ pro.first_name }} {{ pro.last_name }}</p>
@@ -102,83 +122,143 @@
             </div>
         </div>
         <!-- Patient Information -->
-        <div class="section">
-            <h2>Basic Informations</h2>
-            <p><strong>Full Name:</strong> {{ pro.first_name }} {{ pro.last_name }}</p>
+        {% comment %} <div class="section" style="display: flex; flex-direction: column; align-items: center;">
+            <h2 style="color: black; font-size: 24px; text-align: center;">BASIC INFORMATION</h2><BR>
+            <p><strong>First Name:</strong> {{ pro.first_name }} </p>
+            <p><strong>Last Name:</strong> {{ pro.last_name }}</p>
             <p><strong>Date of Birth:</strong> [Date of Birth]</p>
             <p><strong>Gender:</strong>  {{ pro.gender }}</p>
             <p><strong>House Name</strong> {{ pro.house_name }}</p>
+        </div> {% endcomment %}
+        {% comment %} <div class="section" style="text-align: center;">
+            <h2 style="color: black; font-size: 24px;">BASIC INFORMATION</h2><br>
+            <p style="border: 1px solid #000; padding: 10px;"><strong>First Name:</strong> {{ pro.first_name }}</p>
+            <p style="border: 1px solid #000; padding: 10px;"><strong>Last Name:</strong> {{ pro.last_name }}</p>
+            <p style="border: 1px solid #000; padding: 10px;"><strong>Date of Birth:</strong> [Date of Birth]</p>
+            <p style="border: 1px solid #000; padding: 10px;"><strong>Gender:</strong> {{ pro.gender }}</p>
+            <p style="border: 1px solid #000; padding: 10px;"><strong>House Name:</strong> {{ pro.house_name }}</p>
+        </div> {% endcomment %}
+        
+        <div class="section">
+            <h2 style="color: black; font-size: 24px;">BASIC INFORMATION</h2><br>
+            <div style="display: flex; justify-content: space-between;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>First Name:</strong> {{ pro.first_name }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Last Name:</strong> {{ pro.last_name }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Date of Birth:</strong> [Date of Birth]</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Gender:</strong> {{ pro.gender }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>House Name:</strong> {{ pro.house_name }}</p>
+                </div>
+                
+            </div>
         </div>
+        
+        
         
         <!--  Contact Information -->
         <div class="section">
-            <h2>Emergency Contact Information</h2>
-            <p><strong>House Number:</strong> {{ pro.house_no }}</p>
-            <p><strong>Address:</strong> {{ pro.address }}</p>
-            <p><strong>Panchayat:</strong> Parathodu</p>
-            <p><strong>Ward:</strong> {{ pro.ward }} </p>
-            <p><strong>Pin Code:</strong> {{ pro.pin_code }}</p>
-            <p><strong>Phone Number:</strong> {{ pro.phone_number }} </p>
+            <h2 style="color: black; font-size: 24px; text-align: center;">CONTACT INFORMATION</h2><br>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>House Number:</strong> {{ pro.house_no }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Address:</strong> {{ pro.address }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Panchayat:</strong> Parathodu</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Ward:</strong> {{ pro.ward }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Pin Code:</strong> {{ pro.pin_code }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Phone Number:</strong> {{ pro.phone_number }}</p>
+                </div>
+            </div>
         </div>
+        
        
-        <!-- Medical History -->
         <div class="section">
-            <h2>Medical History</h2>
-            <p><strong>Current Diagnosis or Health Concern:</strong>{{ pro.current_diagnosis }}</p>
-            <p><strong>Past Medical Conditions:</strong> {{ pro.past_med_condition }}</p>
-            <p><strong>Surgical Historys:</strong> {{ pro.surgical_history }} </p>
-            <p><strong>Allergies (Medications, Food, Environmental)</strong> {{ pro.allergies }}</p>
-            <p><strong>Height (in cm):</strong> {{ pro.height }}</p>
-            <p><strong>Weight (in kg):</strong> {{ pro.weight }}</p>
-            <p><strong>Body Mass Index (BMI):</strong> {{ pro.bmi }}</p>
+            <h2 style="color: black; font-size: 24px; text-align: center;">MEDICAL HISTORY</h2><br>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Current Diagnosis or Health Concern:</strong> {{ pro.current_diagnosis }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Past Medical Conditions:</strong> {{ pro.past_med_condition }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Surgical Historys:</strong> {{ pro.surgical_history }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Allergies (Medications, Food, Environmental):</strong> {{ pro.allergies }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Height (in cm):</strong> {{ pro.height }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Weight (in kg):</strong> {{ pro.weight }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Body Mass Index (BMI):</strong> {{ pro.bmi }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Current Medication:</strong> {{ pro.medication_names }}</p>
+                </div>
+            </div>
         </div>
+        
 
         <!-- Laboratory and Diagnostic Test Results:-->
-        <div class="section">
+        {% comment %} <div class="section">
             {% comment %} <h2>Insurance Information</h2>
             <p><strong>Insurance Provider:</strong> [Name of Insurance Provider]</p>
             <p><strong>Policy Number:</strong> [Policy Number]</p>
-            <p><strong>Group Number:</strong> [Group Number]</p> {% endcomment %}
-        </div>
+            <p><strong>Group Number:</strong> [Group Number]</p> 
+        </div> {% endcomment %}
 
-        <!-- Current Medications -->
+        {% comment %} <!-- Current Medications -->
         <div class="section">
-            <h2>Current Medications</h2>
-            <table class="table table-bordered" id="medicationTable">
-                <thead>
-                    <tr>
-                        <th>Medication Names</th>
-                        <th>Dosage</th>
-                        <th>Frequency</th>
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <div class="form-group form-focus">
-                                {% comment %} <input type="text" class="form-control" name="medication_names[]"> {% endcomment %}
-                                <input type="text" class="form-control" value="{{ pro.medication_names }}" name="medication_names">
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group form-focus">
-                                {% comment %} <input type="text" class="form-control" name="dosage[]"> {% endcomment %}
-                                <input type="text" class="form-control" value="{{ pro.dosage }}" name="dosage">
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group form-focus">
-                                {% comment %} <input type="text" class="form-control" name="frequency[]"> {% endcomment %}
-                                <input type="text" class="form-control" value="{{ pro.frequency }}" name="frequency">
-                            </div>
-                        </td>
-                       
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
+            <h2 style="color: black; font-size: 24px; text-align: center;">CURRENT MEDICATIONS</h2><br>
+            <div class="card-box">
+                <div style="border: 1px solid #000; padding: 10px; margin-bottom: 10px;">
+                    <p><strong>Medication Names:</strong> <input type="text" class="form-control" value="{{ pro.medication_names }}" name="medication_names"></p>
+                    <p><strong>Dosage:</strong> <input type="text" class="form-control" value="{{ pro.dosage }}" name="dosage"></p>
+                    <p><strong>Frequency:</strong> <input type="text" class="form-control" value="{{ pro.frequency }}" name="frequency"></p>
+                </div>
+                
+                <!-- Add more medication boxes here if needed -->
+            </div>
+        </div> {% endcomment %}
+        
+        
+    </div>
+    {% endfor %}
         {% comment %} <!-- Medical Notes -->
         <div class="section">
             <h2>Medical Notes</h2>
@@ -203,7 +283,35 @@
         <div class="section edit-profile-button">
             <a href="{% url 'edit_patient_profile' %}" class="edit-button">Edit Profile</a>
         </div>
-        {% endfor %}
+        
     </div>
+
+
+
+    <script>
+        function addRow() {
+            var table = document.getElementById("medicationTable").getElementsByTagName('tbody')[0];
+            var newRow = table.insertRow(table.rows.length);
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+    
+            cell1.innerHTML = '<div class="form-group form-focus"><input type="text" class="form-control" name="medication_names[]"></div>';
+            cell2.innerHTML = '<div class="form-group form-focus"><input type="text" class="form-control" name="dosage[]"></div>';
+            cell3.innerHTML = '<div class="form-group form-focus"><input type="text" class="form-control" name="frequency[]"></div>';
+            cell4.innerHTML = '<button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button>';
+        }
+    
+        function removeRow(button) {
+            var row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    </script>
+
+
+
+
+    
 </body>
 </html>

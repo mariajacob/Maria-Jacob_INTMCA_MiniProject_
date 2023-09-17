@@ -66,8 +66,10 @@ def addpatient(request):
 
 def edit_patient_profile(request):
     
+    # user = request.user
+    # profile = PatientProfile.objects.get(user=user)
     user = request.user
-    profile = PatientProfile.objects.get(user=user)
+    profile = get_object_or_404(PatientProfile, user=user)
     
     if request.method == "POST":
         print ('POST')
@@ -78,12 +80,10 @@ def edit_patient_profile(request):
         profile.first_name = request.POST.get('first_name')
         print("first name :",profile.first_name)
         
-        
-       
-        
         profile.last_name = request.POST.get('last_name')
         print("last name :",profile.last_name)
-        # profile.birth_date = request.POST.get('birth_date')
+
+    
         profile.email = request.POST.get('email')
         print("email name :",profile.email)
 
@@ -137,13 +137,21 @@ def edit_patient_profile(request):
 
         profile.frequency = request.POST.get('frequency')
         print("frequency :",profile.frequency)
-            
+        
+        new_profile_pic = request.FILES.get('profile_pic')
+
+        if new_profile_pic:
+            # Save the profile photo to a specific directory
+            fs = FileSystemStorage()
+            filename = fs.save(f"profile_pics/{new_profile_pic.name}", new_profile_pic)
+            profile.profile_pic = filename       
         profile.save()
         
             
 
         # messages.success(request, 'Profile updated successfully.')
         return redirect('print_patient_profile')  # Redirect to the profile page
+    
     context = {
         'user': user,
         'profile': profile
@@ -153,18 +161,37 @@ def edit_patient_profile(request):
 
 
 def print_patient_profile(request):
-    # profile = PatientProfile.objects.filter(user=request.user).first()  # Use .filter().first() to get a single object
-    # # profile = PatientProfile.objects.all()
-    # return render(request, 'print_patient_profile.html', {'profile': profile})
-    profile = PatientProfile.objects.filter(user=request.user).first()  # Use .filter().first() to get a single object
+    profile = PatientProfile.objects.filter(user=request.user).first() 
     return render(request, 'print_patient_profile.html', {'profile': [profile]})
 
+def appointment_form(request):
+    profile = PatientProfile.objects.filter(user=request.user).first() 
+    return render(request, 'appointment.html', {'profile': [profile]})
 
 
 
-# def patient_profile(request):
-#     pros = Ashaworker.objects.all()
-#     return render(request, 'patient_profile.html', {'pros': pros})
+def ad_appointment(request):
+    appo = Appointment.objects.all()
+    return render(request, 'admin_temp/appointments.html', {'appo': appo})  
+
+
+# def appointment_form(request):
+#     pro = get_object_or_404(PatientProfile)
+#     profile = get_object_or_404(PatientProfile)
+#     if request.method == 'POST':
+#         profile.first_name = request.POST.get('first_name')
+#         profile.last_name = request.POST.get('last_name')
+        
+#         pro.first_name = profile.first_name
+#         pro.last_name = profile.last_name
+        
+#         pro.save()
+#         return redirect('appointment')
+#     return render(request, 'appointment.html', {'pro': pro})
+
+
+
+
 
 def add_asha(request):
     if request.method == 'POST':
@@ -276,89 +303,8 @@ def delete_asha(request, asha_id):
     return render(request, 'admin_temp/delete_asha.html', {'ashaworker': ashaworker})
 
 
-def ad_appointment(request):
-    appo = Appointment.objects.all()
-    return render(request, 'admin_temp/appointments.html', {'appo': appo})   
 
-def appointment_form(request):
-    time_slots = []  # Initialize an empty list for time slots
-    user = request.user
-    profile = PatientProfile.objects.get(user=user)
-    first_name=request.GET.get('first_name')
-    if request.method == 'POST':
-        # profile.first_name = request.POST.get('first_name')
-        # profile.last_name = request.POST.get('last_name')
-        # profile.email = request.POST.get('email')
-        # profile.gender = request.POST.get('gender')
-        # profile.address = request.POST.get('address')
-        # profile.ward = request.POST.get('ward')
-        # profile.phone_number = request.POST.get('phone_number')
-        # profile.house_name = request.POST.get('house_name')
-        # profile.house_no = request.POST.get('house_no')
-        # profile.save()
-
-        
-
-        # medical_conditions = request.POST.get('medical_conditions')
-        # urgency = request.POST.get('urgency')
-        # medications = request.POST.get('medications')
-        # symptoms = request.POST.get('symptoms')
-        # preferred_date = request.POST.get('preferred_date')
-        # preferred_time = request.POST.get('preferred_time')
-        
-        obj=Appointment()
-        obj.first_name=first_name
-        obj.save()
-        return redirect('appointment')
-
-        # Create an appointment object and save it to the database
-        # appointment = Appointment(
-        #     user=user,
-        #     obj=PatientProfile()
-        #     obj.first_name=first_name
-            
-            
-        #     last_name=profile.last_name,
-        #     email=profile.email,
-        #     gender=profile.gender,
-        #     address=profile.address,
-        #     ward=profile.ward,
-        #     phone_number=profile.phone_number,
-        #     house_name=profile.house_name,
-        #     house_no=profile.house_no,
-        #     medical_conditions=medical_conditions,
-        #     urgency=urgency,
-        #     medications=medications,
-        #     symptoms=symptoms,
-        #     preferred_date=preferred_date,
-        #     preferred_time=preferred_time
-        # )
-        
-        
-
-    return render(request,'appointment.html',{'first_name': first_name})
-        # return render(request, 'appointment.html')
-
-    # else:
-    #     # Generate time slots with 30-minute intervals for AM and PM
-    #     start_time = datetime.strptime("06:00 AM", "%I:%M %p")
-    #     end_time = datetime.strptime("09:00 PM", "%I:%M %p")
-    #     interval = timedelta(minutes=30)
-
-    #     while start_time <= end_time:
-    #         time_slots.append(start_time.strftime("%I:%M %p"))
-    #         start_time += interval
-    
-    # context = {
-    #     'user': user,
-    #     'profile': profile
-    # }
-
-    # return render(request, 'patient_profile.html',context)
-
-    # return render(request, 'appointment.html', {'time_slots': time_slots})
-
-
+       
 def admin_login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
