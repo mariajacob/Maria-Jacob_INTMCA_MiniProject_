@@ -81,6 +81,7 @@ class CustomUser(AbstractUser):
 class Ashaworker(models.Model): 
     
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    id = models.AutoField(primary_key=True)
     Name = models.CharField(max_length=100)
     
     email = models.EmailField(max_length=100,unique=True)
@@ -96,12 +97,15 @@ class Ashaworker(models.Model):
     address = models.TextField()
     taluk = models.CharField(max_length=100)
     Panchayat = models.CharField(max_length=100)
-    ward = models.CharField(max_length=100)
+    ward = models.CharField(max_length=100,unique=True)
     # city=models.TextField()
     postal = models.IntegerField()
     phone = models.IntegerField()
     profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
     is_active = models.BooleanField(default=True)
+    
+    class Meta:
+            unique_together = (("id", "ward"),)
     # pin = models.IntegerField()
     # bio=models.TextField()
 

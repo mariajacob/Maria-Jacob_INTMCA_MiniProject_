@@ -101,7 +101,11 @@
 <body>
     <div class="container">
         <h1>My Profile</h1>
+       
         <hr>
+        {% for messages in messages %}
+        <h3 style="color: red">{{ messages }}</h3>
+        {% endfor %}
          <!-- Profile Photo -->
     {% for pro in profile %}
          <div class="section profile-photo-container">

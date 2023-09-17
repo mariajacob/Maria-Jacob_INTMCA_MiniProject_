@@ -149,8 +149,9 @@ def edit_patient_profile(request):
         
             
 
-        # messages.success(request, 'Profile updated successfully.')
+        messages.success(request, 'Profile updated successfully.')
         return redirect('print_patient_profile')  # Redirect to the profile page
+        
     
     context = {
         'user': user,
