@@ -13,6 +13,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from .models import CustomUser
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponseNotFound
+from django.contrib.auth.decorators import login_required
+
 from django.contrib.auth import get_user_model
 # Create your views here.
 
@@ -170,30 +172,70 @@ def appointment_form(request):
     return render(request, 'appointment.html', {'profile': [profile]})
 
 
-
+@login_required(login_url='login_page')
 def ad_appointment(request):
     appo = Appointment.objects.all()
     return render(request, 'admin_temp/appointments.html', {'appo': appo})  
 
+def appointment_form(request):
+    time_slots = []  # Initialize an empty list for time slots
 
-# def appointment_form(request):
-#     pro = get_object_or_404(PatientProfile)
-#     profile = get_object_or_404(PatientProfile)
-#     if request.method == 'POST':
-#         profile.first_name = request.POST.get('first_name')
-#         profile.last_name = request.POST.get('last_name')
-        
-#         pro.first_name = profile.first_name
-#         pro.last_name = profile.last_name
-        
-#         pro.save()
-#         return redirect('appointment')
-#     return render(request, 'appointment.html', {'pro': pro})
+    if request.method == 'POST':
+        patient_name = request.POST.get('patient_name')
+        email = request.POST.get('email')
+        date_of_birth = request.POST.get('date_of_birth')
+        gender = request.POST.get('gender')
+        address = request.POST.get('address')
+        ward_asha = request.POST.get('ward')
+        phone_number = request.POST.get('phone_number')
+        id_proof = request.FILES.get('id_proof')
+        medical_conditions = request.POST.get('medical_conditions')
+        urgency = request.POST.get('urgency')
+        medications = request.POST.get('medications')
+        symptoms = request.POST.get('symptoms')
+        preferred_date = request.POST.get('preferred_date')
+        preferred_time = request.POST.get('preferred_time')
+
+        # Create an appointment object and save it to the database
+        appointment = Appointment(
+            patient_name=patient_name,
+            email=email,
+            date_of_birth=date_of_birth,
+            gender=gender,
+            address=address,
+            ward_asha=ward_asha,
+            phone_number=phone_number,
+            id_proof=id_proof,
+            medical_conditions=medical_conditions,
+            urgency=urgency,
+            medications=medications,
+            symptoms=symptoms,
+            preferred_date=preferred_date,
+            preferred_time=preferred_time
+        )
+        appointment.save()
+
+        return render(request,'appointment.html')
+        # return render(request, 'appointment.html')
+
+    else:
+        # Generate time slots with 30-minute intervals for AM and PM
+        start_time = datetime.strptime("06:00 AM", "%I:%M %p")
+        end_time = datetime.strptime("09:00 PM", "%I:%M %p")
+        interval = timedelta(minutes=30)
+
+        while start_time <= end_time:
+            time_slots.append(start_time.strftime("%I:%M %p"))
+            start_time += interval
+
+    return render(request, 'appointment.html', {'time_slots': time_slots})
 
 
 
 
 
+from django.contrib.auth.decorators import login_required
+@login_required(login_url='login_page')
 def add_asha(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -245,13 +287,14 @@ def add_asha(request):
         return redirect('ad_ashaworker')
 
     return render(request, 'admin_temp/add_asha.html')
-
+@login_required(login_url='login')
 def ad_ashaworker(request):
     ashaworkers = Ashaworker.objects.all()
     return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers})
     
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Ashaworker
+@login_required(login_url='login_page')
 def edit_asha(request, asha_id):
     ashaworker = get_object_or_404(Ashaworker, id=asha_id)
     if request.method == 'POST':
@@ -286,7 +329,7 @@ def edit_asha(request, asha_id):
 
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Ashaworker
-
+@login_required(login_url='login_page')
 def delete_asha(request, asha_id):
     ashaworker = get_object_or_404(Ashaworker, id=asha_id)
 
@@ -320,6 +363,7 @@ def admin_login(request):
     
     return render(request, 'admin_temp/adlogin.html')
 
+@login_required(login_url='login_page')
 def admin_dashboard(request):
 
     return render(request, 'admin_temp/adindex.html')

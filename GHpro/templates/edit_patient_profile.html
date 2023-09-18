@@ -380,55 +380,19 @@
                 return true; // Validation passed
             }
         }
-        function validateNumericField(inputElement, errorElement, fieldName) {
-            var fieldValue = inputElement.value;
-            var validNumeric = /^\d+$/; // Regular expression for numeric values
-            
-            if (!validNumeric.test(fieldValue)) {
-                errorElement.textContent = fieldName + " should contain only numeric values.";
-                inputElement.classList.add('is-invalid');
-                return false; // Validation failed
-            } else {
-                errorElement.textContent = ""; // Clear the error message
-                inputElement.classList.remove('is-invalid');
-                return true; // Validation passed
-            }
-        }
-
+        
         
         const currentDiagnosisInput = document.getElementById('current_diagnosis_input');
         const pastMedConditionInput = document.getElementById('past_med_condition_input');
         const surgicalHistoryInput = document.getElementById('surgical_history_input');
         const allergiesInput = document.getElementById('allergies_input');
 
-
-
-        const heightInput = document.getElementById('height_input');
-        const heightError = document.getElementById('height_error');
-
-
-        const weightInput = document.getElementById('weight_input');
-        const weightError = document.getElementById('weight_error');
-
-        const bmiInput = document.getElementById('bmi_input');
-        const bmiError = document.getElementById('bmi_error');
-
-
-
         currentDiagnosisInput.addEventListener('keyup', () => validateAlphabeticInput('current_diagnosis_input', 'current_diagnosis_error'));
         pastMedConditionInput.addEventListener('keyup', () => validateAlphabeticInput('past_med_condition_input', 'past_med_condition_error'));
         surgicalHistoryInput.addEventListener('keyup', () => validateAlphabeticInput('surgical_history_input', 'surgical_history_error'));
         allergiesInput.addEventListener('keyup', () => validateAlphabeticInput('allergies_input', 'allergies_error'));
         
-        heightInput.addEventListener('keyup', function() {
-            validateNumericField(heightInput, heightError, "Height (in cm)");
-        });
-        weightInput.addEventListener('keyup', function() {
-            validateNumericField(weightInput, weightError, "Weight (in kg)");
-        });
-        bmiInput.addEventListener('keyup', function() {
-            validateNumericField(bmiInput, bmiError, "Body Mass Index (BMI)");
-        });
+       
         // Attach keyup event listener to the "First Name" input field
         firstnameInput.addEventListener('keyup', validateFirstName);
         lastNameInput.addEventListener('keyup', validateLastName);
@@ -454,12 +418,9 @@
         const isSurgicalHistoryValid = validateAlphabeticInput('surgical_history_input', 'surgical_history_error');
         const isAllergiesValid = validateAlphabeticInput('allergies_input', 'allergies_error');
 
-        const isheightInputValid = validateNumericField('height_input', 'height_error');
-        const isweightInputValid = validateNumericField('weight_input', 'weight_error');
-        const isbmiInputValid = validateNumericField('bmi_input', 'bmi_error');
             
             if (!isFirstNameValid || !isLastNameValid || !isHouseNameValid || !isAddressValid ||!isPinCodeValid ||!isPhoneNumberValid ||!isCurrentDiagnosisValid 
-            || !isPastMedConditionValid || !isSurgicalHistoryValid || !isAllergiesValid ||!isheightInputValid ||!isweightInputValid ||!isbmiInputValid ) {
+            || !isPastMedConditionValid || !isSurgicalHistoryValid || !isAllergiesValid ) {
                 event.preventDefault(); // Prevent form submission if validation failed
             }
         });
