@@ -1,0 +1,373 @@
+{% comment %} 
+
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+ 
+   
+   
+
+
+
+
+
+    <title>Patient Profile</title>
+    
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Profile</h1>
+       
+        <hr>
+       
+        <div class="section edit-profile-button">
+            <a href="{% url 'edit_asha_profile' %}" class="edit-button">Edit Profile</a>
+        </div>
+        
+    </div>
+
+
+
+
+
+    
+</body>
+</html> {% endcomment %}
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+
+
+
+
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <title>GentleHaloes Admin Dashboard</title>
+ 
+   
+   
+
+
+
+
+
+    <title>Patient Profile</title>
+    <style>
+      body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        h1,h2,h3 {
+            text-align: center;
+          
+        }
+
+        .profile-photo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-photo img {
+            width: 200px;
+            height: 200px; /* Set the width and height to make it square */
+            border-radius: 0; /* Remove border-radius to make it square */
+            border: 3px solid #fff;
+        }
+
+        .profile-details {
+            display: flex;
+            flex-direction: column;
+            margin-left:50px;
+        }
+
+.section {
+    background-color: #f7f7f7;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.section h2 {
+    color: #333;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+.edit-profile-button {
+            text-align: center; /* Center-align the button */
+        }
+
+        .edit-profile-button a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF; /* Blue color */
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer; /* Add cursor style */
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+
+        .edit-profile-button a:hover {
+            background-color: #000000; /* New background color on hover */
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <a href="{% url 'index-2' %}" class="logo">
+                <img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+            </a>
+        </div>
+         <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+        <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+        <ul class="nav user-menu float-right">
+       
+            <li class="nav-item dropdown has-arrow">
+                
+                <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                    
+                    <span>AshaWorker Logout</span>
+                </a>
+                {% if user.is_authenticated %}
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'asha_profile' %}">Profile</a>
+                    <a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+                </div>
+                {% else %}
+
+                <div class="dropdown-menu">
+                    
+                    <a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+                </div>
+                
+                {% endif %}
+       
+    </div> 
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-inner slimscroll">
+            <div id="sidebar-menu" class="sidebar-menu">
+                <ul>
+                    <li class="menu-title">Main</li>
+                    <li class="active">
+                        <a href="{% url 'asha_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                    </li> 
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="page-wrapper">
+
+    <div class="container">
+        <h1>My Profile</h1>
+       
+        <hr>
+        {% for messages in messages %}
+        <h3 style="color: red">{{ messages }}</h3>
+        {% endfor %}
+         <!-- Profile Photo -->
+    
+         <div class="section profile-photo-container">
+           
+           
+            <div class="profile-photo">
+                {% if pro.profile_pic %}
+                    <img src="{{ pro.profile_pic.url }}" alt="Patient's Profile Photo">
+                {% else %}
+                    <img src="/path/to/default/profile_pic.jpg" alt="Default Profile Photo">
+                {% endif %}
+            </div>
+            <div class="profile-details">
+                <p><strong>Full Name:</strong> {{ ashaworker.Name }} </p>
+                <p><strong>Email Address:</strong> {{ user.email }}</p>
+            </div>
+        </div>
+  
+        
+        <div class="section">
+            <h2 style="color: black; font-size: 24px;">BASIC INFORMATION</h2><br>
+            <div style="display: flex; justify-content: space-between;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>First Name:</strong> {{ pro.first_name }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Last Name:</strong> {{ pro.last_name }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Date of Birth:</strong> [Date of Birth]</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Gender:</strong> {{ pro.gender }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>House Name:</strong> {{ pro.house_name }}</p>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        
+        <!--  Contact Information -->
+        <div class="section">
+            <h2 style="color: black; font-size: 24px; text-align: center;">CONTACT INFORMATION</h2><br>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>House Number:</strong> {{ pro.house_no }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Address:</strong> {{ pro.address }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Panchayat:</strong> Parathodu</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Ward:</strong> {{ pro.ward }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Pin Code:</strong> {{ pro.pin_code }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Phone Number:</strong> {{ pro.phone_number }}</p>
+                </div>
+            </div>
+        </div>
+        
+       
+        <div class="section">
+            <h2 style="color: black; font-size: 24px; text-align: center;">MEDICAL HISTORY</h2><br>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Current Diagnosis or Health Concern:</strong> {{ pro.current_diagnosis }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Past Medical Conditions:</strong> {{ pro.past_med_condition }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Surgical Historys:</strong> {{ pro.surgical_history }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Allergies (Medications, Food, Environmental):</strong> {{ pro.allergies }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Height (in cm):</strong> {{ pro.height }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Weight (in kg):</strong> {{ pro.weight }}</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div style="flex: 1; border: 1px solid #000; padding: 5px;">
+                    <p><strong>Body Mass Index (BMI):</strong> {{ pro.bmi }}</p>
+                </div>
+                <div style="flex: 1; border: 1px solid #000; padding: 5px; margin-left: 10px;">
+                    <p><strong>Current Medication:</strong> {{ pro.medication_names }}</p>
+                </div>
+            </div>
+        </div>
+        
+ 
+        <div class="section edit-profile-button">
+            <a href="{% url 'edit_asha_profile' %}" class="edit-button">Edit Profile</a>
+        </div>
+    </div>
+        
+    </div>
+    
+      
+        
+    </div>
+
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/Chart.bundle.js' %}"></script>
+    <script src="{% static 'assets/js/chart.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+
+<style>
+    .header {
+        background-color: #00c6a9;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 1039;
+        height: 50px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+
+
+
+    
+</body>
+</html>
+

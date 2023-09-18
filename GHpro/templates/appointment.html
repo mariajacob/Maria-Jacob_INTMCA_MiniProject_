@@ -201,7 +201,7 @@
     <div class="container">
       <div class="row">
         <div class="col">
-          <form method="POST" action="" autocomplete="off" enctype="multipart/form-data">
+          <form method="POST" action="{% url 'dis_appointment' %}" autocomplete="off" enctype="multipart/form-data">
             {% csrf_token %}
             <h4>
               BOOK <span>APPOINTMENT</span>
@@ -211,14 +211,29 @@
             
               <!-- Patient Information -->
               
+              {% comment %} <div class="form-group col-lg-4">
+                <label for="inputPatientName">First Name</label>
+                <input type="text" name="first_name" class="form-control" id="inputPatientName" value="{{ profile.first_name }}">
+              </div> {% endcomment %}
+
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">First Name</label>
-                <input type="text" name="first_name" class="form-control" id="inputPatientName" value="{{ pro.first_name }}">
-              </div>
+                <input type="text" name="first_name" class="form-control" id="inputPatientName" value="{{ profile_data.first_name }}">
+            </div>
+
+
+
+              {% comment %} <div class="form-group col-lg-4">
+                <label for="inputPatientName">Last Name</label>
+                <input type="text" name="last_name" class="form-control" id="inputPatientName" value="{{ profile.last_name }}">
+              </div> {% endcomment %}
+
+
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">Last Name</label>
-                <input type="text" name="last_name" class="form-control" id="inputPatientName" value="{{ pro.last_name }}">
-              </div>
+                <input type="text" name="last_name" class="form-control" id="inputPatientName" value="{{ profile_data.last_name }}">
+            </div>
+
               <div class="form-group col-lg-4">
                 <label for="inputEmail">Email</label>
                 <input type="email" name="email" class="form-control" id="inputEmail" value="{{ user.email }}">
@@ -226,46 +241,78 @@
               
               
 
+              {% comment %} <div class="form-group col-lg-4">
+                <label for="inputPatientName">Gender</label>
+                <input type="text" name="gender" class="form-control" id="gender" value="{{ profile.gender }}">
+              </div> {% endcomment %}
+
+
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">Gender</label>
-                <input type="text" name="gender" class="form-control" id="gender" value="{{ pro.gender }}">
-              </div>
+                <input type="text" name="gender" class="form-control" id="gender" value="{{ profile_data.gender }}">
+            </div>
+
+              {% comment %} <div class="form-group col-lg-4">
+                <label for="inputAddress">Address</label>
+                <textarea class="form-control" name="address" class="form-control" id="inputAddress" value="{{ profile.address }}" ></textarea>
+              </div> {% endcomment %}
 
               <div class="form-group col-lg-4">
                 <label for="inputAddress">Address</label>
-                <textarea class="form-control" name="address" class="form-control" id="inputAddress" value="{{ pro.address }}" ></textarea>
-              </div>
+                <textarea class="form-control" name="address" id="inputAddress">{{ profile_data.address }}</textarea>
+            </div>
+
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">Panchayat</label>
                 <input type="text" name="panchayat" class="form-control" id="ward" value="Parathodu" readonly>
               </div>
+
+              {% comment %} <div class="form-group col-lg-4">
+                <label for="inputPatientName">Ward</label>
+                <input type="text" name="ward" class="form-control" id="ward" value="{{ profile.ward }}">
+              </div> {% endcomment %}
+
+
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">Ward</label>
-                <input type="text" name="ward" class="form-control" id="ward" value="{{ pro.ward }}">
-              </div>
+                <input type="text" name="ward" class="form-control" id="ward" value="{{ profile_data.ward }}">
+            </div>
    
+              {% comment %} <div class="form-group col-lg-4">
+                <label for="inputPhoneNumber">Phone Number</label>
+                <input type="number" name="phone_number" class="form-control" id="inputPhoneNumber" value="{{ profile.phone_number }}">
+              </div> {% endcomment %}
+
               <div class="form-group col-lg-4">
                 <label for="inputPhoneNumber">Phone Number</label>
-                <input type="number" name="phone_number" class="form-control" id="inputPhoneNumber" value="{{ pro.phone_number }}">
-              </div>
+                <input type="number" name="phone_number" class="form-control" id="inputPhoneNumber" value="{{ profile_data.phone_number }}">
+            </div>
             
             <!-- Contact Information -->
-            
-              
-
-              
+          
               {% comment %} <div class="form-group col-lg-4">
-                <label for="idProof">Upload ID Proof</label>
-                <input type="file" class="form-control" name="id_proof" id="idProof" accept=".pdf, .jpg, .jpeg, .png">
+                <label for="inputPatientName">House Name</label>
+                <input type="number" name="house_name" class="form-control" id="housename" value="{{ profile.house_name }}">
               </div> {% endcomment %}
+
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">House Name</label>
-                <input type="number" name="house_name" class="form-control" id="housename" value="{{ pro.house_name }}">
-              </div>
+                <input type="text" name="house_name" class="form-control" id="housename" value="{{ profile_data.house_name }}">
+            </div>
+        
+
+
+              {% comment %} <div class="form-group col-lg-4">
+                <label for="inputPatientName">House Number</label>
+                <input type="number" name="house_no" class="form-control" id="houseno" value="{{ profile.house_no }}">
+              </div> {% endcomment %}
+
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">House Number</label>
-                <input type="number" name="house_no" class="form-control" id="houseno" value="{{ pro.house_no }}">
-              </div>
+                <input type="text" name="house_no" class="form-control" id="houseno" value="{{ profile_data.house_no }}">
+            </div>
+
+
              
               <div class="form-group col-lg-4">
                 <label for="inputMedicalConditions">Existing Medical Conditions</label>

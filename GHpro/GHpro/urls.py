@@ -17,7 +17,7 @@ Including another URLconf
 from GHapp import views
 from django.contrib import admin
 from django.urls import path, include
-from GHapp.views import admin_login,login_page,hca_signup, register,ad_gallery,loggout,add_asha,appointment_form,ResetPasswordView,ChangePasswordView
+from GHapp.views import login_page,hca_signup, register,ad_gallery,loggout,add_asha,dis_appointment,ResetPasswordView,ChangePasswordView
 from django.contrib.auth import views as auth_views
 
 from django.conf import settings
@@ -29,7 +29,7 @@ urlpatterns = [
     path("", include("allauth.urls")), 
 
     path('', views.index, name="index"),
-    path('appointment_form', appointment_form, name="appointment_form"),
+    path('dis_appointment', dis_appointment, name="dis_appointment"),
     path('about', views.about, name="about"),
     path('treatment', views.treatment, name="treatment"),
     path('doctor', views.doctor, name="doctor"),
@@ -59,12 +59,15 @@ urlpatterns = [
     # path('patient_profile', views.user_details_appointment, name="patient_profile"), 
 
     path('adgallery', ad_gallery, name="adgallery"), 
-    path('admin_login', admin_login, name='admin_login'),
+    # path('admin_login', admin_login, name='admin_login'),
     # path('admin_dashboard', admin_dashboard, name='admin_dashboard'),
     path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'), 
 
     # path('asha_dashboard', views.asha_dashboard, name='asha_dashboard'),
 
+    path('asha_index', views.asha_index, name='asha_index'), 
+    path('asha_profile', views.asha_profile, name='asha_profile'),
+    path('edit_asha_profile', views.edit_asha_profile, name='edit_asha_profile'),
 
 
     path('login_page', login_page, name='login_page'),
