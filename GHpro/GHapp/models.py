@@ -153,32 +153,25 @@ class PatientProfile(models.Model):
     def _str_(self):
         return self.first_name
 
-
-
-# class Appointment(models.Model):
-#     patient_profile = models.ForeignKey(PatientProfile, on_delete=models.CASCADE)
-
-
 class Appointment(models.Model):
+    is_approve=models.BooleanField(default=False)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
-    patient = models.OneToOneField(PatientProfile, on_delete=models.CASCADE, blank=True, null=True)
-    first_name = models.CharField(max_length=255,blank=True, null=True)
-    last_name = models.CharField(max_length=255,blank=True, null=True)
-    email = models.EmailField(unique=True)
-    # date_of_birth = models.DateField()
+    first_name = models.CharField(max_length=255,null=True,blank=True)
+    last_name = models.CharField(max_length=255,null=True,blank=True)
+    email = models.EmailField(null=True,blank=True)
+    # date_of_birth = models.DateField(null=True,blank=True)
     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
-    address = models.TextField()
-    ward = models.CharField(max_length=255,blank=True, null=True)
+    address = models.TextField(null=True,blank=True)
+    ward_asha = models.CharField(max_length=255,null=True,blank=True)
     phone_number = models.CharField(max_length=15)
-    house_name = models.CharField(max_length=15,blank=True, null=True)
-    house_no = models.CharField(max_length=15,blank=True, null=True)
-    # id_proof = models.FileField(upload_to='id_proofs/')
-    medical_conditions = models.TextField()
-    urgency = models.CharField(max_length=50, choices=[('Routine check-up', 'Routine check-up'), ('Non-urgent medical check-up', 'Non-urgent medical check-up'), ('Urgent medical check-up', 'Urgent medical check-up')])
-    medications = models.TextField()
-    symptoms = models.TextField()
-    # preferred_date = models.DateField(blank=True, null=True)
-    # preferred_time = models.TimeField(max_length=20, choices=[('09:00 AM', '09:00 AM'), ('10:00 AM', '10:00 AM'), ('11:00 AM', '11:00 AM'), ('12:00 PM', '12:00 PM'), ('01:00 PM', '01:00 PM')],blank=True, null=True)
-    
+    # id_proof = models.FileField(upload_to='id_proofs/',null=True,blank=True)
+    medical_conditions = models.TextField(null=True,blank=True)
+    urgency = models.CharField(max_length=50, choices=[('Routine check-up', 'Routine check-up'), ('Non-urgent medical check-up', 'Non-urgent medical check-up'), ('Urgent medical check-up', 'Urgent medical check-up')],null=True,blank=True)
+    medication_names = models.TextField(null=True,blank=True)
+    symptoms = models.TextField(null=True,blank=True)
+    preferred_date = models.DateField(null=True,blank=True)
+    preferred_time = models.CharField(max_length=20, choices=[('09:00 AM', '09:00 AM'), ('10:00 AM', '10:00 AM'), ('11:00 AM', '11:00 AM'), ('12:00 PM', '12:00 PM'), ('01:00 PM', '01:00 PM')],null=True,blank=True)
+
     def __str__(self):
-        return self.patient_name
+        return self.email
+

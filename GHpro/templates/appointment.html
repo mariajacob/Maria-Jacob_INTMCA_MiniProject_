@@ -117,6 +117,10 @@
                           <span>{{ user.email }}</span>
                       </button>
                       <div class="dropdown-menu" aria-labelledby="loggedInDropdown">
+                        <a class="dropdown-item" href="{% url 'print_patient_profile' %}">
+                          <i class="fa fa-sign-out" aria-hidden="true"></i>
+                          <span>Profile</span>
+                         </a>
                           <a class="dropdown-item" href="{% url 'loggout' %}">
                               <i class="fa fa-sign-out" aria-hidden="true"></i>
                               <span>Logout</span>
@@ -124,7 +128,7 @@
                       </div>
                   </div>
                   {% else %}
-                  <div class="dropdown">
+                  {% comment %} <div class="dropdown">
                       <button class="dropdown-toggle" type="button" id="loginDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <i class="fa fa-user" aria-hidden="true"></i>
                           <span>Login</span>
@@ -134,16 +138,16 @@
                               <i class="fa fa-user" aria-hidden="true"></i>
                               <span>Patient Login</span>
                           </a>
-                          <a class="dropdown-item" href="{% url 'admin_login' %}">
+                          <a class="dropdown-item" href="{% url 'login_page' %}">
                               <i class="fa fa-user" aria-hidden="true"></i>
                               <span>AshaWorker Login</span> 
                           </a>
-                          <a class="dropdown-item" href="{% url 'admin_login' %}">
+                          <a class="dropdown-item" href="{% url 'login_page' %}">
                             <i class="fa fa-user" aria-hidden="true"></i>
                             <span>Hospital Login</span> 
                         </a>
                       </div>
-                  </div>
+                  </div> {% endcomment %}
                   {% endif %}
               </div>
               
@@ -173,11 +177,11 @@
                               <i class="fa fa-user" aria-hidden="true"></i>
                               <span>Patient Login</span>
                           </a>
-                          <a class="dropdown-item" href="{% url 'admin_login' %}">
+                          <a class="dropdown-item" href="{% url 'login_page' %}">
                             <i class="fa fa-user" aria-hidden="true"></i>
                             <span>AshaWorker Login</span> 
                         </a>
-                        <a class="dropdown-item" href="{% url 'admin_login' %}">
+                        <a class="dropdown-item" href="{% url 'login_page' %}">
                           <i class="fa fa-user" aria-hidden="true"></i>
                           <span>Hospital Login</span> 
                       </a>
@@ -201,122 +205,70 @@
     <div class="container">
       <div class="row">
         <div class="col">
-          <form method="POST" action="{% url 'dis_appointment' %}" autocomplete="off" enctype="multipart/form-data">
+          <form method="POST" action="" autocomplete="off" enctype="multipart/form-data">
             {% csrf_token %}
             <h4>
               BOOK <span>APPOINTMENT</span>
             </h4>
-            
             <div class="form-row">
-            
               <!-- Patient Information -->
-              
-              {% comment %} <div class="form-group col-lg-4">
-                <label for="inputPatientName">First Name</label>
-                <input type="text" name="first_name" class="form-control" id="inputPatientName" value="{{ profile.first_name }}">
-              </div> {% endcomment %}
-
               <div class="form-group col-lg-4">
-                <label for="inputPatientName">First Name</label>
-                <input type="text" name="first_name" class="form-control" id="inputPatientName" value="{{ profile_data.first_name }}">
-            </div>
-
-
-
-              {% comment %} <div class="form-group col-lg-4">
-                <label for="inputPatientName">Last Name</label>
-                <input type="text" name="last_name" class="form-control" id="inputPatientName" value="{{ profile.last_name }}">
-              </div> {% endcomment %}
-
-
+                <label for="inputPatientName">first Name</label>
+                <input type="text" name="first_name" value="{{ patientprofile.first_name}}" class="form-control" id="inputPatientName" placeholder="Full Name" readonly>
+              </div>
               <div class="form-group col-lg-4">
                 <label for="inputPatientName">Last Name</label>
-                <input type="text" name="last_name" class="form-control" id="inputPatientName" value="{{ profile_data.last_name }}">
-            </div>
-
+                <input type="text" name="last_name" value="{{ patientprofile.last_name}}" class="form-control" id="inputPatientName" placeholder="Full Name" readonly>
+              </div>
               <div class="form-group col-lg-4">
                 <label for="inputEmail">Email</label>
-                <input type="email" name="email" class="form-control" id="inputEmail" value="{{ user.email }}">
+                <input type="email" name="email" value="{{ patientprofile.email}}" class="form-control" id="inputEmail" placeholder="Email Address" readonly>
               </div>
-              
-              
-
               {% comment %} <div class="form-group col-lg-4">
-                <label for="inputPatientName">Gender</label>
-                <input type="text" name="gender" class="form-control" id="gender" value="{{ profile.gender }}">
-              </div> {% endcomment %}
-
-
-              <div class="form-group col-lg-4">
-                <label for="inputPatientName">Gender</label>
-                <input type="text" name="gender" class="form-control" id="gender" value="{{ profile_data.gender }}">
-            </div>
-
-              {% comment %} <div class="form-group col-lg-4">
-                <label for="inputAddress">Address</label>
-                <textarea class="form-control" name="address" class="form-control" id="inputAddress" value="{{ profile.address }}" ></textarea>
+                <label for="inputDateOfBirth">Date of Birth</label>
+                <input type="date" name="date_of_birth" class="form-control" id="inputDateOfBirth">
               </div> {% endcomment %}
 
               <div class="form-group col-lg-4">
-                <label for="inputAddress">Address</label>
-                <textarea class="form-control" name="address" id="inputAddress">{{ profile_data.address }}</textarea>
-            </div>
-
-              <div class="form-group col-lg-4">
-                <label for="inputPatientName">Panchayat</label>
-                <input type="text" name="panchayat" class="form-control" id="ward" value="Parathodu" readonly>
+                <label for="inputEmail">Gender</label>
+                <input type="text" name="gender" value="{{ patientprofile.gender}}" class="form-control" id="inputEmail" placeholder="Email Address" readonly>
               </div>
-
               {% comment %} <div class="form-group col-lg-4">
-                <label for="inputPatientName">Ward</label>
-                <input type="text" name="ward" class="form-control" id="ward" value="{{ profile.ward }}">
-              </div> {% endcomment %}
-
-
-              <div class="form-group col-lg-4">
-                <label for="inputPatientName">Ward</label>
-                <input type="text" name="ward" class="form-control" id="ward" value="{{ profile_data.ward }}">
-            </div>
-   
-              {% comment %} <div class="form-group col-lg-4">
-                <label for="inputPhoneNumber">Phone Number</label>
-                <input type="number" name="phone_number" class="form-control" id="inputPhoneNumber" value="{{ profile.phone_number }}">
+                <label for="inputGender">Gender</label>
+                <select name="gender" class="form-control" id="inputGender">
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>+
+                </select>
               </div> {% endcomment %}
 
               <div class="form-group col-lg-4">
-                <label for="inputPhoneNumber">Phone Number</label>
-                <input type="number" name="phone_number" class="form-control" id="inputPhoneNumber" value="{{ profile_data.phone_number }}">
-            </div>
-            
-            <!-- Contact Information -->
-          
-              {% comment %} <div class="form-group col-lg-4">
-                <label for="inputPatientName">House Name</label>
-                <input type="number" name="house_name" class="form-control" id="housename" value="{{ profile.house_name }}">
-              </div> {% endcomment %}
-
+                <label for="inputAddress">Address</label>
+                
+                <input type="text" class="form-control floating" value="{{ patientprofile.address }}" name="address" readonly>
+              </div>
               <div class="form-group col-lg-4">
-                <label for="inputPatientName">House Name</label>
-                <input type="text" name="house_name" class="form-control" id="housename" value="{{ profile_data.house_name }}">
-            </div>
-        
-
-
-              {% comment %} <div class="form-group col-lg-4">
-                <label for="inputPatientName">House Number</label>
-                <input type="number" name="house_no" class="form-control" id="houseno" value="{{ profile.house_no }}">
-              </div> {% endcomment %}
-
-              <div class="form-group col-lg-4">
-                <label for="inputPatientName">House Number</label>
-                <input type="text" name="house_no" class="form-control" id="houseno" value="{{ profile_data.house_no }}">
-            </div>
-
+                <label for="inputAddress">Ward</label>
+                <input type="number" class="form-control floating" value="{{ patientprofile.ward }}" name="ward" readonly>
+              </div>
 
              
+            </div>
+            <!-- Contact Information -->
+            <div class="form-row">
+              
+
+              <div class="form-group col-lg-4">
+                <label for="inputPhoneNumber">Phone Number</label>
+                <input type="tel" name="phone_number" value="{{ patientprofile.phone_number}}" class="form-control" id="inputPhoneNumber"  readonly>
+              </div>
+              <div class="form-group col-lg-4">
+                <label for="inputMedications">Medications Currently Taking</label>
+                <input type="text" class="form-control floating" value="{{ patientprofile.medication_names }}" name="medication_names" readonly>
+              </div>
               <div class="form-group col-lg-4">
                 <label for="inputMedicalConditions">Existing Medical Conditions</label>
-                <textarea class="form-control"  name="medical_conditions" id="inputMedicalConditions" rows="3" placeholder="Enter existing medical conditions"></textarea>
+                <textarea class="form-control"   name="medical_conditions" id="inputMedicalConditions" rows="3" placeholder="Enter existing medical conditions"></textarea>
               </div>
 
               <!-- Appointment Status/Urgency Selection -->
@@ -329,16 +281,66 @@
                 
            </select>
            </div>
-           <div class="form-group col-lg-4">
-            <label for="inputMedications">Medications Currently Taking</label>
-            <textarea class="form-control" name="medications" id="inputMedications" rows="3" placeholder="Enter medications"></textarea>
-          </div>
+           
           <div class="form-group col-lg-4">
             <label for="inputSymptoms">Symptoms/Reason for Visit</label>
             <textarea class="form-control" name="symptoms" id="inputSymptoms" rows="3" placeholder="Describe symptoms or reason for the visit"></textarea>
           </div>
-        </div>
-        
+            </div>
+            <!-- Medical Information -->
+            <div class="form-row">
+              
+              
+              
+            </div>
+            <!-- Symptoms/Reason for Visit -->
+            
+            <!-- Preferred Date and Time -->
+            <div class="form-row">
+              <div class="form-group col-lg-6">
+                <label for="inputPreferredDate">Preferred Date</label>
+                <input type="date" class="form-control" name="preferred_date" id="inputPreferredDate">
+              </div>
+              {% comment %} <div class="form-group col-lg-4">
+                <label for="inputPreferredTime">Preferred Time</label>
+                <select class="form-control" id="inputPreferredTime">
+                  <option value="Morning">Morning</option>
+                  <option value="Afternoon">Afternoon</option>
+                  <option value="Evening">Evening</option>
+                </select>
+              </div> {% endcomment %}
+
+              <!-- Preferred Date Selection -->
+{% comment %} <div class="form-group">
+  <label for="preferredDate">Preferred Date</label>
+  <input type="date" class="form-control" name="preferredDate" id="preferredDate">
+</div> {% endcomment %}
+
+<!-- Preferred Time Selection -->
+{% comment %} <div class="form-group col-lg-6">
+  <label for="preferredTime">Preferred Time</label>
+  <select class="form-control" name="preferredTime" id="preferredTime">
+    <option value="">Select Preferred Time</option>
+    <option value="09:00 AM">09:00 AM</option>
+    <option value="10:00 AM">10:00 AM</option>
+    <option value="11:00 AM">11:00 AM</option>
+    <option value="12:00 PM">12:00 PM</option>
+    <option value="01:00 PM">01:00 PM</option>
+    <!-- Add more time slots as needed -->
+  </select>
+</div> {% endcomment %}
+<div class="form-group col-lg-6">
+  <label for="preferredTime">Preferred Time</label>
+  <select class="form-control" name="preferred_time" id="preferredTime">
+    <option value="">Select Preferred Time</option>
+    {% for time_slot in time_slots %}
+      <option value="{{ time_slot }}">{{ time_slot }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+            </div>
+            <!-- ... (other fields) ... -->
             <div class="btn-box">
               <button type="submit" class="btn">Schedule Now</button>
             </div>

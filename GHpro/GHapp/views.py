@@ -148,72 +148,84 @@ def print_patient_profile(request):
     profile = PatientProfile.objects.filter(user=request.user).first() 
     return render(request, 'print_patient_profile.html', {'profile': [profile]})
 
-
-def dis_appointment(request):
-    profile = PatientProfile.objects.all()
-    return render(request, 'appointment.html', {'profile': [profile]})
-
-
 @login_required(login_url='login_page')
 def ad_appointment(request):
     appo = Appointment.objects.all()
-    return render(request, 'admin_temp/appointments.html', {'appo': appo})  
+    return render(request, 'admin_temp/appointments.html', {'appo': appo})   
 
-# def appointment_form(request):
-#     time_slots = []  # Initialize an empty list for time slots
+@login_required(login_url='login_page')
+def appointment_form(request):
+    patientprofile = request.user.patientprofile
+    time_slots = []  # Initialize an empty list for time slots
 
-#     if request.method == 'POST':
-#         patient_name = request.POST.get('patient_name')
-#         email = request.POST.get('email')
-#         date_of_birth = request.POST.get('date_of_birth')
-#         gender = request.POST.get('gender')
-#         address = request.POST.get('address')
-#         ward_asha = request.POST.get('ward')
-#         phone_number = request.POST.get('phone_number')
-#         id_proof = request.FILES.get('id_proof')
-#         medical_conditions = request.POST.get('medical_conditions')
-#         urgency = request.POST.get('urgency')
-#         medications = request.POST.get('medications')
-#         symptoms = request.POST.get('symptoms')
-#         preferred_date = request.POST.get('preferred_date')
-#         preferred_time = request.POST.get('preferred_time')
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        # date_of_birth = request.POST.get('date_of_birth')
+        gender = request.POST.get('gender')
+        address = request.POST.get('address')
+        ward_asha = request.POST.get('ward')
+        phone_number = request.POST.get('phone_number')
+        # id_proof = request.FILES.get('id_proof')
+        medical_conditions = request.POST.get('medical_conditions')
+        urgency = request.POST.get('urgency')
+        medication_names= request.POST.get('medication_names')
+        symptoms = request.POST.get('symptoms')
+        preferred_date = request.POST.get('preferred_date')
+        preferred_time = request.POST.get('preferred_time')
 
-#         # Create an appointment object and save it to the database
-#         appointment = Appointment(
-#             patient_name=patient_name,
-#             email=email,
-#             date_of_birth=date_of_birth,
-#             gender=gender,
-#             address=address,
-#             ward_asha=ward_asha,
-#             phone_number=phone_number,
-#             id_proof=id_proof,
-#             medical_conditions=medical_conditions,
-#             urgency=urgency,
-#             medications=medications,
-#             symptoms=symptoms,
-#             preferred_date=preferred_date,
-#             preferred_time=preferred_time
-#         )
-#         appointment.save()
+        # Create an appointment object and save it to the database
+        appointment = Appointment(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            # date_of_birth=date_of_birth,
+            gender=gender,
+            address=address,
+            ward_asha=ward_asha,
+            phone_number=phone_number,
+            # id_proof=id_proof,
+            medical_conditions=medical_conditions,
+            urgency=urgency,
+            medication_names=medication_names,
+            symptoms=symptoms,
+            preferred_date=preferred_date,
+            preferred_time=preferred_time
+        )
+        appointment.save()
 
-#         return render(request,'appointment.html')
-#         # return render(request, 'appointment.html')
+        return render(request,'appointment.html')
+        # return render(request, 'appointment.html')
 
-#     else:
-#         # Generate time slots with 30-minute intervals for AM and PM
-#         start_time = datetime.strptime("06:00 AM", "%I:%M %p")
-#         end_time = datetime.strptime("09:00 PM", "%I:%M %p")
-#         interval = timedelta(minutes=30)
+    else:
+        # Generate time slots with 30-minute intervals for AM and PM
+        start_time = datetime.strptime("06:00 AM", "%I:%M %p")
+        end_time = datetime.strptime("09:00 PM", "%I:%M %p")
+        interval = timedelta(minutes=30)
 
-#         while start_time <= end_time:
-#             time_slots.append(start_time.strftime("%I:%M %p"))
-#             start_time += interval
+        while start_time <= end_time:
+            time_slots.append(start_time.strftime("%I:%M %p"))
+            start_time += interval
 
-#     return render(request, 'appointment.html', {'time_slots': time_slots})
+    return render(request, 'appointment.html', {'time_slots': time_slots,'patientprofile': patientprofile})
 
 
 
+def approved_appointments(request, email):
+    try:
+        appointment = Appointment.objects.get(email=email)
+        appointment.is_approve = True
+        appointment.save()
+    except Appointment.DoesNotExist:
+        # Handle the case where the appointment doesn't exist
+        pass
+    return render(request, 'asha_temp/approved_appointments.html', {'appointment': appointment})
+
+
+def dis_approved_appointments(request,email):
+    approved_appointments = Appointment.objects.filter(email=email,is_approve=True)
+    return render(request, 'asha_temp/approved_appointments.html', {'approved_appointments': approved_appointments})
 
 
 from django.contrib.auth.decorators import login_required
@@ -283,6 +295,7 @@ def edit_asha(request, asha_id):
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
+        password=request.POST.get('password')
         dob = request.POST.get('dob')
         doj = request.POST.get('doj')
         gender = request.POST.get('gender')
@@ -295,6 +308,7 @@ def edit_asha(request, asha_id):
 
         ashaworker.Name = name
         ashaworker.email = email
+        ashaworker.set_password(password)
         ashaworker.date_of_birth = dob
         ashaworker.date_of_join = doj
         ashaworker.gender = gender
@@ -376,6 +390,7 @@ def edit_asha_profile(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
+        password=request.POST.get('password')
         dob = request.POST.get('dob')
         doj = request.POST.get('doj')
         gender = request.POST.get('gender')
@@ -388,6 +403,7 @@ def edit_asha_profile(request):
 
         ashaworker.Name = name
         ashaworker.email = email
+        ashaworker.set_password(password)
         ashaworker.date_of_birth = dob
         ashaworker.date_of_join = doj
         ashaworker.gender = gender
@@ -404,9 +420,9 @@ def edit_asha_profile(request):
 
 
 def login_page(request):
-    if request.user.is_authenticated:
-        # User is authenticated, redirect to another page
-        return render(request, 'appointment.html')
+    # if request.user.is_authenticated:
+    #     # User is authenticated, redirect to another page
+    #     return render(request, 'appointment.html')
 
 
     if request.method == "POST":
