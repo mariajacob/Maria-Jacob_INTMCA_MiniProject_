@@ -234,10 +234,10 @@ def appointment_form(request,appointment_id=None):
         appointment.save()
 
         return render(request,'appointment.html')
-        # return render(request, 'appointment.html')
+      
 
     else:
-        # Generate time slots with 30-minute intervals for AM and PM
+       
         start_time = datetime.strptime("06:00 AM", "%I:%M %p")
         end_time = datetime.strptime("09:00 PM", "%I:%M %p")
         interval = timedelta(minutes=30)
