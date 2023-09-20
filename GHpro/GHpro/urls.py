@@ -62,17 +62,18 @@ urlpatterns = [
     # path('admin_login', admin_login, name='admin_login'),
     # path('admin_dashboard', admin_dashboard, name='admin_dashboard'),
     path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'), 
+     path('search-ashaworker/', views.search_ashaworker, name='search_ashaworker'),
 
     # path('asha_dashboard', views.asha_dashboard, name='asha_dashboard'),
 
     path('asha_index', views.asha_index, name='asha_index'), 
     path('asha_profile', views.asha_profile, name='asha_profile'),
     path('edit_asha_profile', views.edit_asha_profile, name='edit_asha_profile'),
-
-    path('approved_appointments', views.approved_appointments, name='approved_appointments'),
-    # path('approved_appointments', views.dis_approved_appointments, name='approved_appointments'),
-     path('approved_appointments/<str:email>/', views.dis_approved_appointments, name='approved_appointments'),
-
+    
+    path('asha_approved_appo', views.asha_approved_appointments, name='asha_approved_appo'),
+    path('approve-appointment/<int:appointment_id>/', views.approve_appointment, name='approve_appointment'),
+    path('patient_users/', views.patient_users, name='patient_users'),
+   
 
     path('login_page', login_page, name='login_page'),
     path('register', register, name='register'),

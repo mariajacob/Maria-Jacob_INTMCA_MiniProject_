@@ -53,6 +53,8 @@ def addpatient(request):
     return render(request,'admin_temp/add-patient.html')
 
 
+
+
 def edit_patient_profile(request):
     
     # user = request.user
@@ -151,10 +153,46 @@ def print_patient_profile(request):
 @login_required(login_url='login_page')
 def ad_appointment(request):
     appo = Appointment.objects.all()
-    return render(request, 'admin_temp/appointments.html', {'appo': appo})   
+    return render(request, 'admin_temp/appointments.html', {'appo': appo})
+
+# def approved_appointments(request):
+#     return render(request, 'asha_temp/asha_approved_appo.html')
+
+
+def asha_approved_appointments(request):
+    approved_appointments = Appointment.objects.filter(is_approved=True)
+    print(approved_appointments)
+    return render(request, 'asha_temp/asha_approved_appo.html', {'approved_appointments': approved_appointments})
+
+
+
+from django.shortcuts import get_object_or_404, redirect
+
+def approve_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, pk=appointment_id)
+    appointment.is_approved = True
+    appointment.save()
+    
+    # Redirect back to the list of approved appointments
+    return redirect("asha_approved_appo")
+
+
+def patient_users(request):
+    # patients = CustomUser.objects.filter(role=CustomUser.PATIENTS)
+    patients = PatientProfile.objects.filter()
+    return render(request, 'asha_temp/patient_users.html', {'patients': patients})
+
+
+
+
+
+
+
+
+
 
 @login_required(login_url='login_page')
-def appointment_form(request):
+def appointment_form(request,appointment_id=None):
     patientprofile = request.user.patientprofile
     time_slots = []  # Initialize an empty list for time slots
 
@@ -208,25 +246,7 @@ def appointment_form(request):
             time_slots.append(start_time.strftime("%I:%M %p"))
             start_time += interval
 
-    return render(request, 'appointment.html', {'time_slots': time_slots,'patientprofile': patientprofile})
-
-
-
-def approved_appointments(request, email):
-    try:
-        appointment = Appointment.objects.get(email=email)
-        appointment.is_approve = True
-        appointment.save()
-    except Appointment.DoesNotExist:
-        # Handle the case where the appointment doesn't exist
-        pass
-    return render(request, 'asha_temp/approved_appointments.html', {'appointment': appointment})
-
-
-def dis_approved_appointments(request,email):
-    approved_appointments = Appointment.objects.filter(email=email,is_approve=True)
-    return render(request, 'asha_temp/approved_appointments.html', {'approved_appointments': approved_appointments})
-
+    return render(request, 'appointment.html', {'time_slots': time_slots,'patientprofile': patientprofile,'appointment_id': appointment_id})
 
 from django.contrib.auth.decorators import login_required
 @login_required(login_url='login_page')
@@ -321,6 +341,44 @@ def edit_asha(request, asha_id):
         ashaworker.save()
         return redirect('ad_ashaworker')
     return render(request, 'admin_temp/edit_asha.html', {'ashaworker': ashaworker})
+
+from django.shortcuts import render
+from .models import Ashaworker
+
+# def search_ashaworker(request):
+#     # Get the search query from the GET request
+#     search_query = request.GET.get('ashaname', '')
+
+#     # Filter Ashaworkers whose name contains the search query
+#     ashaworkers = Ashaworker.objects.filter(Name__icontains=search_query, is_active=True)
+
+#     context = {
+#         'ashaworkers': ashaworkers,
+#         'search_query': search_query,
+#     }
+
+#     return render(request, 'admin_temp/ad_ashaworker.html', context)
+def search_ashaworker(request):
+    # Get the search query from the GET request
+    search_query = request.GET.get('ashaname', '')
+
+    # Filter Ashaworkers whose name contains the search query
+    ashaworkers = Ashaworker.objects.filter(Name__icontains=search_query, is_active=True)
+
+    context = {
+        'ashaworkers': ashaworkers,
+        'search_query': search_query,
+    }
+
+    return render(request, 'admin_temp/ad_ashaworker.html', context)
+
+
+
+
+
+
+
+
 
 
 

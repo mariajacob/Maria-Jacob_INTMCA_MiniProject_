@@ -115,7 +115,6 @@
 							<table class="table table-striped custom-table">
 								<thead>
 									<tr>
-										
 										<th>First Name</th>
                                         <th>Last Name</th>
                                         <th>Email</th>
@@ -139,6 +138,7 @@
 								<tbody>
 									<tr>
 										{% comment %} <td>APT0001</td> {% endcomment %}
+                                       
 										<td>{{ appointment.first_name }}</td>
                                         <td>{{ appointment.last_name }}</td>
 										<td>{{ appointment.email }}</td>
@@ -157,10 +157,16 @@
                                         {% comment %} <td><button type="submit" href="{% url 'approved_appointments' %}" class="btn btn-success">Approve</button></td> {% endcomment %}
 										{% comment %} <td><span class="custom-badge status-red">Approve</span></td> {% endcomment %}
                                         
-                                        <td><button type="submit" class="btn btn-success">
-                                            <a href="{% url 'approved_appointments' appointment.email %}">
-                                                      <span class="custom-badge status-red">Approve</span>
-                                                    </button></td>
+                                        {% comment %} <td><button type="submit" class="btn btn-success"> {% endcomment %}
+                                            <td>
+                                                 <a href="{% url 'asha_approved_appo' %}">
+                                                    <td>
+                                                        <a href="{% url 'approve_appointment' appointment.id %}" class="btn btn-success">Approve</a>
+                                                    </td>
+                                                    
+                                                </a> 
+                                            </td>
+                                            
 
 
 

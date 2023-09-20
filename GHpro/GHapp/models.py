@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 # Create your models here.
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+import uuid
 
 class UserManager(BaseUserManager):
    
@@ -154,7 +155,8 @@ class PatientProfile(models.Model):
         return self.first_name
 
 class Appointment(models.Model):
-    is_approve=models.BooleanField(default=False)
+   
+    is_approved=models.BooleanField(default=False)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(max_length=255,null=True,blank=True)
     last_name = models.CharField(max_length=255,null=True,blank=True)

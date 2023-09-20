@@ -59,9 +59,15 @@
                         <li class="menu-title">Main</li>
                         <li class="active">
                             <a href="{% url 'asha_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                           
                         </li> 
-                        <li><a href="{% url 'approved_appointments' %}">Asha Workers List</a></li> 
-						
+                        <li>
+                            <a href="{% url 'asha_approved_appo' %}"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                        </li>
+                        <li>
+                            <a href="{% url 'patient_users' %}"><i class="fa fa-wheelchair"></i> <span>Patients List</span></a>
+                            
+                        </li>
                     </ul>
                 </div>
             </div>
