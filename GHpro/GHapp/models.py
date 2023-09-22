@@ -79,13 +79,48 @@ class CustomUser(AbstractUser):
 
 
 
-class Ashaworker(models.Model): 
+# class Ashaworker(models.Model): 
     
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
-    id = models.AutoField(primary_key=True)
+#     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+#     id = models.AutoField(primary_key=True)
+#     Name = models.CharField(max_length=100)
+    
+#     email = models.EmailField(max_length=100,unique=True,default=None)
+#     admin_set_password = models.CharField(max_length=128, blank=True, null=True)
+
+#     def set_password(self, password):
+#         # Hash and set the password
+#         self.admin_set_password = make_password(password)
+#     date_of_birth = models.CharField(max_length=100)
+#     date_of_join = models.CharField(max_length=100)
+#     # gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+#     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
+#     address = models.TextField()
+#     taluk = models.CharField(max_length=100)
+#     Panchayat = models.CharField(max_length=100)
+#     ward = models.CharField(max_length=100)
+#     # city=models.TextField()
+#     postal = models.IntegerField()
+#     phone = models.IntegerField()
+#     profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
+#     is_active = models.BooleanField(default=True)
+    
+#     class Meta:
+#             unique_together = (("id", "ward"),)
+#     # pin = models.IntegerField()
+#     # bio=models.TextField()
+
+#     def __str__(self):
+#         return self.email
+
+
+class Ashaworker(models.Model):
+     
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    
     Name = models.CharField(max_length=100)
     
-    email = models.EmailField(max_length=100,unique=True,default=None)
+    email = models.EmailField(blank=True, null=True)
     admin_set_password = models.CharField(max_length=128, blank=True, null=True)
 
     def set_password(self, password):
@@ -93,13 +128,13 @@ class Ashaworker(models.Model):
         self.admin_set_password = make_password(password)
     date_of_birth = models.CharField(max_length=100)
     date_of_join = models.CharField(max_length=100)
-    # gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    
     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
     address = models.TextField()
     taluk = models.CharField(max_length=100)
     Panchayat = models.CharField(max_length=100)
     ward = models.CharField(max_length=100)
-    # city=models.TextField()
+    
     postal = models.IntegerField()
     phone = models.IntegerField()
     profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
@@ -110,8 +145,16 @@ class Ashaworker(models.Model):
     # pin = models.IntegerField()
     # bio=models.TextField()
 
-    def __str__(self):
-        return self.email
+    def _str_(self):
+        return self.Name
+
+
+
+
+
+
+
+
     
 class Image(models.Model):
     title = models.CharField(max_length=100)

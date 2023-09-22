@@ -152,7 +152,7 @@
                                     <div>
                                         <p>Ashaworker ID: {{ ashaworker.id }}</p>
                                         <p class="card-text">Email: {{ ashaworker.email }}</p>
-                                        <p class="card-text">Password: {{ ashaworker.password }}</p>
+                                        {% comment %} <p class="card-text">Password: {{ ashaworker.password }}</p> {% endcomment %}
                                         <p class="card-text">Date of Birth: {{ ashaworker.date_of_birth }}</p>
                                         <p class="card-text">Date of Join: {{ ashaworker.date_of_join }}</p>
                                         <p class="card-text">Gender: {{ ashaworker.get_gender_display }}</p>

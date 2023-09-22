@@ -38,18 +38,17 @@ urlpatterns = [
     
     path('index-2', views.index2, name="index-2"), 
     
-    # path('patient_profile', views.patient_profile, name="patient_profile"),
-    # path('edit_patient_profile', views.edit_patient_profile, name="edit_patient_profile"),
-    
+  
     path('edit_patient_profile', views.edit_patient_profile, name='edit_patient_profile'),
     path('print_patient_profile', views.print_patient_profile, name='print_patient_profile'),
     
-    
+     # path('edit_asha_pro', views.edit_asha_pro, name='edit_asha_pro'),
+     # path('pro_ashaworker', views.pro_ashaworker, name="pro_ashaworker"),
 
 
 
     path('ad_ashaworker', views.ad_ashaworker, name="ad_ashaworker"),
-    # path('pro_ashaworker', views.pro_ashaworker, name="pro_ashaworker"),
+   
 
 
 
@@ -60,15 +59,14 @@ urlpatterns = [
     
 
     path('appointments', views.ad_appointment, name="appointments"), 
-    # path('patient_profile', views.user_details_appointment, name="patient_profile"), 
+   
 
     path('adgallery', ad_gallery, name="adgallery"), 
-    # path('admin_login', admin_login, name='admin_login'),
-    # path('admin_dashboard', admin_dashboard, name='admin_dashboard'),
+   
     path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'), 
     path('search-ashaworker/', views.search_ashaworker, name='search_ashaworker'),
 
-    # path('asha_dashboard', views.asha_dashboard, name='asha_dashboard'),
+    
 
     path('asha_index', views.asha_index, name='asha_index'), 
     
@@ -90,7 +88,7 @@ urlpatterns = [
     path('delete_asha/<int:asha_id>/', views.delete_asha, name='delete_asha'),
 
     path('edit_asha/<int:asha_id>/', views.edit_asha, name='edit_asha'),
-    # path('edit_asha_pro', views.edit_asha_pro, name='edit_asha_pro'),
+ 
 
     # path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     # path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),

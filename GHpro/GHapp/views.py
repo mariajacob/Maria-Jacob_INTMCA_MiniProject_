@@ -161,6 +161,88 @@ def print_patient_profile(request):
     return render(request, 'print_patient_profile.html', {'profile': [profile]})
 
 @login_required(login_url='login_page')
+def edit_asha_pro(request):
+    
+    # user = request.user
+    # profile = PatientProfile.objects.get(user=user)
+    user = request.user
+    asha = get_object_or_404(Ashaworker, user=user)
+    
+    if request.method == "POST":
+        print ('POST')
+        # user.first_name=request.POST.get('first_name')
+        # user.last_name=request.POST.get('last_name')
+        # Process the form data and save/update the profile
+
+        asha.Name = request.POST.get('name')
+        print("first name :",asha.Name)
+        asha.email = request.POST.get('email')
+        print("email name :",asha.email)
+        asha.gender = request.POST.get('gender')
+        print("gender :",asha.gender)
+
+        asha.date_of_birth = request.POST.get('dob')
+        print("house name :",asha.date_of_birth)
+
+        asha.date_of_join = request.POST.get('doj')
+        print("house no :",asha.date_of_join)
+
+        asha.address = request.POST.get('address')
+        print("adsress :",asha.address)
+
+        asha.ward = request.POST.get('ward')
+        print("ward :",asha.ward)
+
+        asha.postal = request.POST.get('pin')
+        print("pin code :",asha.postal)
+
+        asha.phone = request.POST.get('phone')
+        print("phone :",asha.phone)
+
+        asha.Panchayat = request.POST.get('panchayat')
+        print("curret dignosis :",asha.Panchayat)
+
+        asha.phone = request.POST.get('phone')
+        print("past medicine :",asha.past_med_condition)
+
+        asha.surgical_history = request.POST.get('profile_photo')
+        print("surgical histroy :",asha.surgical_history)
+
+        asha.allergies = request.POST.get('allergies')
+        print("allergies :",asha.allergies)
+
+        new_profile_pic = request.FILES.get('profile_pic')
+
+        if new_profile_pic:
+            # Save the profile photo to a specific directory
+            fs = FileSystemStorage()
+            filename = fs.save(f"profile_pics/{new_profile_pic.name}", new_profile_pic)
+            asha.profile_photo = filename       
+        asha.save()
+        messages.success(request, 'Profile updated successfully.')
+        return redirect('print_patient_profile')  # Redirect to the profile page
+    context = {
+        'user': user,
+        'profile': asha
+    }
+
+    return render(request, 'edit_patient_profile.html',context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@login_required(login_url='login_page')
 def ad_appointment(request):
     appo = Appointment.objects.all()
     return render(request, 'admin_temp/appointments.html', {'appo': appo})
@@ -255,6 +337,7 @@ from django.contrib.auth.decorators import login_required
 @login_required(login_url='login_page')
 def add_asha(request):
     if request.method == 'POST':
+        # Retrieve data from the POST request
         name = request.POST.get('name')
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -267,155 +350,29 @@ def add_asha(request):
         ward = request.POST.get('ward')
         pin = request.POST.get('pin')
         phone = request.POST.get('phone')
-        # user.role=ASHAWORKER
-        role=CustomUser.ASHAWORKER
-        # Handle profile photo upload
         profile_photo = request.FILES.get('profile_photo')
+        role=CustomUser.ASHAWORKER
+        print(role)
+        if CustomUser.objects.filter(email=email,role=CustomUser.ASHAWORKER).exists():
+                messages.info(request, 'Email already exists') 
+                return redirect('add_asha')
+        else:
+                user = CustomUser.objects.create_user(email=email, password=password)
+                user.role = CustomUser.ASHAWORKER
+                user.save()
+                asha = Ashaworker(user=user,Name=name,email=email,date_of_birth=dob,date_of_join=doj,gender=gender,address=address,taluk=taluk,Panchayat=panchayat,ward=ward,postal=pin,phone=phone,profile_photo=profile_photo)
+                asha.save()
+                return redirect('ad_ashaworker')
+    else:
+         
+        return render(request, 'admin_temp/add_asha.html')
 
-        # Create an instance of Ashaworker
-        obj = Ashaworker()
-        user=CustomUser()
-        obj.Name = name
-        obj.email = email
-        obj.set_password(password)
-        obj.date_of_birth = dob
-        obj.date_of_join = doj
-        obj.gender = gender
-        obj.address = address
-        obj.taluk = taluk
-        obj.Panchayat = panchayat
-        obj.ward = ward
-        obj.postal = pin
-        obj.phone = phone
-        
-        user.email=email
-        user.set_password(password)
-        user.role=role
-        if profile_photo:
-            # Save the profile photo to a specific directory
-            fs = FileSystemStorage()
-            filename = fs.save(f"profile_photos/{profile_photo.name}", profile_photo)
-            obj.profile_photo = filename  # Associate profile photo if uploaded
-        
-        user.email = email
-        user.set_password(password)
-        user.role = CustomUser.ASHAWORKER
-        
-        obj.save()
-        user.save()
-        messages.success(request, 'Asha Worker created successfully!')
-
-        return redirect('ad_ashaworker')
-
-    return render(request, 'admin_temp/add_asha.html')
 
 
 @login_required(login_url='login_page')
 def ad_ashaworker(request):
     ashaworkers = Ashaworker.objects.all()
     return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers})
-
-# def pro_ashaworker(request):
-#     # ashaworkers = Ashaworker.objects.all()
-#     # return render(request, 'asha_temp/pro_ashaworker.html', {'ashaworkers': ashaworkers})
-#     logged_in_user = request.user
-#     ashaworkers = Ashaworker.objects.filter(user=logged_in_user)
-#     return render(request, 'asha_temp/pro_ashaworker.html', {'ashaworkers': ashaworkers})
-
-# @login_required(login_url='login_page')
-# def edit_asha_pro(request, asha_id):
-#     ashaworker = get_object_or_404(Ashaworker, id=asha_id)
-#     if request.method == 'POST':
-#         name = request.POST.get('name')
-#         email = request.POST.get('email')
-#         password=request.POST.get('password')
-#         dob = request.POST.get('dob')
-#         doj = request.POST.get('doj')
-#         gender = request.POST.get('gender')
-#         address = request.POST.get('address')
-#         taluk = request.POST.get('taluk')
-#         panchayat = request.POST.get('panchayat')
-#         ward = request.POST.get('ward')
-#         pin = request.POST.get('pin')
-#         phone = request.POST.get('phone')
-
-#         ashaworker.Name = name
-#         ashaworker.email = email
-#         ashaworker.set_password(password)
-#         ashaworker.date_of_birth = dob
-#         ashaworker.date_of_join = doj
-#         ashaworker.gender = gender
-#         ashaworker.address = address
-#         ashaworker.taluk = taluk
-#         ashaworker.Panchayat = panchayat
-#         ashaworker.ward = ward
-#         ashaworker.postal = pin
-#         ashaworker.phone = phone
-#         ashaworker.save()
-#         return redirect('pro_ashaworker')
-#     return render(request, 'asha_temp/edit_asha_pro.html', {'ashaworker': ashaworker})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# def edit_asha_pro(request,asha_id=None):
-#     user = request.user
-#     ashaworker=Ashaworker(user=user) 
-#     ashaworker = Ashaworker.objects.get(email=user)
-#     if request.method == 'POST':
-#         name = request.POST.get('name')
-#         email = request.POST.get('email')
-#         # password = request.POST.get('password')
-#         dob = request.POST.get('dob')
-#         doj = request.POST.get('doj')
-#         gender = request.POST.get('gender')
-#         address = request.POST.get('address')
-#         taluk = request.POST.get('taluk')
-#         panchayat = request.POST.get('panchayat')
-#         ward = request.POST.get('ward')
-#         pin = request.POST.get('pin')
-#         phone = request.POST.get('phone')
-      
-
-        
-#         asha = Ashaworker(
-#             Name = name,
-#             email = email,
-#             # set_password(password),
-#             date_of_birth = dob,
-#             date_of_join = doj,
-#             gender = gender,
-#             address = address,
-#             taluk = taluk,
-#             Panchayat = panchayat,
-#             ward = ward,
-#             postal = pin,
-#             phone = phone,
-#         )
-        
-#         asha.save()
-
-#         return render(request,'asha_temp/edit_asha_pro.html')
-       
-#     return render(request, 'asha_temp/edit_asha_pro.html', {'ashaworker': ashaworker,'asha_id': asha_id})   
-
-
-
 
 
 @login_required(login_url='login_page')
@@ -451,9 +408,6 @@ def edit_asha(request, asha_id):
         return redirect('ad_ashaworker')
     return render(request, 'admin_temp/edit_asha.html', {'ashaworker': ashaworker})
 
-from django.shortcuts import render
-from .models import Ashaworker
-
 
 @login_required(login_url='login_page')
 def search_ashaworker(request):
@@ -469,15 +423,6 @@ def search_ashaworker(request):
     }
 
     return render(request, 'admin_temp/ad_ashaworker.html', context)
-
-
-
-
-
-
-
-
-
 
 
 @login_required(login_url='login_page')
@@ -498,34 +443,10 @@ def delete_asha(request, asha_id):
     return render(request, 'admin_temp/delete_asha.html', {'ashaworker': ashaworker})
 
 
-
-       
-# def admin_login(request):
-#     if request.method == 'POST':
-#         email = request.POST.get('email')
-#         password = request.POST.get('password')
-#         user = authenticate(request, username=email, password=password)
-#         if user is not None:
-#             login(request, user)
-#             return redirect('admin_dashboard')  # Redirect to admin dashboard
-#         else:
-#             # Invalid credentials, handle error or show message
-#             pass
-    
-#     return render(request, 'admin_temp/adlogin.html')
-
-
-
-
 @login_required(login_url='login_page')
 def admin_dashboard(request):
 
     return render(request, 'admin_temp/adindex.html')
-
-
-
-
-
 
 
 @ashaworker_required
@@ -539,47 +460,7 @@ def asha_profile(request):
     return render(request, 'asha_temp/asha_profile.html')
 
 
-
-# def edit_asha_profile(request, asha_id):
-#     ashaworker = get_object_or_404(Ashaworker, id=asha_id)
-#     if request.method == 'POST':
-#         name = request.POST.get('name')
-#         email = request.POST.get('email')
-#         password=request.POST.get('password')
-#         dob = request.POST.get('dob')
-#         doj = request.POST.get('doj')
-#         gender = request.POST.get('gender')
-#         address = request.POST.get('address')
-#         taluk = request.POST.get('taluk')
-#         panchayat = request.POST.get('panchayat')
-#         ward = request.POST.get('ward')
-#         pin = request.POST.get('pin')
-#         phone = request.POST.get('phone')
-
-#         ashaworker.Name = name
-#         ashaworker.email = email
-#         ashaworker.set_password(password)
-#         ashaworker.date_of_birth = dob
-#         ashaworker.date_of_join = doj
-#         ashaworker.gender = gender
-#         ashaworker.address = address
-#         ashaworker.taluk = taluk
-#         ashaworker.Panchayat = panchayat
-#         ashaworker.ward = ward
-#         ashaworker.postal = pin
-#         ashaworker.phone = phone
-#         ashaworker.save()
-#         return redirect('asha_profile')
-#     return render(request, 'asha_temp/edit_asha.html', {'ashaworker': ashaworker})
-
-
-
 def login_page(request):
-    # if request.user.is_authenticated:
-    #     # User is authenticated, redirect to another page
-    #     return render(request, 'appointment.html')
-
-
     if request.method == "POST":
         # username=request.POST['email']
         email=request.POST['email']
@@ -681,9 +562,6 @@ def loggout(request):
         logout(request)
         return redirect('/')
 
-
-
-
 class ResetPasswordView(SuccessMessageMixin,PasswordResetView):
     template_name = 'registration/password_reset.html'
     email_template_name = 'registration/password_reset_email.html'
@@ -734,6 +612,7 @@ def index(request):
     }
 
     return render(request, 'index.html', context)
+
 
 @login_required(login_url='login_page')
 def ad_gallery(request):
