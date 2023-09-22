@@ -14,7 +14,9 @@ from .models import CustomUser
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
+from .decorators import patient_required
 from django.shortcuts import render, get_object_or_404, redirect
+from .decorators import ashaworker_required
 
 
 
@@ -25,36 +27,44 @@ from django.contrib.auth import get_user_model
 
 User=get_user_model()
 
+patient_required
 def index(request):
     return render(request,'index.html')
 
+patient_required
 def about(request):
     return render(request,'about.html')
 
+patient_required
 def treatment(request):
     return render(request,'treatment.html')
 
+patient_required
 def testimonial(request):
     return render(request,'testimonial.html')
 
+patient_required
 def contact(request):
     return render(request,'contact.html')
 
+@login_required(login_url='login_page')
 def patients(request):
     return render(request,'admin_temp/patients.html')
 
+@login_required(login_url='login_page')
 def schedule(request):
     return render(request,'admin_temp/schedule.html')
 
 def index2(request):
     return render(request,'admin_temp/index-2.html')
 
+@login_required(login_url='login_page')
 def addpatient(request):
     return render(request,'admin_temp/add-patient.html')
 
 
 
-
+@login_required(login_url='login_page')
 def edit_patient_profile(request):
     
     # user = request.user
@@ -145,7 +155,7 @@ def edit_patient_profile(request):
 
     return render(request, 'edit_patient_profile.html',context) 
 
-
+@login_required(login_url='login_page')
 def print_patient_profile(request):
     profile = PatientProfile.objects.filter(user=request.user).first() 
     return render(request, 'print_patient_profile.html', {'profile': [profile]})
@@ -158,7 +168,7 @@ def ad_appointment(request):
 # def approved_appointments(request):
 #     return render(request, 'asha_temp/asha_approved_appo.html')
 
-
+@ashaworker_required
 def asha_approved_appointments(request):
     approved_appointments = Appointment.objects.filter(is_approved=True)
     print(approved_appointments)
@@ -167,7 +177,7 @@ def asha_approved_appointments(request):
 
 
 from django.shortcuts import get_object_or_404, redirect
-
+@login_required(login_url='login_page')
 def approve_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, pk=appointment_id)
     appointment.is_approved = True
@@ -176,19 +186,11 @@ def approve_appointment(request, appointment_id):
     # Redirect back to the list of approved appointments
     return redirect("asha_approved_appo")
 
-
+@ashaworker_required
 def patient_users(request):
     # patients = CustomUser.objects.filter(role=CustomUser.PATIENTS)
     patients = PatientProfile.objects.filter()
     return render(request, 'asha_temp/patient_users.html', {'patients': patients})
-
-
-
-
-
-
-
-
 
 
 @login_required(login_url='login_page')
@@ -234,10 +236,10 @@ def appointment_form(request,appointment_id=None):
         appointment.save()
 
         return render(request,'appointment.html')
-      
+        # return render(request, 'appointment.html')
 
     else:
-       
+        # Generate time slots with 30-minute intervals for AM and PM
         start_time = datetime.strptime("06:00 AM", "%I:%M %p")
         end_time = datetime.strptime("09:00 PM", "%I:%M %p")
         interval = timedelta(minutes=30)
@@ -249,6 +251,7 @@ def appointment_form(request,appointment_id=None):
     return render(request, 'appointment.html', {'time_slots': time_slots,'patientprofile': patientprofile,'appointment_id': appointment_id})
 
 from django.contrib.auth.decorators import login_required
+
 @login_required(login_url='login_page')
 def add_asha(request):
     if request.method == 'POST':
@@ -293,7 +296,11 @@ def add_asha(request):
             fs = FileSystemStorage()
             filename = fs.save(f"profile_photos/{profile_photo.name}", profile_photo)
             obj.profile_photo = filename  # Associate profile photo if uploaded
-
+        
+        user.email = email
+        user.set_password(password)
+        user.role = CustomUser.ASHAWORKER
+        
         obj.save()
         user.save()
         messages.success(request, 'Asha Worker created successfully!')
@@ -303,11 +310,113 @@ def add_asha(request):
     return render(request, 'admin_temp/add_asha.html')
 
 
-@login_required(login_url='login')
+@login_required(login_url='login_page')
 def ad_ashaworker(request):
     ashaworkers = Ashaworker.objects.all()
     return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers})
-    
+
+# def pro_ashaworker(request):
+#     # ashaworkers = Ashaworker.objects.all()
+#     # return render(request, 'asha_temp/pro_ashaworker.html', {'ashaworkers': ashaworkers})
+#     logged_in_user = request.user
+#     ashaworkers = Ashaworker.objects.filter(user=logged_in_user)
+#     return render(request, 'asha_temp/pro_ashaworker.html', {'ashaworkers': ashaworkers})
+
+# @login_required(login_url='login_page')
+# def edit_asha_pro(request, asha_id):
+#     ashaworker = get_object_or_404(Ashaworker, id=asha_id)
+#     if request.method == 'POST':
+#         name = request.POST.get('name')
+#         email = request.POST.get('email')
+#         password=request.POST.get('password')
+#         dob = request.POST.get('dob')
+#         doj = request.POST.get('doj')
+#         gender = request.POST.get('gender')
+#         address = request.POST.get('address')
+#         taluk = request.POST.get('taluk')
+#         panchayat = request.POST.get('panchayat')
+#         ward = request.POST.get('ward')
+#         pin = request.POST.get('pin')
+#         phone = request.POST.get('phone')
+
+#         ashaworker.Name = name
+#         ashaworker.email = email
+#         ashaworker.set_password(password)
+#         ashaworker.date_of_birth = dob
+#         ashaworker.date_of_join = doj
+#         ashaworker.gender = gender
+#         ashaworker.address = address
+#         ashaworker.taluk = taluk
+#         ashaworker.Panchayat = panchayat
+#         ashaworker.ward = ward
+#         ashaworker.postal = pin
+#         ashaworker.phone = phone
+#         ashaworker.save()
+#         return redirect('pro_ashaworker')
+#     return render(request, 'asha_temp/edit_asha_pro.html', {'ashaworker': ashaworker})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def edit_asha_pro(request,asha_id=None):
+#     user = request.user
+#     ashaworker=Ashaworker(user=user) 
+#     ashaworker = Ashaworker.objects.get(email=user)
+#     if request.method == 'POST':
+#         name = request.POST.get('name')
+#         email = request.POST.get('email')
+#         # password = request.POST.get('password')
+#         dob = request.POST.get('dob')
+#         doj = request.POST.get('doj')
+#         gender = request.POST.get('gender')
+#         address = request.POST.get('address')
+#         taluk = request.POST.get('taluk')
+#         panchayat = request.POST.get('panchayat')
+#         ward = request.POST.get('ward')
+#         pin = request.POST.get('pin')
+#         phone = request.POST.get('phone')
+      
+
+        
+#         asha = Ashaworker(
+#             Name = name,
+#             email = email,
+#             # set_password(password),
+#             date_of_birth = dob,
+#             date_of_join = doj,
+#             gender = gender,
+#             address = address,
+#             taluk = taluk,
+#             Panchayat = panchayat,
+#             ward = ward,
+#             postal = pin,
+#             phone = phone,
+#         )
+        
+#         asha.save()
+
+#         return render(request,'asha_temp/edit_asha_pro.html')
+       
+#     return render(request, 'asha_temp/edit_asha_pro.html', {'ashaworker': ashaworker,'asha_id': asha_id})   
+
+
+
+
 
 @login_required(login_url='login_page')
 def edit_asha(request, asha_id):
@@ -345,19 +454,8 @@ def edit_asha(request, asha_id):
 from django.shortcuts import render
 from .models import Ashaworker
 
-# def search_ashaworker(request):
-#     # Get the search query from the GET request
-#     search_query = request.GET.get('ashaname', '')
 
-#     # Filter Ashaworkers whose name contains the search query
-#     ashaworkers = Ashaworker.objects.filter(Name__icontains=search_query, is_active=True)
-
-#     context = {
-#         'ashaworkers': ashaworkers,
-#         'search_query': search_query,
-#     }
-
-#     return render(request, 'admin_temp/ad_ashaworker.html', context)
+@login_required(login_url='login_page')
 def search_ashaworker(request):
     # Get the search query from the GET request
     search_query = request.GET.get('ashaname', '')
@@ -429,51 +527,50 @@ def admin_dashboard(request):
 
 
 
-@login_required(login_url='login_page')
+
+@ashaworker_required
 def asha_index(request):
 
     return render(request, 'asha_temp/asha_index.html')
 
+@ashaworker_required
 def asha_profile(request):
      
     return render(request, 'asha_temp/asha_profile.html')
 
-# def edit_asha_profile(request):
-
-#     return render(request, 'asha_temp/edit_asha_profile.html')
 
 
-def edit_asha_profile(request):
-    ashaworker = get_object_or_404(Ashaworker)
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        password=request.POST.get('password')
-        dob = request.POST.get('dob')
-        doj = request.POST.get('doj')
-        gender = request.POST.get('gender')
-        address = request.POST.get('address')
-        taluk = request.POST.get('taluk')
-        panchayat = request.POST.get('panchayat')
-        ward = request.POST.get('ward')
-        pin = request.POST.get('pin')
-        phone = request.POST.get('phone')
+# def edit_asha_profile(request, asha_id):
+#     ashaworker = get_object_or_404(Ashaworker, id=asha_id)
+#     if request.method == 'POST':
+#         name = request.POST.get('name')
+#         email = request.POST.get('email')
+#         password=request.POST.get('password')
+#         dob = request.POST.get('dob')
+#         doj = request.POST.get('doj')
+#         gender = request.POST.get('gender')
+#         address = request.POST.get('address')
+#         taluk = request.POST.get('taluk')
+#         panchayat = request.POST.get('panchayat')
+#         ward = request.POST.get('ward')
+#         pin = request.POST.get('pin')
+#         phone = request.POST.get('phone')
 
-        ashaworker.Name = name
-        ashaworker.email = email
-        ashaworker.set_password(password)
-        ashaworker.date_of_birth = dob
-        ashaworker.date_of_join = doj
-        ashaworker.gender = gender
-        ashaworker.address = address
-        ashaworker.taluk = taluk
-        ashaworker.Panchayat = panchayat
-        ashaworker.ward = ward
-        ashaworker.postal = pin
-        ashaworker.phone = phone
-        ashaworker.save()
-        return redirect('asha_profile')
-    return render(request, 'asha_temp/edit_asha_profile.html', {'ashaworker': ashaworker})
+#         ashaworker.Name = name
+#         ashaworker.email = email
+#         ashaworker.set_password(password)
+#         ashaworker.date_of_birth = dob
+#         ashaworker.date_of_join = doj
+#         ashaworker.gender = gender
+#         ashaworker.address = address
+#         ashaworker.taluk = taluk
+#         ashaworker.Panchayat = panchayat
+#         ashaworker.ward = ward
+#         ashaworker.postal = pin
+#         ashaworker.phone = phone
+#         ashaworker.save()
+#         return redirect('asha_profile')
+#     return render(request, 'asha_temp/edit_asha.html', {'ashaworker': ashaworker})
 
 
 
@@ -490,6 +587,7 @@ def login_page(request):
         print(email)
         print(password)
         user = authenticate(email=email,password=password)
+        
         print(user)
         if user is not None:
             
@@ -558,12 +656,12 @@ def register(request):
             #     # messages.info(request, 'Username already exists')
             #     # return redirect('register')
             #     return render(request, 'signup.html', {'username_exists': True})
-            if User.objects.filter(email=email).exists():
+            if CustomUser.objects.filter(email=email).exists():
                 messages.info(request, 'Email already exists') 
                 return redirect('register')
             else:
                 # user = User.objects.create_user(email=email,password=password)
-                user = User.objects.create_user(email=email, password=password, role=role)    
+                user = CustomUser.objects.create_user(email=email, password=password, role=role)    
                 profile=PatientProfile(user=user,email=email)  
                 profile.save()          
                 user.save()
@@ -614,6 +712,7 @@ def doctor(request):
 
     return render(request, 'doctor.html', context)
 
+@login_required(login_url='login_page')
 def edit_gallery(request):
     
     images = Image.objects.all()
@@ -636,6 +735,7 @@ def index(request):
 
     return render(request, 'index.html', context)
 
+@login_required(login_url='login_page')
 def ad_gallery(request):
     if request.method == 'POST':
         # Handle form submission for image upload

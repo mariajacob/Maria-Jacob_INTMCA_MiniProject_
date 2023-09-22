@@ -34,8 +34,8 @@
                 
                 <li class="nav-item dropdown has-arrow">
                     <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
-                        
-						<span>Admin Logout</span>
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
                     </a>
                     {% if user.is_authenticated %}
                     <div class="dropdown-menu">
@@ -50,6 +50,7 @@
 					</div>
                     
                     {% endif %}
+                </li>
             </div>
         </div> 
         <div class="sidebar" id="sidebar">

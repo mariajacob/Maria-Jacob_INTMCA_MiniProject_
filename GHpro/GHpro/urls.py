@@ -43,17 +43,21 @@ urlpatterns = [
     
     path('edit_patient_profile', views.edit_patient_profile, name='edit_patient_profile'),
     path('print_patient_profile', views.print_patient_profile, name='print_patient_profile'),
-    # path('edit_patient_profile',views.edit_patient_profile, name='edit_patient_profile'),
+    
     
 
 
 
     path('ad_ashaworker', views.ad_ashaworker, name="ad_ashaworker"),
+    # path('pro_ashaworker', views.pro_ashaworker, name="pro_ashaworker"),
+
+
+
     path('add_asha', add_asha, name="add_asha"),  # Add this line for adding Asha Worker
     path('patients', views.patients, name="patients"),
     path('schedule', views.schedule, name="schedule"),
     path('add-patient', views.addpatient, name="add-patient"),
-    # path('edit_asha', edit_asha, name="edit_asha"),
+    
 
     path('appointments', views.ad_appointment, name="appointments"), 
     # path('patient_profile', views.user_details_appointment, name="patient_profile"), 
@@ -62,13 +66,14 @@ urlpatterns = [
     # path('admin_login', admin_login, name='admin_login'),
     # path('admin_dashboard', admin_dashboard, name='admin_dashboard'),
     path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'), 
-     path('search-ashaworker/', views.search_ashaworker, name='search_ashaworker'),
+    path('search-ashaworker/', views.search_ashaworker, name='search_ashaworker'),
 
     # path('asha_dashboard', views.asha_dashboard, name='asha_dashboard'),
 
     path('asha_index', views.asha_index, name='asha_index'), 
-    path('asha_profile', views.asha_profile, name='asha_profile'),
-    path('edit_asha_profile', views.edit_asha_profile, name='edit_asha_profile'),
+    
+    
+
     
     path('asha_approved_appo', views.asha_approved_appointments, name='asha_approved_appo'),
     path('approve-appointment/<int:appointment_id>/', views.approve_appointment, name='approve_appointment'),
@@ -81,8 +86,12 @@ urlpatterns = [
     path('loggout', loggout, name='loggout'),  
 
     path('edit_gallery', views.edit_gallery, name="edit_gallery"),
-    path('edit_asha/<int:asha_id>/', views.edit_asha, name='edit_asha'),
+    
     path('delete_asha/<int:asha_id>/', views.delete_asha, name='delete_asha'),
+
+    path('edit_asha/<int:asha_id>/', views.edit_asha, name='edit_asha'),
+    # path('edit_asha_pro', views.edit_asha_pro, name='edit_asha_pro'),
+
     # path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     # path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     # path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),

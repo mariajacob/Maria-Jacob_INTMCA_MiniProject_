@@ -23,6 +23,33 @@
 </head>
 
 <body>
+    <style>
+        
+          .profile-photo-container {
+              display: flex;
+              align-items: center;
+          }
+  
+          .profile-photo img {
+              width: 200px;
+              height: 200px; /* Set the width and height to make it square */
+              border-radius: 0; /* Remove border-radius to make it square */
+              border: 3px solid #fff;
+          }
+  
+          .profile-details {
+              display: flex;
+              flex-direction: column;
+              margin-left:50px;
+          }
+  
+ 
+ 
+  
+  
+      </style>
+
+
     <div class="main-wrapper">
         
         <div class="page-wrapper">
@@ -39,24 +66,29 @@
                 {% csrf_token %}  
                 <div class="card-box">
                         <h3 class="card-title">Basic Informations</h3>
+                         
                         <div class="row">
                             <div class="col-md-12">
+                                
                                 <div class="profile-photo">
                                     {% if profile.profile_pic %}
                                         <img src="{{ profile.profile_pic.url }}" >
                                     {% else %}
                                         <img src="/path/to/default/profile_pic.jpg" >
                                     {% endif %}
-                                    <br> <!-- Add this line -->
                                     <div class="fileupload btn">
                                         <input class="upload" name="profile_pic" type="file">
                                         <span class="btn-text">Edit</span>
                                     </div>
+                                    <br> <!-- Add this line -->
+                                     
                                 </div>  
                                    
                         <div class="profile-basic">
                                     <div class="row">
+                                        
                                         <div class="col-md-6">
+                                            
                                             <label>First Name  </label>
                                             {% comment %} <div class="form-group form-focus"> 
                                                 

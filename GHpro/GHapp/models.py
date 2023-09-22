@@ -85,7 +85,7 @@ class Ashaworker(models.Model):
     id = models.AutoField(primary_key=True)
     Name = models.CharField(max_length=100)
     
-    email = models.EmailField(max_length=100,unique=True)
+    email = models.EmailField(max_length=100,unique=True,default=None)
     admin_set_password = models.CharField(max_length=128, blank=True, null=True)
 
     def set_password(self, password):
@@ -98,7 +98,7 @@ class Ashaworker(models.Model):
     address = models.TextField()
     taluk = models.CharField(max_length=100)
     Panchayat = models.CharField(max_length=100)
-    ward = models.CharField(max_length=100,unique=True)
+    ward = models.CharField(max_length=100)
     # city=models.TextField()
     postal = models.IntegerField()
     phone = models.IntegerField()
