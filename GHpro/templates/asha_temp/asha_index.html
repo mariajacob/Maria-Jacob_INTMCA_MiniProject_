@@ -39,7 +39,7 @@
                     {% if user.is_authenticated %}
                     <div class="dropdown-menu">
 						{% comment %} <a class="dropdown-item" href="{% url 'edit_asha_profile' %}">Profile</a> {% endcomment %}
-						{% comment %} <a class="dropdown-item" href="{% url 'edit_asha_pro' %}">Profile</a> {% endcomment %}
+						<a class="dropdown-item" href="{% url 'pro_ashaworker' %}">Profile</a>
                         <a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
 					</div>
                     {% else %}

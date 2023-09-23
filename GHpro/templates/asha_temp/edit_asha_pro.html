@@ -30,6 +30,7 @@
 			 <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
             <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
             <ul class="nav user-menu float-right">
+           
                 <li class="nav-item dropdown has-arrow">
                     <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
                         <i class="fa fa-user" aria-hidden="true"></i>
@@ -37,8 +38,9 @@
                     </a>
                     {% if user.is_authenticated %}
                     <div class="dropdown-menu">
-						
-						<a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+						{% comment %} <a class="dropdown-item" href="{% url 'edit_asha_profile' %}">Profile</a> {% endcomment %}
+						<a class="dropdown-item" href="{% url 'pro_ashaworker' %}">Profile</a>
+                        <a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
 					</div>
                     {% else %}
 
@@ -49,8 +51,7 @@
                     
                     {% endif %}
                 </li>
-            </ul>
-            
+           
         </div> 
         <div class="sidebar" id="sidebar">
             <div class="sidebar-inner slimscroll">
@@ -58,44 +59,16 @@
                     <ul>
                         <li class="menu-title">Main</li>
                         <li class="active">
-                            <a href="{% url 'index-2' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                            <a href="{% url 'asha_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                           
                         </li> 
-						
-                        
-                        <li class="submenu">
-							<a href="#"><i class="fa fa-user"></i> <span>Asha Workers </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								
-								<li><a href="{% url 'ad_ashaworker' %}">Asha Workers List</a></li>
-								
-								
-							</ul>
-						</li>
-
-
-
-                         <li>
-                            <a href="{% url 'patients' %}"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
+                        <li>
+                            <a href="{% url 'asha_approved_appo' %}"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
                         </li>
                         <li>
-                            <a href="{% url 'appointments' %}"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                            <a href="{% url 'patient_users' %}"><i class="fa fa-wheelchair"></i> <span>Patients List</span></a>
+                            
                         </li>
-                        <li>
-                            <a href="{% url 'schedule' %}"><i class="fa fa-calendar-check-o"></i> <span>Asha Workers Schedule</span></a>
-                        </li> 
-                        
-                        {% comment %} <li>
-                            <a href="{% url 'adgallery' %}"><i class="fa fa-calendar-check-o"></i> <span>Gallery</span></a>
-                        </li>  {% endcomment %}
-                        <li class="submenu">
-							<a href="#"><i class="fa fa-user"></i> <span> Gallery </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								
-								<li><a href="{% url 'adgallery' %}">Add Image</a></li>
-								<li><a href="{% url 'edit_gallery' %}">Edit Image</a></li>
-								<li><a href="attendance.html">Attendance</a></li>
-							</ul>
-						</li>
                     </ul>
                 </div>
             </div>
@@ -115,7 +88,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Name <span class="text-danger">*</span></label>
-                                        <input class="form-control" id="name" value="{{ ashaworker.Name }}" name="name" type="text">
+                                        <input class="form-control" id="name" value="{{ asha.Name }}" name="name" type="text">
                                     </div>
                                 </div>
                                
@@ -125,18 +98,18 @@
                                         <input class="form-control" id="email" value="{{ user.email }}" name="email" type="email">
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
+                                {% comment %} <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Password</label>
                                         <input class="form-control" id="pass" name="pass"  type="password">
                                     </div>
-                                </div>
+                                </div> {% endcomment %}
                                
 								<div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Date of Birth</label>
                                         <div class="cal-icon">
-                                            <input type="text" id="dob" name="dob" value="{{ ashaworker.date_of_birth }}" class="form-control datetimepicker">
+                                            <input type="text" id="dob" name="dob" value="{{ asha.date_of_birth }}" class="form-control datetimepicker">
                                         </div>
                                     </div>
                                 </div>
@@ -144,14 +117,14 @@
                                     <div class="form-group">
                                         <label>Date of Join</label>
                                         <div class="cal-icon">
-                                            <input type="text" id="doj" name="doj" value="{{ ashaworker.date_of_join }}" class="form-control datetimepicker">
+                                            <input type="text" id="doj" name="doj" value="{{ asha.date_of_join }}" class="form-control datetimepicker">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
 									<div class="form-group gender-select">
 										<label class="gen-label">Gender:</label>
-										<input type="text" name="gender" id="gender" value="{{ ashaworker.gender }}" class="form-control ">
+										<input type="text" name="gender" id="gender" value="{{ asha.gender }}" class="form-control ">
 										
 									</div>
                                 </div>
@@ -160,33 +133,33 @@
 										<div class="col-sm-12">
 											<div class="form-group">
 												<label>Address</label>
-												<input type="text" name="address" id="address" value="{{ ashaworker.address }}" class="form-control ">
+												<input type="text" name="address" id="address" value="{{ asha.address }}" class="form-control ">
 											</div>
 										</div>
 										<div class="col-sm-6 col-md-6 col-lg-3">
 											<div class="form-group">
 												<label>Taluk</label>
 												
-                                                <input class="form-control"  id="taluk" value="{{ ashaworker.taluk }}" name="taluk" type="text">
+                                                <input class="form-control"  id="taluk" value="{{ asha.taluk }}" name="taluk" type="text">
 											</div>
 										</div>
 										<div class="col-sm-6 col-md-6 col-lg-3">
 											<div class="form-group">
 												<label>Panchayat</label>
 											
-                                                <input class="form-control"  id="panchayat" name="panchayat" value="{{ ashaworker.Panchayat }}" type="text">
+                                                <input class="form-control"  id="panchayat" name="panchayat" value="{{ asha.Panchayat }}" type="text">
 											</div>
 										</div>
 										<div class="col-sm-6 col-md-6 col-lg-3">
 											<div class="form-group">
 												<label>Ward</label>
-                                                <input type="text" class="form-control" name="ward" value="{{ ashaworker.ward }}" id="ward">
+                                                <input type="text" class="form-control" name="ward" value="{{ asha.ward }}" id="ward">
 											</div>
 										</div>
 										<div class="col-sm-6 col-md-6 col-lg-3">
 											<div class="form-group">
 												<label>Postal Code</label>
-												<input type="text" class="form-control" value="{{ ashaworker.postal }}"  name="pin" id="pin">
+												<input type="text" class="form-control" value="{{ asha.postal }}"  name="pin" id="pin">
 											</div>
 										</div>
 									</div>
@@ -194,7 +167,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Phone </label>
-                                        <input class="form-control" type="text" value="{{ ashaworker.phone }}" name="phone" id="phone">
+                                        <input class="form-control" type="text" value="{{ asha.phone }}" name="phone" id="phone">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">

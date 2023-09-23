@@ -160,6 +160,8 @@ def print_patient_profile(request):
     profile = PatientProfile.objects.filter(user=request.user).first() 
     return render(request, 'print_patient_profile.html', {'profile': [profile]})
 
+
+
 @login_required(login_url='login_page')
 def edit_asha_pro(request):
     
@@ -175,71 +177,56 @@ def edit_asha_pro(request):
         # Process the form data and save/update the profile
 
         asha.Name = request.POST.get('name')
-        print("first name :",asha.Name)
+        
         asha.email = request.POST.get('email')
-        print("email name :",asha.email)
+       
         asha.gender = request.POST.get('gender')
-        print("gender :",asha.gender)
+        
 
         asha.date_of_birth = request.POST.get('dob')
-        print("house name :",asha.date_of_birth)
+        
 
         asha.date_of_join = request.POST.get('doj')
-        print("house no :",asha.date_of_join)
+        
 
         asha.address = request.POST.get('address')
-        print("adsress :",asha.address)
+       
 
         asha.ward = request.POST.get('ward')
-        print("ward :",asha.ward)
+        
 
         asha.postal = request.POST.get('pin')
-        print("pin code :",asha.postal)
+        
 
         asha.phone = request.POST.get('phone')
-        print("phone :",asha.phone)
+       
 
         asha.Panchayat = request.POST.get('panchayat')
-        print("curret dignosis :",asha.Panchayat)
+        
 
         asha.phone = request.POST.get('phone')
-        print("past medicine :",asha.past_med_condition)
-
-        asha.surgical_history = request.POST.get('profile_photo')
-        print("surgical histroy :",asha.surgical_history)
-
-        asha.allergies = request.POST.get('allergies')
-        print("allergies :",asha.allergies)
-
+        
         new_profile_pic = request.FILES.get('profile_pic')
 
         if new_profile_pic:
             # Save the profile photo to a specific directory
             fs = FileSystemStorage()
             filename = fs.save(f"profile_pics/{new_profile_pic.name}", new_profile_pic)
-            asha.profile_photo = filename       
+            asha.new_profile_pic = filename       
         asha.save()
         messages.success(request, 'Profile updated successfully.')
-        return redirect('print_patient_profile')  # Redirect to the profile page
+        return redirect('pro_ashaworker')  # Redirect to the profile page
     context = {
         'user': user,
-        'profile': asha
+        'asha': asha
     }
 
-    return render(request, 'edit_patient_profile.html',context)
+    return render(request, 'asha_temp/edit_asha_pro.html',context)
 
-
-
-
-
-
-
-
-
-
-
-
-
+@login_required(login_url='login_page')
+def pro_ashaworker(request):
+    asha = Ashaworker.objects.filter(user=request.user).first() 
+    return render(request, 'asha_temp/pro_ashaworker.html', {'asha': [asha]})
 
 
 @login_required(login_url='login_page')

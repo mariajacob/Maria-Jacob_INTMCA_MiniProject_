@@ -42,8 +42,8 @@ urlpatterns = [
     path('edit_patient_profile', views.edit_patient_profile, name='edit_patient_profile'),
     path('print_patient_profile', views.print_patient_profile, name='print_patient_profile'),
     
-     # path('edit_asha_pro', views.edit_asha_pro, name='edit_asha_pro'),
-     # path('pro_ashaworker', views.pro_ashaworker, name="pro_ashaworker"),
+     path('edit_asha_pro', views.edit_asha_pro, name='edit_asha_pro'),
+     path('pro_ashaworker', views.pro_ashaworker, name="pro_ashaworker"),
 
 
 
