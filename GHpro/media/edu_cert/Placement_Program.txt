@@ -1,0 +1,237 @@
+1. swapping of two numbers
+#include <stdio.h>
+
+int main() {
+    int a,b;
+    // a=10;
+    // b=20;
+   printf("enter two number:");
+    scanf("%d",&a);
+    scanf("%d",&b);
+    // temp=a;
+    // a=b;
+    // b=temp;
+    a=a+b;
+    b=a-b;
+    a=a-b;
+    printf("after swapping : a=%d,b=%d",a,b);
+}
+
+
+
+
+#include <stdio.h>
+int main() {
+    int a,b;
+    // a=10;
+    // b=20;
+   printf("enter two number:");
+    scanf("%d",&a);
+    scanf("%d",&b);
+    // temp=a;
+    // a=b;
+    // b=temp;
+    a=a^b;
+    b=a^b;
+    a=a^b;
+    printf("after swapping : a=%d,b=%d",a,b);
+}
+
+/tmp/K5Q4MRwZWV.o
+enter two number:3 5
+after swapping : a=5,b=3
+
+2. hello world without semiclon
+#include <stdio.h>
+
+int main() {
+    
+    if(printf("hello world"))
+    return 0;
+}
+
+3. sum of n numbers
+int main() {
+//    int n,i,sum=0;
+      int n,sum=0;
+    printf("Enter the limit: ",n);
+    scanf("%d",&n);
+//    for(i=1;i<=n;i++)
+//    {
+//    	sum=sum+i;
+//    	
+//	}
+    sum=(n*(n+1)/2);
+	printf(" Sum is %d ",sum);
+	
+}
+
+4. sum - two limits
+
+int main() {
+//    int n,i,sum=0;
+      int n1,n2,i,sum=0;
+    printf("Enter the limit1: ",n1);
+    scanf("%d",&n1);
+    printf("Enter the limit2: ",n2);
+    scanf("%d",&n2);
+    for(i=n1;i<=n2;i++){
+	
+    sum=sum+i;}
+    printf(" Sum is %d ",sum);
+    
+}
+
+
+
+#######   c tokens
+
+6 tokens are there.
+keyword
+identifiers
+constants
+operators
+special symbols
+strings
+
+
+################
+
+32 keywords
+
+auto    break   case    char    const
+continue    default do  double  else
+enum    extern  float   for goto
+if  int long    register    return
+short   signed  sizeof  static  struct
+switch  typedef union   unsigned    void
+volatile    while
+
+################
+
+5. Leap year
+
+int main() {
+
+    int n1;
+    printf("Enter the year: ",n1);
+    scanf("%d",&n1);
+    if((n1%4==0 && n1%100!=0) || (n1%400==0))
+    	printf("Leap year");
+    else
+    	printf("Not Leap year");
+    
+    
+    
+}
+
+6. prime number limit
+
+#include <stdio.h>
+
+int main() {
+    int n1,n2,num,i;
+
+    printf("Enter the limit 1: ");
+    scanf("%d", &n1);
+	printf("Enter the limit 2 ");
+    scanf("%d", &n2);
+    printf("Prime numbers in the range %d to %d are: ", n1,n2);
+
+    for (num = n1; num <= n2; num++) {
+        int isPrime = 1;
+        if (num <= 1) {
+            isPrime = 0; // 0 and 1 are not prime
+        } else {
+            for (i = 2; i * i <= num; i++) {
+                if (num % i == 0) {
+                    isPrime = 0; 
+                    break;        
+                }
+            }
+        }
+
+        if (isPrime) {
+            printf("%d ", num);
+        }
+    }
+
+    printf("\n");
+
+    return 0;
+}
+
+7. armstrong
+
+#include<stdio.h>
+void main()
+{
+    int n,r,sum=0,tem;
+    printf("enter the number : ");
+    scanf("%d", &n);
+    tem=n;
+    while(n>0)
+    {
+    r=n%10;
+    sum=sum+(r*r*r);
+    n=n/10;
+    }
+    if(tem==sum)
+    printf("%d is armstrong number",tem);
+    else
+    printf("%d is not armstrong number",tem);
+
+
+
+
+}
+8. fibonacci
+
+#include<stdio.h>
+void main()
+{
+    int n1=0,n2=1,i,n,n3;
+    printf("enter the no of elements:");
+    scanf("%d",&n);
+    printf("%d\t%d\t",n1,n2);
+    for(i=2;i<n;++i)
+    {
+        n3=n1+n2;
+        printf("%d\t",n3);
+        n1=n2;
+        n2=n3;
+    }
+
+
+
+
+}
+
+9. factorial 
+#include<stdio.h>
+void main()
+{
+    int i,n,f=1;
+    printf("Enter the number : ",n);
+    scanf("%d",&n);
+    if(n<0){
+	
+    printf("Invalid Input !!");
+}
+	else if(n==0){
+	
+    printf("factorial of %d is 1",n);
+}
+    else
+    {
+	
+    for(i=1;i<=n;i++){
+    f=f*i;	
+	}
+
+    printf("Factorial of %d is %d ", n , f);
+
+}
+
+
+}

@@ -109,7 +109,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <form method="POST" action="" autocomplete="off">
+                        <form method="POST" action="" enctype="multipart/form-data" autocomplete="off">
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-sm-6">
@@ -163,69 +163,69 @@
 												<input type="text" name="address" id="address" value="{{ ashaworker.address }}" class="form-control ">
 											</div>
 										</div>
-										<div class="col-sm-6 col-md-6 col-lg-3">
+										<div class="col-sm-6 col-md-6 col-lg-4">
 											<div class="form-group">
 												<label>Taluk</label>
 												
                                                 <input class="form-control"  id="taluk" value="{{ ashaworker.taluk }}" name="taluk" type="text">
 											</div>
 										</div>
-										<div class="col-sm-6 col-md-6 col-lg-3">
+										<div class="col-sm-6 col-md-6 col-lg-4">
 											<div class="form-group">
 												<label>Panchayat</label>
 											
                                                 <input class="form-control"  id="panchayat" name="panchayat" value="{{ ashaworker.Panchayat }}" type="text">
 											</div>
 										</div>
-										<div class="col-sm-6 col-md-6 col-lg-3">
+										<div class="col-sm-6 col-md-6 col-lg-4">
 											<div class="form-group">
 												<label>Ward</label>
                                                 <input type="text" class="form-control" name="ward" value="{{ ashaworker.ward }}" id="ward">
 											</div>
 										</div>
-										<div class="col-sm-6 col-md-6 col-lg-3">
+										<div class="col-sm-6 ">
 											<div class="form-group">
 												<label>Postal Code</label>
 												<input type="text" class="form-control" value="{{ ashaworker.postal }}"  name="pin" id="pin">
 											</div>
 										</div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label>Phone </label>
+                                                <input class="form-control" type="text" value="{{ ashaworker.phone }}" name="phone" id="phone">
+                                            </div>
+                                        </div>
+
+
 									</div>
+                                    
 								</div>
+                                
+                               
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label>Phone </label>
-                                        <input class="form-control" type="text" value="{{ ashaworker.phone }}" name="phone" id="phone">
+                                        <img alt="" src="{{ ashaworker.profile_photo.url }}" height="70px" width="90px">
+                                        <label>Profile Photo</label>
+                                        
+                                        <input type="file" class="form-control" name="new_profile_photo">
                                     </div>
                                 </div>
+                               
                                 <div class="col-sm-6">
-									<div class="form-group">
-										<label>Photo</label>
-										<div class="profile-upload">
-											<div class="upload-img">
-												<img alt="" src="{% static 'assets/img/user.jpg' %}">
-											</div> 
-											 <div class="upload-input">
-                                              
-											<input type="file" class="form-control">
-											</div> 
+                                    <br> <br> <div class="form-group">
+                                        <label>ID Proof</label>
+                                        <div class="profile-upload">
+                                            <div class="upload-img">
+                                                <img alt="" src="{% static 'assets/img/user.jpg' %}" >
+                                            </div> 
+                                            <div class="upload-input">
+                                               <input type="file" class="form-control">
+                                            </div>
                                         </div>     
-									</div>
-                                </div>
-                                
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label>ID Proof</label>
-                                    <div class="profile-upload">
-                                        <div class="upload-img">
-                                            <img alt="" src="{% static 'assets/img/user.jpg' %}">
-                                        </div> 
-                                        <div class="upload-input">
-                                           <input type="file" class="form-control">
-                                        </div>
-                                    </div>     
+                                    </div>
                                 </div>
                             </div>
+                           
 						
                         <div>
                             <div class="m-t-20 text-center">

@@ -5,19 +5,76 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Student Profile Page Design Example</title>
-
-    <meta name="author" content="Codeconvey" />
+     <meta name="author" content="Codeconvey" />
+     <title>GentleHaloes</title>
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap" rel="stylesheet"><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css'>
-<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css'>
-
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css'>
+    
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <!--Only for demo purpose - no need to add.-->
     
 </head>
 <body>
-		
+	<div class="main-wrapper">
+    <div class="header">
+  <div class="header-left">
+    <a href="{% url 'index-2' %}" class="logo">
+      <img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+    </a>
+  </div>
+   <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+        <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+        <ul class="nav user-menu float-right">
+       
+            <li class="nav-item dropdown has-arrow">
+                <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                    <span>{{ user.email }}</span>
+                </a>
+                {% if user.is_authenticated %}
+                <div class="dropdown-menu">
+        {% comment %} <a class="dropdown-item" href="{% url 'edit_asha_profile' %}">Profile</a> {% endcomment %}
+        <a class="dropdown-item" href="{% url 'pro_ashaworker' %}">Profile</a>
+                    <a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+      </div>
+                {% else %}
 
+                <div class="dropdown-menu">
+        
+        <a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+      </div>
+                
+                {% endif %}
+            </li>
+       
+    </div> 
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-inner slimscroll">
+            <div id="sidebar-menu" class="sidebar-menu">
+                <ul>
+                    <li class="menu-title">Main</li>
+                    <li class="active">
+                        <a href="{% url 'asha_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                       
+                    </li> 
+                    <li>
+                        <a href="{% url 'asha_approved_appo' %}"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                    </li>
+                    <li>
+                        <a href="{% url 'patient_users' %}"><i class="fa fa-wheelchair"></i> <span>Patients List</span></a>
+                        
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>	
 
+<div class="page-wrapper">
 <header class="ScriptHeader">
     <div class="rt-container">
     	<div class="col-rt-12">
@@ -41,10 +98,18 @@
     <div class="row">
       <div class="col-lg-4">
         <div class="card shadow-sm">
+         
+
           <div class="card-header bg-transparent text-center">
-            <img class="profile_img" src="{{ asha.profile_photo.url }}" alt="student dp">
+            {% if asha.profile_photo.url %}
+                <img class="profile_img" src="{{ asha.profile_photo.url }}" alt="{{ asha.Name }}'s Profile Photo">
+            {% else %}
+                <img src="/path/to/default/profile_photo.jpg" alt="Default Profile Photo">
+            {% endif %}
             <h3>{{ asha.Name }}</h3>
-          </div>
+        </div>
+
+
           <div class="card-body">
             <p class="mb-0"><strong class="pr-1">Email:</strong>{{user.email}}</p>
             <p class="mb-0"><strong class="pr-1">Phone Number</strong>{{ asha.phone }}</p>
@@ -91,7 +156,7 @@
                 <td>{{ asha.Panchayat }}</td>
               </tr>
               <tr>
-                <th width="30%">Ward</th>
+                <th width="30%">Assigned Ward:</th>
                 <td width="2%">:</td>
                 <td>{{ asha.ward }}</td>
               </tr>
@@ -100,8 +165,92 @@
                 <td width="2%">:</td>
                 <td>{{ asha.postal }}</td>
               </tr>
+              {% comment %} <tr>
+                <th width="30%">Upload IDproof:</th>
+                <td width="2%">:</td>
+                <td>{{ asha.add_certificate }}</td>
+              </tr> {% endcomment %}
+              <tr>
+                <th width="30%">Upload IDproof:</th>
+                <td width="2%">:</td>
+                <td>
+                    {% if asha.id_proof %}
+                        <a href="{{ asha.id_proof.url }}" download>Download ID Proof</a>
+                    {% else %}
+                        No ID Proof Uploaded
+                    {% endif %}
+                </td>
+            </tr>
             </table>
+            
           </div>
+          
+        </div>
+        <div class="card shadow-sm">
+          <div class="card-header bg-transparent border-0">
+            <h3 class="mb-0"><i class="far fa-clone pr-1"></i>Educational Informations</h3>
+          </div>
+          <div class="card-body pt-0">
+            <table class="table table-bordered">
+              <tr>
+                <th width="30%">Highest Educational Level </th>
+                <td width="2%">:</td>
+                <td>{{ asha.get_edu_level_display }}</td>
+              </tr>
+              <tr>
+                <th width="30%">Institute Name </th>
+                <td width="2%">:</td>
+                <td>{{ asha.edu_inst }}</td>
+              </tr>
+              <tr>
+                <th width="30%">Year of Passing</th>
+                <td width="2%">:</td>
+                <td>{{ asha.year_pass_edu }}</td>
+              </tr>
+              <tr>
+                <th width="30%">Upload Educational Certificates</th>
+                <td width="2%">:</td>
+                <td>
+                    {% if asha.edu_certificate %}
+                        <a href="{{ asha.edu_certificate.url }}" download>Download Educational Certificate</a>
+                    {% else %}
+                        No Educational Certificate Uploaded
+                    {% endif %}
+                </td>
+            </tr>
+            
+              
+              <tr>
+                <th width="30%">Additional Training(If Any)</th>
+                <td width="2%">:</td>
+                <td>{{ asha.add_training }}</td>
+              </tr>
+              <tr>
+                <th width="30%">Training Institute Name</th>
+                <td width="2%">:</td>
+                <td>{{ asha.add_training_inst }}</td>
+              </tr>
+              <tr>
+                <th width="30%">Year of Passing</th>
+                <td width="2%">:</td>
+                <td>{{ asha.year_pass_add }}</td>
+              </tr>
+              <tr>
+                <th width="30%">Upload Certifications and Licenses:</th>
+                <td width="2%">:</td>
+                <td>
+                    {% if asha.add_certificate %}
+                        <a href="{{ asha.add_certificate.url }}" download>Download Additional Training Certificate</a>
+                    {% else %}
+                        No Additional Training Certificate Uploaded
+                    {% endif %}
+                </td>
+            </tr>
+            
+            </table>
+            
+          </div>
+          
         </div>
         <div class="section edit-profile-button">
             <a href="{% url 'edit_asha_pro' %}" class="edit-button">Edit Profile</a>
@@ -127,7 +276,15 @@
     </div>
 </section>
      
-
+</div>
+<div class="sidebar-overlay" data-reff=""></div>
+<script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'assets/js/popper.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+<script src="{% static 'assets/js/Chart.bundle.js' %}"></script>
+<script src="{% static 'assets/js/chart.js' %}"></script>
+<script src="{% static 'assets/js/app.js' %}"></script>
 
     <!-- Analytics -->
     <style>
@@ -150,9 +307,9 @@
             background-color: #0056b3; /* Change to the desired hover color */
           }
         body {
-            background: #67B26F;  /* fallback for old browsers */
+            background: #f2e6dc;  /* fallback for old browsers */
             background: -webkit-linear-gradient(to right, #4ca2cd, #67B26F);  /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #4ca2cd, #67B26F); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: linear-gradient(to right, #cdfaf2, #ecdaf7); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
             padding: 0;
             margin: 0;
             font-family: 'Lato', sans-serif;
@@ -436,7 +593,16 @@ html {
       }
       
   }
-  
+  .header {
+        background-color: #00c6a9;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 1039;
+        height: 50px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    }
   
   
   

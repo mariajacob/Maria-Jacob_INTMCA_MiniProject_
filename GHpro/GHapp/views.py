@@ -5,6 +5,7 @@ from django.contrib import messages
 from .models import Ashaworker
 from .models import Appointment
 from .models import PatientProfile
+from .models import MedicalRecord
 from .models import Image 
 from datetime import datetime, timedelta
 from django.urls import reverse_lazy
@@ -17,6 +18,8 @@ from django.contrib.auth.decorators import login_required
 from .decorators import patient_required
 from django.shortcuts import render, get_object_or_404, redirect
 from .decorators import ashaworker_required
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 
@@ -62,6 +65,46 @@ def index2(request):
 def addpatient(request):
     return render(request,'admin_temp/add-patient.html')
 
+def medical_record(request):
+    return render(request,'medical_record.html')
+
+
+
+
+def medical_record(request):
+    patientprofile = request.user.patientprofile
+    if request.method == 'POST':
+        # Handle form submission
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        date = request.POST['date']
+        doctor_notes = request.POST['doctor_notes']
+        medications_needed = request.POST['medications_needed']
+        treatments = request.POST['treatments']
+        current_conditions = request.POST['current_conditions']
+
+        # Assuming you have a way to retrieve the patient profile based on the name
+        # patient = PatientProfile.objects.get(first_name=patient_name)
+
+        # Create a new medical record entry
+        medrec = MedicalRecord(
+            first_name=first_name,
+            last_name=last_name,
+            date=date,
+            doctor_notes=doctor_notes,
+            medications_needed=medications_needed,
+            treatments=treatments,
+            current_conditions=current_conditions
+        )
+        medrec.save()
+        # Redirect to a success page or wherever you want
+        return redirect('medical_record')
+
+    return render(request, 'medical_record.html',{'patientprofile': patientprofile})
+
+# def medical_record_success(request):
+#     # You can create a separate template for the success page
+#     return render(request, 'medical_record_success.html')
 
 
 @login_required(login_url='login_page')
@@ -99,6 +142,9 @@ def edit_patient_profile(request):
 
         profile.address = request.POST.get('address')
         print("adsress :",profile.address)
+
+        profile.birth_date = request.POST.get('birth_date')
+        print("dob :",profile.birth_date)
 
         profile.ward = request.POST.get('ward')
         print("ward :",profile.ward)
@@ -169,6 +215,7 @@ def edit_asha_pro(request):
     # profile = PatientProfile.objects.get(user=user)
     user = request.user
     asha = get_object_or_404(Ashaworker, user=user)
+    asha = Ashaworker.objects.get(user=user)
     
     if request.method == "POST":
         print ('POST')
@@ -205,14 +252,64 @@ def edit_asha_pro(request):
         
 
         asha.phone = request.POST.get('phone')
-        
-        new_profile_pic = request.FILES.get('profile_pic')
 
-        if new_profile_pic:
-            # Save the profile photo to a specific directory
+        asha.edu_level = request.POST.get('edu_level')
+        asha.edu_inst = request.POST.get('edu_inst')
+        asha.year_pass_edu = request.POST.get('year_pass_edu')
+        
+        asha.add_training = request.POST.get('add_training')
+        asha.add_training_inst = request.POST.get('add_training_inst')
+        asha.year_pass_add = request.POST.get('year_pass_add')
+
+        new_id_proof = request.FILES.get('id_proof')
+        if new_id_proof:
+            # Delete the old ID proof if it exists
+            if asha.id_proof:
+                fs = FileSystemStorage()
+                fs.delete(asha.id_proof.name)
+
+            # Save the new ID proof to the 'id_proofs/' directory
             fs = FileSystemStorage()
-            filename = fs.save(f"profile_pics/{new_profile_pic.name}", new_profile_pic)
-            asha.new_profile_pic = filename       
+            filename = fs.save(f"id_proofs/{new_id_proof.name}", new_id_proof)
+            asha.id_proof = filename
+
+        new_edu_certificate = request.FILES.get('edu_certificate')
+        if new_edu_certificate:
+            # Delete the old educational certificate if it exists
+            if asha.edu_certificate:
+                fs = FileSystemStorage()
+                fs.delete(asha.edu_certificate.name)
+
+            # Save the new educational certificate to the 'edu_cert/' directory
+            fs = FileSystemStorage()
+            filename = fs.save(f"edu_cert/{new_edu_certificate.name}", new_edu_certificate)
+            asha.edu_certificate = filename
+
+        new_add_certificate = request.FILES.get('add_certificate')
+        if new_add_certificate:
+            # Delete the old additional training certificate if it exists
+            if asha.add_certificate:
+                fs = FileSystemStorage()
+                fs.delete(asha.add_certificate.name)
+
+            # Save the new additional training certificate to the 'add_cert/' directory
+            fs = FileSystemStorage()
+            filename = fs.save(f"add_cert/{new_add_certificate.name}", new_add_certificate)
+            asha.add_certificate = filename
+
+
+        new_profile_pic = request.FILES.get('profile_photo')
+        
+        if new_profile_pic:
+            # Delete the old profile photo if it exists
+            if asha.profile_photo:
+                fs = FileSystemStorage()
+                fs.delete(asha.profile_photo.name)
+            
+            # Save the new profile photo to a specific directory
+            fs = FileSystemStorage()
+            filename = fs.save(f"profile_photos/{new_profile_pic.name}", new_profile_pic)
+            asha.profile_photo = filename 
         asha.save()
         messages.success(request, 'Profile updated successfully.')
         return redirect('pro_ashaworker')  # Redirect to the profile page
@@ -303,6 +400,13 @@ def appointment_form(request,appointment_id=None):
             preferred_time=preferred_time
         )
         appointment.save()
+        subject = 'Appointment is Successful'
+        message = f'Your appointment for home visit is successful. Your Scheduled date: {preferred_date}, Your Scheduled Time: {preferred_time}'
+        from_email = settings.EMAIL_HOST_USER  # Your email address
+        recipient_list = [request.user.email]  # Employee's email address
+
+        send_mail(subject, message, from_email, recipient_list)
+        
 
         return render(request,'appointment.html')
         # return render(request, 'appointment.html')
@@ -316,6 +420,7 @@ def appointment_form(request,appointment_id=None):
         while start_time <= end_time:
             time_slots.append(start_time.strftime("%I:%M %p"))
             start_time += interval
+    
 
     return render(request, 'appointment.html', {'time_slots': time_slots,'patientprofile': patientprofile,'appointment_id': appointment_id})
 
@@ -349,6 +454,15 @@ def add_asha(request):
                 user.save()
                 asha = Ashaworker(user=user,Name=name,email=email,date_of_birth=dob,date_of_join=doj,gender=gender,address=address,taluk=taluk,Panchayat=panchayat,ward=ward,postal=pin,phone=phone,profile_photo=profile_photo)
                 asha.save()
+
+                subject = 'Ashaworker Login Details'
+                message = f'Registered as an Ashaworker. Your username: {email}, Password: {password}'
+                from_email = settings.EMAIL_HOST_USER  # Your email address
+                recipient_list = [user.email]  # Employee's email address
+
+                send_mail(subject, message, from_email, recipient_list)
+
+
                 return redirect('ad_ashaworker')
     else:
          
@@ -378,6 +492,9 @@ def edit_asha(request, asha_id):
         ward = request.POST.get('ward')
         pin = request.POST.get('pin')
         phone = request.POST.get('phone')
+        new_profile_photo = request.FILES.get('new_profile_photo')
+        if new_profile_photo:
+            ashaworker.profile_photo = new_profile_photo
 
         ashaworker.Name = name
         ashaworker.email = email

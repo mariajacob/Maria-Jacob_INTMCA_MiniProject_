@@ -36,6 +36,8 @@ urlpatterns = [
     path('testimonial', views.testimonial, name="testimonial"),
     path('contact', views.contact, name="contact"),
     
+    path('medical_record', views.medical_record, name="medical_record"),
+    
     path('index-2', views.index2, name="index-2"), 
     
   

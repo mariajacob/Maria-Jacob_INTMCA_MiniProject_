@@ -79,41 +79,6 @@ class CustomUser(AbstractUser):
 
 
 
-# class Ashaworker(models.Model): 
-    
-#     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
-#     id = models.AutoField(primary_key=True)
-#     Name = models.CharField(max_length=100)
-    
-#     email = models.EmailField(max_length=100,unique=True,default=None)
-#     admin_set_password = models.CharField(max_length=128, blank=True, null=True)
-
-#     def set_password(self, password):
-#         # Hash and set the password
-#         self.admin_set_password = make_password(password)
-#     date_of_birth = models.CharField(max_length=100)
-#     date_of_join = models.CharField(max_length=100)
-#     # gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-#     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
-#     address = models.TextField()
-#     taluk = models.CharField(max_length=100)
-#     Panchayat = models.CharField(max_length=100)
-#     ward = models.CharField(max_length=100)
-#     # city=models.TextField()
-#     postal = models.IntegerField()
-#     phone = models.IntegerField()
-#     profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
-#     is_active = models.BooleanField(default=True)
-    
-#     class Meta:
-#             unique_together = (("id", "ward"),)
-#     # pin = models.IntegerField()
-#     # bio=models.TextField()
-
-#     def __str__(self):
-#         return self.email
-
-
 class Ashaworker(models.Model):
      
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
@@ -138,6 +103,17 @@ class Ashaworker(models.Model):
     postal = models.IntegerField()
     phone = models.IntegerField()
     profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
+    
+    id_proof = models.FileField(upload_to='id_proofs/', blank=True, null=True)
+    edu_level=models.CharField(max_length=100,choices=[('High School', 'High School'), ('Bachelors Degree', 'Bachelors Degree'), ('Masters Degree', 'Masters Degree')],blank=True, null=True)
+    edu_inst=models.CharField(max_length=100,blank=True, null=True)
+    year_pass_edu=models.IntegerField(blank=True, null=True)
+    edu_certificate=models.FileField(upload_to='edu_cert/', blank=True, null=True)
+    add_training=models.CharField(max_length=100,blank=True, null=True)
+    add_training_inst=models.CharField(max_length=100,blank=True, null=True)
+    year_pass_add=models.IntegerField(blank=True, null=True)
+    add_certificate=models.FileField(upload_to='add_cert/', blank=True, null=True)
+
     is_active = models.BooleanField(default=True)
     
     class Meta:
@@ -171,7 +147,7 @@ class PatientProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(max_length=100, null=True,blank=True)
     last_name = models.CharField(max_length=100,null=True,blank=True)
-    # birth_date = models.DateField(null=True,blank=True)
+    birth_date = models.CharField(max_length=100,null=True,blank=True)
     email = models.EmailField(max_length=100,null=True,blank=True)
     profile_pic = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
@@ -220,3 +196,12 @@ class Appointment(models.Model):
     def __str__(self):
         return self.email
 
+class MedicalRecord(models.Model):
+    first_name = models.CharField(max_length=255,null=True,blank=True)
+    last_name = models.CharField(max_length=255,null=True,blank=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    date = models.DateField()
+    doctor_notes = models.TextField()
+    medications_needed = models.TextField()
+    treatments = models.TextField()
+    current_conditions = models.TextField()

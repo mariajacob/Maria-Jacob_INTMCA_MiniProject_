@@ -74,28 +74,33 @@
             </div>
         </div>
         <div class="page-wrapper">
-            <div class="content">
+        <div class="content">
+            <div class="card-header bg-transparent border-0">
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <h4 class="page-title">Edit Asha Workers</h4>
+                        <h4 class="page-title">My Profile</h4>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-8 offset-lg-2">
-                        <form method="POST" action="" autocomplete="off">
+                    
+                    <div class="card shadow-sm">
+                    <div class="col-lg-8 offset-lg-2"><br>
+                        <h4 class="page-title" style="color: black; font-weight: bold;">General Informations</h4>  
+                        <form method="POST" action="" enctype="multipart/form-data" autocomplete="off">
                             {% csrf_token %}
+                            
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Name <span class="text-danger">*</span></label>
-                                        <input class="form-control" id="name" value="{{ asha.Name }}" name="name" type="text">
+                                        <input class="form-control" id="name" value="{{ asha.Name }}" name="name" type="text" readonly>
                                     </div>
                                 </div>
                                
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Email <span class="text-danger">*</span></label>
-                                        <input class="form-control" id="email" value="{{ user.email }}" name="email" type="email">
+                                        <input class="form-control" id="email" value="{{ user.email }}" name="email" type="email" readonly>
                                     </div>
                                 </div>
                                 {% comment %} <div class="col-sm-6">
@@ -109,7 +114,7 @@
                                     <div class="form-group">
                                         <label>Date of Birth</label>
                                         <div class="cal-icon">
-                                            <input type="text" id="dob" name="dob" value="{{ asha.date_of_birth }}" class="form-control datetimepicker">
+                                            <input type="text" id="dob" name="dob" value="{{ asha.date_of_birth }}" class="form-control datetimepicker"readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -117,102 +122,178 @@
                                     <div class="form-group">
                                         <label>Date of Join</label>
                                         <div class="cal-icon">
-                                            <input type="text" id="doj" name="doj" value="{{ asha.date_of_join }}" class="form-control datetimepicker">
+                                            <input type="text" id="doj" name="doj" value="{{ asha.date_of_join }}" class="form-control datetimepicker"readonly>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
 									<div class="form-group gender-select">
 										<label class="gen-label">Gender:</label>
-										<input type="text" name="gender" id="gender" value="{{ asha.gender }}" class="form-control ">
+										<input type="text" name="gender" id="gender" value="{{ asha.gender }}" class="form-control "readonly>
 										
 									</div>
                                 </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <input type="text" name="address" id="address" value="{{ asha.address }}" class="form-control "readonly>
+                                    </div>
+                                </div>
 								<div class="col-sm-12">
 									<div class="row">
-										<div class="col-sm-12">
-											<div class="form-group">
-												<label>Address</label>
-												<input type="text" name="address" id="address" value="{{ asha.address }}" class="form-control ">
-											</div>
-										</div>
+										
 										<div class="col-sm-6 col-md-6 col-lg-3">
 											<div class="form-group">
 												<label>Taluk</label>
 												
-                                                <input class="form-control"  id="taluk" value="{{ asha.taluk }}" name="taluk" type="text">
+                                                <input class="form-control"  id="taluk" value="{{ asha.taluk }}" name="taluk" type="text"readonly>
 											</div>
 										</div>
 										<div class="col-sm-6 col-md-6 col-lg-3">
 											<div class="form-group">
 												<label>Panchayat</label>
 											
-                                                <input class="form-control"  id="panchayat" name="panchayat" value="{{ asha.Panchayat }}" type="text">
+                                                <input class="form-control"  id="panchayat" name="panchayat" value="{{ asha.Panchayat }}" type="text"readonly>
 											</div>
 										</div>
 										<div class="col-sm-6 col-md-6 col-lg-3">
 											<div class="form-group">
 												<label>Ward</label>
-                                                <input type="text" class="form-control" name="ward" value="{{ asha.ward }}" id="ward">
+                                                <input type="text" class="form-control" name="ward" value="{{ asha.ward }}" id="ward"readonly>
 											</div>
 										</div>
 										<div class="col-sm-6 col-md-6 col-lg-3">
 											<div class="form-group">
 												<label>Postal Code</label>
-												<input type="text" class="form-control" value="{{ asha.postal }}"  name="pin" id="pin">
+												<input type="text" class="form-control" value="{{ asha.postal }}"  name="pin" id="pin"readonly>
 											</div>
 										</div>
 									</div>
 								</div>
                                 <div class="col-sm-6">
-                                    <div class="form-group">
+                                    <br><br><div class="form-group">
                                         <label>Phone </label>
-                                        <input class="form-control" type="text" value="{{ asha.phone }}" name="phone" id="phone">
+                                        <input class="form-control" type="text" value="{{ asha.phone }}" name="phone" id="phone"readonly>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
-									<div class="form-group">
-										<label>Photo</label>
-										<div class="profile-upload">
-											<div class="upload-img">
-												<img alt="" src="{% static 'assets/img/user.jpg' %}">
-											</div> 
-											 <div class="upload-input">
-                                              
-											<input type="file" class="form-control">
-											</div> 
-                                        </div>     
-									</div>
+                                    <div class="form-group">
+                                        <img alt="" src="{{ asha.profile_photo.url }}" height="70px" width="90px">
+                                        <label>Profile Photo</label>
+                                        
+                                        <input type="file" class="form-control" name="new_profile_photo">
+                                    </div>
                                 </div>
-                                
+                                 {% comment %} <div class="form-group">
+                                    <label for="profile_photo">Profile Photo:</label>
+                                    <input type="file" name="profile_photo" accept="image/*">
+                                </div> {% endcomment %}
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <label>ID Proof</label>
+                                    <label>ID Proof<span class="text-danger"> * </span></label>
                                     <div class="profile-upload">
                                         <div class="upload-img">
-                                            <img alt="" src="{% static 'assets/img/user.jpg' %}">
+                                            <img alt="" src="{% if asha.id_proof %}{{ asha.id_proof.url }}{% else %}{% static 'assets/img/user.jpg' %}{% endif %}">
                                         </div> 
                                         <div class="upload-input">
-                                           <input type="file" class="form-control">
+                                            <input type="file" class="form-control" name="id_proof">
                                         </div>
                                     </div>     
                                 </div>
                             </div>
-						
-                        <div>
-                            <div class="m-t-20 text-center">
-                                <button class="btn btn-primary submit-btn">Edit Asha Worker</button>
+                            
+                            <br><h4 class="page-title" style="color: black; font-weight: bold;">Educational Informations</h4>  
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-sm-6 ">
+                                        <div class="form-group">
+                                            <label>Highest Educational Level <span class="text-danger">*</span></label>
+                                            <select class="form-control" id="education_level" value="{{ asha.get_edu_level_display }}" name="edu_level">
+                                                <option value="" disabled selected>-Select Educational Level-</option>
+                                                <option value="High School">High School</option>
+                                                <option value="Bachelor's Degree">Bachelor's Degree</option>
+                                                <option value="Master's Degree">Master's Degree</option>
+                                                <!-- Add more options as needed -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                   
+                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                        <div class="form-group">
+                                            <label>Institute Name<span class="text-danger"> * </span></label>
+                                            <input type="text" class="form-control" value="{{ asha.edu_inst }}" name="edu_inst" >
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                        <div class="form-group">
+                                            <label>Year of Passing<span class="text-danger"> * </span></label>
+                                            <input type="text" class="form-control" value="{{ asha.year_pass_edu }}" name="year_pass_edu"  >
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Upload Educational Certificates<span class="text-danger"> * </span></label>
+                                            <div class="profile-upload">
+                                                <div class="upload-img">
+                                                    <img alt="" src="{% if asha.edu_certificate %}{{ asha.edu_certificate.url }}{% else %}{% static 'assets/img/user.jpg' %}{% endif %}">
+                                                </div> 
+                                                <div class="upload-input">
+                                                    <input type="file" class="form-control" name="edu_certificate">
+                                                </div>
+                                            </div>     
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                        <div class="form-group">
+                                            <label>Additional Training(If Any)</label>
+                                            <input type="text" class="form-control" value="{{ asha.add_training }}" name="add_training"  >
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                        <div class="form-group">
+                                            <label>Training Institute Name</label>
+                                            <input type="text" class="form-control" value="{{ asha.add_training_inst }}" name="add_training_inst" >
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                        <div class="form-group">
+                                            <label>Year of Passing</label>
+                                            <input type="text" class="form-control" value="{{ asha.year_pass_add }}" name="year_pass_add"  >
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Upload Certifications and Licenses:</label>
+                                            <div class="profile-upload">
+                                                <div class="upload-img">
+                                                    <img alt="" src="{% if asha.add_certificate %}{{ asha.add_certificate.url }}{% else %}{% static 'assets/img/user.jpg' %}{% endif %}">
+                                                </div> 
+                                                <div class="upload-input">
+                                                    <input type="file" class="form-control" name="add_certificate">
+                                                </div>
+                                            </div>     
+                                        </div>
+                                    </div>
+                                    
+                                </div>
                             </div>
-                        </div>
+                            <div>
+                                <div class="m-t-20 text-center">
+                                    <button class="btn btn-primary submit-btn">Edit Asha Worker</button>
+                                </div>
+                            </div>
                         </form>
-
                         
-
                     </div>
+                    
                 </div>
+               
             </div>
-		
+            
+            </div>
+		</div>
         </div>
     </div>
     <div class="sidebar-overlay" data-reff=""></div>
