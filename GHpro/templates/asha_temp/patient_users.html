@@ -82,14 +82,31 @@
                         <a href="{% url 'add_asha' %}" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Add Asha Workers</a>
                     </div> {% endcomment %}
                 </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <form id="search-form" method="GET" action="{% url 'search_patient' %}">
+                            <div class="input-group">
+                                <a href="{% url 'patient_users' %}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>&ensp;&ensp;&ensp;&ensp;
+                                <input type="text" class="form-control" name="patientname" placeholder="Search by patient Name">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div><br><br>
                 <div class="row doctor-grid">
                 
                     {% for patient in patients %}
                     
                     <div class="col-md-4 col-sm-4  col-lg-3">
                         <div class="profile-widget">
-                             <div class="doctor-img">
-                                {% comment %} <a class="avatar" href="profile.html"><img alt="" src="{{ patient.profile_pic.url }}"></a>         {% endcomment %}
+                             
+                            <div class="doctor-img">
+                                <a class="avatar" href="profile.html">
+                                    <img alt="" src="{{ patient.profile_pic.url }}">
+                                </a>
                             </div> 
                             <div class="dropdown profile-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
@@ -100,13 +117,14 @@
                             </div>
                             <h4 class="doctor-name text-ellipsis"><a href="profile.html"> {{ patient.Name }}</a></h4>
                             
-                            <div class="user-country">
-                                <i class="fa fa-map-marker"></i> {{ patient.address }}
-                            </div>
+                            
                             <div>
-                                <p>First Name: {{ patient.first_name }}</p>
-                                <p>Last Name: {{ patient.last_name }}</p>
+                                <p>Name: {{ patient.first_name }} {{ patient.last_name }}</p>
+                                {% comment %} <p>Last Name: {{ patient.last_name }}</p> {% endcomment %}
                                 <p>Email: {{ patient.email }}</p>
+                                <div class="user-country">
+                                    <i class="fa fa-map-marker"></i> {{ patient.address }}
+                                </div><br>
                                 <p>Gender: {{ patient.gender }}</p>
                                 <p>Address: {{ patient.address }}</p>
                                 <p>ward: {{ patient.ward }}</p>
@@ -119,6 +137,14 @@
                                 <p>Surgical Historys:{{ patient.surgical_history }}</p>
                                 <p>Allergies (Medications, Food, Environmental): {{ patient.allergies }}</p>
                                 
+                                <div class="card shadow-sm">
+                                    <div class="card-header bg-transparent text-center">
+                                        <h3>Medical Record</h3>
+                                        <br>
+                                        <a href="{% url 'medical_record' %}" class="btn-show-medical-record">Add Medical Records</a> <br>
+                                        <br><a href="{% url 'medical_record_display' %}" class="btn-show-medical-record">View Medical Records</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -362,6 +388,23 @@
 </body>
 
 <style>
+    .btn-show-medical-record {
+        display: inline-block;
+        padding: 10px 20px; /* Adjust padding as needed */
+        background-color: #007BFF; /* Button background color */
+        color: #fff; /* Button text color */
+        border: none;
+        border-radius: 4px; /* Rounded corners */
+        text-decoration: none;
+        transition: background-color 0.3s ease; /* Smooth transition on hover */
+    }
+    
+    /* Hover effect */
+    .btn-show-medical-record:hover {
+        background-color: #0056b3; /* Change background color on hover */
+        /* You can also add other hover effects like changing text color, adding shadows, etc. */
+    }
+    
     .header {
         background-color: #00c6a9;
         left: 0;

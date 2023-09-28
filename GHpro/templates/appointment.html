@@ -267,83 +267,75 @@
                 <label for="inputMedications">Medications Currently Taking</label>
                 <input type="text" class="form-control floating" value="{{ patientprofile.medication_names }}" name="medication_names" readonly>
               </div>
-              <div class="form-group col-lg-4">
-                <label for="inputMedicalConditions">Existing Medical Conditions</label>
-                <textarea class="form-control"   name="medical_conditions" id="inputMedicalConditions" rows="3" placeholder="Enter existing medical conditions"></textarea>
-              </div>
+             
+              
 
               <!-- Appointment Status/Urgency Selection -->
-            <div class="form-group col-lg-4">
-            <label for="urgency">Appointment Status/Urgency</label>
-            <select class="form-control" name="urgency" id="urgency">
-                <option value="Routine check-up">Routine check-up</option>
-                <option value="Non-urgent medical check-up">Non-urgent medical check-up</option>
-                <option value="Urgent medical check-up">Urgent medical check-up</option>
-                
-           </select>
-           </div>
-           
-          <div class="form-group col-lg-4">
-            <label for="inputSymptoms">Symptoms/Reason for Visit</label>
-            <textarea class="form-control" name="symptoms" id="inputSymptoms" rows="3" placeholder="Describe symptoms or reason for the visit"></textarea>
-          </div>
+              <div class="form-group col-lg-4">
+                <label for="urgency">Appointment Status/Urgency</label>
+                <select class="form-control" name="urgency" id="urgency" required>
+                  <option value="" disabled selected>-Select-</option>
+                  <option value="Routine check-up">Routine check-up</option>
+                  <option value="Non-urgent medical check-up">Non-urgent medical check-up</option>
+                  <option value="Urgent medical check-up">Urgent medical check-up</option>
+                </select>
+                <span id="urgencyError" class="text-danger"></span>
+              </div>
+              
+              <div class="form-group col-lg-4">
+                <label for="inputMedicalConditions">Existing Medical Conditions</label>
+                <textarea class="form-control" name="medical_conditions" id="inputMedicalConditions" rows="3" placeholder="Enter existing medical conditions"></textarea>
+                <div id="medicalConditionsError" style="color: red;"></div>
+              </div>
+              
+              <div class="form-group col-lg-4">
+                <label for="inputSymptoms">Symptoms/Reason for Visit</label>
+                <textarea class="form-control" name="symptoms" id="inputSymptoms" rows="3" placeholder="Describe symptoms or reason for the visit"></textarea>
+                <div id="symptomsError" style="color: red;"></div>
+              </div>
+          
+          
             </div>
-            <!-- Medical Information -->
-            <div class="form-row">
-              
-              
-              
-            </div>
-            <!-- Symptoms/Reason for Visit -->
+            
+       
             
             <!-- Preferred Date and Time -->
             <div class="form-row">
               <div class="form-group col-lg-6">
                 <label for="inputPreferredDate">Preferred Date</label>
-                <input type="date" class="form-control" name="preferred_date" id="inputPreferredDate">
+                {% comment %} <input type="date" class="form-control" name="preferred_date" id="inputPreferredDate"> {% endcomment %}
+                <input type="date" class="form-control" name="preferred_date" id="inputPreferredDate" onchange="validateDate()" required>
+                <p id="dateValidationMessage" style="color: red;"></p>
+
+
               </div>
-              {% comment %} <div class="form-group col-lg-4">
-                <label for="inputPreferredTime">Preferred Time</label>
-                <select class="form-control" id="inputPreferredTime">
-                  <option value="Morning">Morning</option>
-                  <option value="Afternoon">Afternoon</option>
-                  <option value="Evening">Evening</option>
-                </select>
-              </div> {% endcomment %}
-
-              <!-- Preferred Date Selection -->
-{% comment %} <div class="form-group">
-  <label for="preferredDate">Preferred Date</label>
-  <input type="date" class="form-control" name="preferredDate" id="preferredDate">
-</div> {% endcomment %}
-
-<!-- Preferred Time Selection -->
-{% comment %} <div class="form-group col-lg-6">
-  <label for="preferredTime">Preferred Time</label>
-  <select class="form-control" name="preferredTime" id="preferredTime">
-    <option value="">Select Preferred Time</option>
-    <option value="09:00 AM">09:00 AM</option>
-    <option value="10:00 AM">10:00 AM</option>
-    <option value="11:00 AM">11:00 AM</option>
-    <option value="12:00 PM">12:00 PM</option>
-    <option value="01:00 PM">01:00 PM</option>
-    <!-- Add more time slots as needed -->
-  </select>
-</div> {% endcomment %}
+              
 <div class="form-group col-lg-6">
   <label for="preferredTime">Preferred Time</label>
-  <select class="form-control" name="preferred_time" id="preferredTime">
+  <select class="form-control" name="preferred_time" id="preferredTime" required>
+    <option value="">Select Preferred Time</option>
+    {% for time_slot in time_slots %}
+        <option value="{{ time_slot }}">{{ time_slot }}</option>
+    {% endfor %}
+  </select>
+  {% comment %} <select class="form-control" name="preferred_time" id="preferredTime">
     <option value="">Select Preferred Time</option>
     {% for time_slot in time_slots %}
       <option value="{{ time_slot }}">{{ time_slot }}</option>
     {% endfor %}
-  </select>
+  </select> {% endcomment %}
 </div>
+
+
+
 
             </div>
             <!-- ... (other fields) ... -->
-            <div class="btn-box">
+            {% comment %} <div class="btn-box">
               <button type="submit" class="btn">Schedule Now</button>
+            </div> {% endcomment %}
+            <div class="btn-box">
+              <button type="submit" class="btn" id="submitButton">Schedule Now</button>
             </div>
           </form>
         </div>
@@ -475,7 +467,88 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
   <!-- custom js -->
   <script src="{% static 'js/custom.js' %}"></script>
-
+  <script>
+    function validateDate() {
+        // Get the selected date from the input field
+        var selectedDate = new Date(document.getElementById('inputPreferredDate').value);
+    
+        // Get the current date
+        var currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0); // Set current date to midnight
+    
+        // Get the validation message element
+        var validationMessage = document.getElementById('dateValidationMessage');
+    
+        // Check if the selected date is in the past or equal to the current date
+        if (selectedDate < currentDate) {
+            validationMessage.textContent = 'Past dates are not allowed.';
+            document.getElementById('preferredTime').disabled = true;
+        } else {
+            validationMessage.textContent = ''; // Clear the validation message
+            document.getElementById('preferredTime').disabled = false;
+        }
+    }
+    </script>
+ 
+ <script>
+      // Get the textarea elements
+      const medicalConditionsTextarea = document.getElementById('inputMedicalConditions');
+      const symptomsTextarea = document.getElementById('inputSymptoms');
+    
+      // Get the error message elements
+      const medicalConditionsError = document.getElementById('medicalConditionsError');
+      const symptomsError = document.getElementById('symptomsError');
+    
+      // Get the submit button element
+      const submitButton = document.getElementById('submitButton');
+    
+      // Function to validate a textarea field
+      function validateTextarea(textarea, errorElement) {
+        // Get the value of the textarea
+        const value = textarea.value.trim();
+    
+        // Regular expression to match only alphabetic characters, spaces, and commas
+        const regex = /^[a-zA-Z, ]+$/;
+    
+        if (value === '') {
+          // Empty field, show an error message
+          errorElement.textContent = 'This field cannot be empty.';
+          submitButton.disabled = true; // Disable the submit button
+        } else if (!regex.test(value)) {
+          // Field contains invalid characters, show an error message
+          errorElement.textContent = 'This field can only contain alphabetic characters, spaces, and commas.';
+          submitButton.disabled = true; // Disable the submit button
+        } else {
+          // Field is valid, clear the error message
+          errorElement.textContent = '';
+          submitButton.disabled = false; // Enable the submit button
+        }
+      }
+    
+      // Add keyup event listeners to both textarea fields
+      medicalConditionsTextarea.addEventListener('keyup', function() {
+        validateTextarea(medicalConditionsTextarea, medicalConditionsError);
+      });
+    
+      symptomsTextarea.addEventListener('keyup', function() {
+        validateTextarea(symptomsTextarea, symptomsError);
+      });
+    
+      // Add a submit event listener to the form
+      document.querySelector('form').addEventListener('submit', function(event) {
+        // Validate both textarea fields
+        validateTextarea(medicalConditionsTextarea, medicalConditionsError);
+        validateTextarea(symptomsTextarea, symptomsError);
+    
+        // Check if there are validation errors in either field
+        if (medicalConditionsError.textContent !== '' || symptomsError.textContent !== '') {
+          // Prevent the form from submitting if there are errors
+          event.preventDefault();
+        }
+      });
+    </script> 
+    
+    
   <style>
     /* Add this CSS to your stylesheet */
     .quote_btn-container .dropdown-toggle {

@@ -248,7 +248,7 @@
           <h3>Medical Record</h3>
           <br>
           <a href="{% url 'medical_record' %}" class="btn-show-medical-record">Add Medical Records</a> <br>
-          <br> <a href="{% url 'medical_record' %}" class="btn-show-medical-record">View Medical Records</a>
+          <br> <a href="{% url 'medical_record_display' %}" class="btn-show-medical-record">View Medical Records</a>
       </div>
   </div>
   
@@ -395,7 +395,7 @@
     <!-- Analytics -->
     <style>
       /* CSS for the button */
-.btn-show-medical-record {
+    .btn-show-medical-record {
     display: inline-block;
     padding: 10px 20px; /* Adjust padding as needed */
     background-color: #007BFF; /* Button background color */

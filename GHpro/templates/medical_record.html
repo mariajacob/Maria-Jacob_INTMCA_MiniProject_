@@ -212,11 +212,11 @@
         <h1>Medical Record</h1>
         <form method="POST" action="{% url 'medical_record' %}">
             {% csrf_token %}
-            <label for="patient_name">First Name:</label>
+            {% comment %} <label for="patient_name">First Name:</label>
             <input type="text" id="patient_name" value="{{ patientprofile.first_name}}" name="first_name" required>
             
             <label for="patient_name">Last Name:</label>
-            <input type="text" id="patient_name" value="{{ patientprofile.last_name}}" name="last_name" required>
+            <input type="text" id="patient_name" value="{{ patientprofile.last_name}}" name="last_name" required> {% endcomment %}
         
         
             <label for="date">Date:</label>
@@ -240,14 +240,14 @@
     </div>
    
 </div>
-{% comment %} <div class="sidebar-overlay" data-reff=""></div>
+ <div class="sidebar-overlay" data-reff=""></div>
 <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
 <script src="{% static 'assets/js/popper.min.js' %}"></script>
 <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
 <script src="{% static 'assets/js/Chart.bundle.js' %}"></script>
 <script src="{% static 'assets/js/chart.js' %}"></script>
-<script src="{% static 'assets/js/app.js' %}"></script> {% endcomment %}
+<script src="{% static 'assets/js/app.js' %}"></script> 
 
     <!-- Analytics -->
    

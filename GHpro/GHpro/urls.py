@@ -37,6 +37,9 @@ urlpatterns = [
     path('contact', views.contact, name="contact"),
     
     path('medical_record', views.medical_record, name="medical_record"),
+    path('medical_record_display', views.medical_record_display, name="medical_record_display"),
+    
+   
     
     path('index-2', views.index2, name="index-2"), 
     
@@ -57,7 +60,7 @@ urlpatterns = [
     path('add_asha', add_asha, name="add_asha"),  # Add this line for adding Asha Worker
     path('patients', views.patients, name="patients"),
     path('schedule', views.schedule, name="schedule"),
-    path('add-patient', views.addpatient, name="add-patient"),
+    # path('add-patient', views.addpatient, name="add-patient"),
     
 
     path('appointments', views.ad_appointment, name="appointments"), 
@@ -77,7 +80,10 @@ urlpatterns = [
     
     path('asha_approved_appo', views.asha_approved_appointments, name='asha_approved_appo'),
     path('approve-appointment/<int:appointment_id>/', views.approve_appointment, name='approve_appointment'),
+    # path('pending-appointment/<int:appointment_id>/', views.pending_appointment, name='pending_appointment'),
+    
     path('patient_users/', views.patient_users, name='patient_users'),
+    path('search-patient/', views.search_patient, name='search_patient'),
    
 
     path('login_page', login_page, name='login_page'),

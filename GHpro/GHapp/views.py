@@ -50,9 +50,9 @@ patient_required
 def contact(request):
     return render(request,'contact.html')
 
-@login_required(login_url='login_page')
-def patients(request):
-    return render(request,'admin_temp/patients.html')
+# @login_required(login_url='login_page')
+# def patients(request):
+#     return render(request,'admin_temp/patients.html')
 
 @login_required(login_url='login_page')
 def schedule(request):
@@ -61,50 +61,66 @@ def schedule(request):
 def index2(request):
     return render(request,'admin_temp/index-2.html')
 
+# @login_required(login_url='login_page')
+# def addpatient(request):
+#     return render(request,'admin_temp/add-patient.html')
+
+
+# @login_required(login_url='login_page')
+# def patients(request):
+#     pat = PatientProfile.objects.all()
+#     return render(request, 'admin_temp/patients.html', {'pat': pat})
+
 @login_required(login_url='login_page')
-def addpatient(request):
-    return render(request,'admin_temp/add-patient.html')
+def patients(request):
+    # patients = CustomUser.objects.filter(role=CustomUser.PATIENTS)
+    patients = PatientProfile.objects.filter()
+    return render(request, 'admin_temp/patients.html', {'patients': patients})
+
+
+
 
 def medical_record(request):
-    return render(request,'medical_record.html')
+    
+    if request.method == "POST":
+        # Get the data from the form
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        date = request.POST.get("date")
+        doctor_notes = request.POST.get("doctor_notes")
+        medications_needed = request.POST.get("medications_needed")
+        treatments = request.POST.get("treatments")
+        current_conditions = request.POST.get("current_conditions")
 
-
-
-
-def medical_record(request):
-    patientprofile = request.user.patientprofile
-    if request.method == 'POST':
-        # Handle form submission
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        date = request.POST['date']
-        doctor_notes = request.POST['doctor_notes']
-        medications_needed = request.POST['medications_needed']
-        treatments = request.POST['treatments']
-        current_conditions = request.POST['current_conditions']
-
-        # Assuming you have a way to retrieve the patient profile based on the name
-        # patient = PatientProfile.objects.get(first_name=patient_name)
-
-        # Create a new medical record entry
-        medrec = MedicalRecord(
+        # Create a new MedicalRecord instance and save it
+        medical_record = MedicalRecord(
             first_name=first_name,
             last_name=last_name,
             date=date,
             doctor_notes=doctor_notes,
             medications_needed=medications_needed,
             treatments=treatments,
-            current_conditions=current_conditions
+            current_conditions=current_conditions,
         )
-        medrec.save()
-        # Redirect to a success page or wherever you want
-        return redirect('medical_record')
+        medical_record.save()
 
-    return render(request, 'medical_record.html',{'patientprofile': patientprofile})
+        # Redirect to the medical record display page
+        return redirect("medical_record_display")
 
-# def medical_record_success(request):
-#     # You can create a separate template for the success page
-#     return render(request, 'medical_record_success.html')
+    return render(request, "medical_record.html")   
+
+# def medical_record_display(request):
+#     # Retrieve the recently added medical record (you may need to adjust this query)
+#     latest_medical_record = MedicalRecord.objects.latest('id')
+
+#     return render(request, "medical_record_display.html", {"medical_record": latest_medical_record})
+@login_required
+def medical_record_display(request):
+    # Retrieve medical records for the currently logged-in user
+    medical_records = MedicalRecord.objects.filter(user=request.user)
+
+    return render(request, "medical_record_display.html", {"medical_records": medical_records})
+
 
 
 @login_required(login_url='login_page')
@@ -325,16 +341,48 @@ def pro_ashaworker(request):
     asha = Ashaworker.objects.filter(user=request.user).first() 
     return render(request, 'asha_temp/pro_ashaworker.html', {'asha': [asha]})
 
-
+from datetime import datetime
 @login_required(login_url='login_page')
 def ad_appointment(request):
-    appo = Appointment.objects.all()
-    return render(request, 'admin_temp/appointments.html', {'appo': appo})
+    # Get the current date and time
+    current_date = datetime.now().date()
+    current_time = datetime.now().time()
 
-# def approved_appointments(request):
-#     return render(request, 'asha_temp/asha_approved_appo.html')
+    # Retrieve all appointments
+    appointments = Appointment.objects.all()
 
-@ashaworker_required
+    # Separate appointments into past, current, and future lists
+    past_appointments = []
+    current_appointments = []
+    future_appointments = []
+
+    for appointment in appointments:
+        # Check if preferred_time is not None and convert it to datetime.time
+        if appointment.preferred_time:
+            preferred_time = datetime.strptime(appointment.preferred_time, '%I:%M %p').time()
+
+            if appointment.preferred_date < current_date:
+                past_appointments.append(appointment)
+            elif appointment.preferred_date == current_date:
+                if preferred_time < current_time:
+                    past_appointments.append(appointment)
+                else:
+                    current_appointments.append(appointment)
+            else:
+                future_appointments.append(appointment)
+
+    # Sort all appointment lists by date and time
+    past_appointments.sort(key=lambda x: (x.preferred_date, x.preferred_time))
+    current_appointments.sort(key=lambda x: (x.preferred_date, x.preferred_time))
+    future_appointments.sort(key=lambda x: (x.preferred_date, x.preferred_time))
+
+    return render(request, 'admin_temp/appointments.html', {
+        'past_appointments': past_appointments,
+        'current_appointments': current_appointments,
+        'future_appointments': future_appointments
+    })
+
+@login_required(login_url='login_page')
 def asha_approved_appointments(request):
     approved_appointments = Appointment.objects.filter(is_approved=True)
     print(approved_appointments)
@@ -343,20 +391,37 @@ def asha_approved_appointments(request):
 
 
 from django.shortcuts import get_object_or_404, redirect
-@login_required(login_url='login_page')
 def approve_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, pk=appointment_id)
     appointment.is_approved = True
     appointment.save()
-    
-    # Redirect back to the list of approved appointments
-    return redirect("asha_approved_appo")
+    # messages.success(request, 'Appointment approval successful. An approval email with the login link has been sent to the Patient.')
+    return redirect("appointments")
+
+
 
 @ashaworker_required
 def patient_users(request):
     # patients = CustomUser.objects.filter(role=CustomUser.PATIENTS)
     patients = PatientProfile.objects.filter()
     return render(request, 'asha_temp/patient_users.html', {'patients': patients})
+
+@login_required(login_url='login_page')
+def search_patient(request):
+    # Get the search query from the GET request
+    search_query = request.GET.get('patientname', '')
+
+    # Filter Ashaworkers whose name contains the search query
+    patients = PatientProfile.objects.filter(first_name__icontains=search_query)
+    patients = PatientProfile.objects.filter(last_name__icontains=search_query)
+    
+
+    context = {
+        'patients': patients,
+        'search_query': search_query,
+    }
+
+    return render(request, 'asha_temp/patient_users.html', context)
 
 
 @login_required(login_url='login_page')
@@ -400,12 +465,12 @@ def appointment_form(request,appointment_id=None):
             preferred_time=preferred_time
         )
         appointment.save()
-        subject = 'Appointment is Successful'
-        message = f'Your appointment for home visit is successful. Your Scheduled date: {preferred_date}, Your Scheduled Time: {preferred_time}'
-        from_email = settings.EMAIL_HOST_USER  # Your email address
-        recipient_list = [request.user.email]  # Employee's email address
+        # subject = 'Appointment is Successful'
+        # message = f'Your appointment for home visit is successful. Your Scheduled date: {preferred_date}, Your Scheduled Time: {preferred_time}'
+        # from_email = settings.EMAIL_HOST_USER  # Your email address
+        # recipient_list = [request.user.email]  # Employee's email address
 
-        send_mail(subject, message, from_email, recipient_list)
+        # send_mail(subject, message, from_email, recipient_list)
         
 
         return render(request,'appointment.html')
