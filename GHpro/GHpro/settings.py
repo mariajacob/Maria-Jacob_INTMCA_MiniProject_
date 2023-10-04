@@ -172,3 +172,6 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'jacobmaria1308@gmail.com'
 EMAIL_HOST_PASSWORD = 'aelfponbmueceqjd'
+
+RAZOR_KEY_ID = 'rzp_test_h542V1PlEITokF'
+RAZOR_KEY_SECRET = 'wBTVSeuuy8jdM4UUdOuW0cAP'

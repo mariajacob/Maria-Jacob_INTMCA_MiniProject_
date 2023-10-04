@@ -119,6 +119,7 @@
                             
                             
                             <div>
+                                <p>Name: {{ patient.id}}</p>
                                 <p>Name: {{ patient.first_name }} {{ patient.last_name }}</p>
                                 {% comment %} <p>Last Name: {{ patient.last_name }}</p> {% endcomment %}
                                 <p>Email: {{ patient.email }}</p>
@@ -137,18 +138,21 @@
                                 <p>Surgical Historys:{{ patient.surgical_history }}</p>
                                 <p>Allergies (Medications, Food, Environmental): {{ patient.allergies }}</p>
                                 
-                                <div class="card shadow-sm">
+                                {% comment %} <div class="card shadow-sm">
                                     <div class="card-header bg-transparent text-center">
                                         <h3>Medical Record</h3>
                                         <br>
                                         <a href="{% url 'medical_record' %}" class="btn-show-medical-record">Add Medical Records</a> <br>
                                         <br><a href="{% url 'medical_record_display' %}" class="btn-show-medical-record">View Medical Records</a>
                                     </div>
-                                </div>
+                                </div> {% endcomment %}
                             </div>
+                            <form method="GET" action="{% url 'medical_record' patient.id %}">
+                                <button type="submit" class="btn-show-medical-record">Add Medical Records</button>
+                            </form>
+                                                   
                         </div>
                     </div>
-                 
                     {% endfor %} 
                 </div> 
             </div>

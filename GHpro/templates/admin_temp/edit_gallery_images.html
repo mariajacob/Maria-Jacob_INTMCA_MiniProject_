@@ -1,0 +1,252 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.min.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+			<div class="header-left">
+				<a href="{% url 'index-2' %}" class="logo">
+					<img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+				</a>
+			</div>
+			 <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+                
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+					</div>
+                    {% else %}
+
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+					</div>
+                    
+                    {% endif %}
+                </li>
+            </div>
+        </div> 
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+                        <li class="active">
+                            <a href="{% url 'admin_dashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                        </li> 
+						{% comment %} <li>
+                            <a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user-md"></i> <span>Asha Workers</span></a>
+                        </li> {% endcomment %}
+                        
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span>Asha Workers </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'ad_ashaworker' %}">Asha Workers List</a></li>
+								
+								
+							</ul>
+						</li>
+
+
+
+                         <li>
+                            <a href="{% url 'patients' %}"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
+                        </li>
+                        <li>
+                            <a href="{% url 'appointments' %}"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                        </li>
+                        <li>
+                            <a href="{% url 'schedule' %}"><i class="fa fa-calendar-check-o"></i> <span>Asha Workers Schedule</span></a>
+                        </li> 
+                        
+                        {% comment %} <li>
+                            <a href="{% url 'adgallery' %}"><i class="fa fa-calendar-check-o"></i> <span>Gallery</span></a>
+                        </li>  {% endcomment %}
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span> Gallery </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'adgallery' %}">Add Image</a></li>
+								<li><a href="{% url 'dis_gallery' %}">Edit Image</a></li>
+								
+							</ul>
+						</li>
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a href="{% url 'blog' %}">Blog View</a></li>
+                                <li><a href="{% url 'add-blog' %}">Add Blog</a></li>
+                               
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="page-wrapper">
+            <div class="content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 offset-md-3">
+                            <h2>EDIT IMAGE</h2>
+
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="image">Image:</label>
+                                    <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                    <div class="invalid-feedback">Please select a valid image file.</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="title">Title:</label>
+                                    <input type="text" class="form-control" id="title" name="title" value="{{ image.title }}" required>
+                                    <div class="invalid-feedback" id="titleValidation">Please enter a valid title with no special characters or numbers, and capitalize the first letter.</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="description">Description:</label>
+                                    <textarea class="form-control" id="description" name="description" rows="4" required>{{ image.description }}</textarea>
+                                    <div class="invalid-feedback" id="descriptionValidation">Please enter a valid description with no special characters or numbers.</div>
+                                </div>
+                                
+                                <!-- Bootstrap-styled button -->
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary btn-block">UPDATE IMAGE</button>
+                                </div>
+                            </form>
+                           
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+            </div>
+            
+    </div>
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/select2.min.js' %}"></script>
+    <script src="{% static 'ssets/js/moment.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+
+
+
+    {% comment %} <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> {% endcomment %}
+    <script>
+        // Function to validate the image file
+        function validateImage() {
+            var imageField = document.getElementById('image');
+            if (imageField.files.length === 0) {
+                imageField.classList.add('is-invalid');
+                return false;
+            } else {
+                imageField.classList.remove('is-invalid');
+                return true;
+            }
+        }
+    
+        // Function to validate the title
+        function validateTitle() {
+            var titleField = document.getElementById('title');
+            var titleRegex = /^[A-Z][a-zA-Z ]*$/;
+            if (!titleRegex.test(titleField.value.trim())) {
+                titleField.classList.add('is-invalid');
+                document.getElementById('titleValidation').style.display = 'block';
+                return false;
+            } else {
+                titleField.classList.remove('is-invalid');
+                document.getElementById('titleValidation').style.display = 'none';
+                return true;
+            }
+        }
+    
+        // Function to validate the description
+        function validateDescription() {
+            var descriptionField = document.getElementById('description');
+            var descriptionRegex = /^[A-Z][a-zA-Z ]*$/;
+            if (!descriptionRegex.test(descriptionField.value.trim())) {
+                descriptionField.classList.add('is-invalid');
+                document.getElementById('descriptionValidation').style.display = 'block';
+                return false;
+            } else {
+                descriptionField.classList.remove('is-invalid');
+                document.getElementById('descriptionValidation').style.display = 'none';
+                return true;
+            }
+        }
+    
+        // Event listeners for keyup validation
+        document.getElementById('image').addEventListener('keyup', validateImage);
+        document.getElementById('title').addEventListener('keyup', validateTitle);
+        document.getElementById('description').addEventListener('keyup', validateDescription);
+    
+        // Client-side validation using JavaScript
+        document.getElementById('imageForm').addEventListener('submit', function(event) {
+            var isValidImage = validateImage();
+            var isValidTitle = validateTitle();
+            var isValidDescription = validateDescription();
+            
+            if (!isValidImage || !isValidTitle || !isValidDescription) {
+                event.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
+    </script>
+    
+    
+</body>
+
+<style>
+    .header {
+        background-color: #00c6a9;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 1039;
+        height: 50px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    }
+</style>
+<!-- doctors23:17-->
+</html>

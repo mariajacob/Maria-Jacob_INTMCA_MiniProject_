@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.min.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+			<div class="header-left">
+				<a href="{% url 'index-2' %}" class="logo">
+					<img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+				</a>
+			</div>
+			 <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+           
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu">
+						{% comment %} <a class="dropdown-item" href="{% url 'edit_asha_profile' %}">Profile</a> {% endcomment %}
+						<a class="dropdown-item" href="{% url 'pro_ashaworker' %}">Profile</a>
+                        <a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+					</div>
+                    {% else %}
+
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+					</div>
+                    
+                    {% endif %}
+                </li>
+           
+        </div> 
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+                        <li class="active">
+                            <a href="{% url 'asha_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                           
+                        </li> 
+                        <li>
+                            <a href="{% url 'asha_approved_appo' %}"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                        </li>
+                        <li>
+                            <a href="{% url 'asha_timeslots'%}"><i class="fa fa-calendar"></i> <span>Schedules</span></a> 
+                        </li>
+                        <li>
+                            <a href="{% url 'asha_timeslots_shows'%}"><i class="fa fa-calendar"></i> <span>View Schedules</span></a> 
+                        </li> 
+                        <li>
+                            <a href="{% url 'patient_users' %}"><i class="fa fa-wheelchair"></i> <span>Patients List</span></a>
+                            
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="page-wrapper">
+            <br><br><br><br>
+            
+            
+            
+            <div class="row doctor-grid">
+                
+                {% for slot in time_slots %}
+                
+                <div class="col-md-4 col-sm-4  col-lg-3">
+                    <div class="profile-widget">
+                        <div>
+                           
+                            <p>Date: {{ slot.date }}</p>
+                            
+                            <p>Time:{{ slot.start_time }} to {{ slot.end_time }}</p>
+                           
+                           
+                          
+                        </div>
+                                     
+                    </div>
+                </div>
+                {% endfor %}
+            </div> 
+
+            
+        </div> 
+            
+    </div>
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/Chart.bundle.js' %}"></script>
+    <script src="{% static 'assets/js/chart.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+    <script>
+        // Get a reference to the date input field by its ID
+        var reservationDateInput = document.getElementById('date');
+      
+        // Get today's date
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; // January is 0
+        var yyyy = today.getFullYear();
+      
+        // Format today's date as "YYYY-MM-DD"
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+      
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+      
+        today = yyyy + '-' + mm + '-' + dd;
+      
+        // Set the minimum date attribute to today
+        reservationDateInput.min = today;
+      
+        // Add an event listener for date input changes
+        reservationDateInput.addEventListener('change', function () {
+            var selectedDate = new Date(this.value);
+            if (selectedDate < today) {
+                alert('Please select a date from today onwards.');
+                this.value = today; // Reset the input value to today's date
+            }
+        });
+      </script>
+    
+<style>
+    .header {
+        background-color: #00c6a9;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    }
+   .page-wrapper{
+    color:black;
+    margin-left:300px;
+
+   }
+   .profile-widget {
+    background-color: #bef7f1; /* Set the background color */
+    border: 3px solid #000; /* Add a border */
+    padding: 10px; /* Add padding for spacing */
+    color: #000; /* Set font color to black */
+    font-size: 25px; /* Set font size to 18 */
+    margin-bottom: 20px; /* Add spacing between each profile-widget */
+}
+
+/* Style the date and time paragraphs */
+.profile-widget p {
+    margin: 0; /* Remove default paragraph margin */
+}
+</style>
+
+
+</body>
+
+
+
+</html>

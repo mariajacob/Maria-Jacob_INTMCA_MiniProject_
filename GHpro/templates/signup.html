@@ -230,7 +230,7 @@ pre a {
      const emailValue = emailInput.value;
     const emailError = document.getElementById('emailError');
       
-    if (!/^\S+@\S+\.\S+$/.test(emailValue)) {
+    if (!/^\S+@\S+(\.\S+)?$/.test(emailValue)) {
   emailError.textContent = 'Enter a valid email address.';
    return false;
   } else {

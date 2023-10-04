@@ -1,4 +1,6 @@
 from django.db import models
+
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
@@ -98,7 +100,7 @@ class Ashaworker(models.Model):
     address = models.TextField()
     taluk = models.CharField(max_length=100)
     Panchayat = models.CharField(max_length=100)
-    ward = models.CharField(max_length=100)
+    ward = models.CharField(max_length=100,blank=True, null=True)
     
     postal = models.IntegerField()
     phone = models.IntegerField()
@@ -124,7 +126,27 @@ class Ashaworker(models.Model):
     def _str_(self):
         return self.Name
 
+class AshaworkerSchedule(models.Model):
+    # Reference to the Ashaworker
+    ashaworker = models.ForeignKey(Ashaworker, on_delete=models.CASCADE, related_name='schedules')
 
+    # Available Days
+    available_days = models.CharField(max_length=10, choices=[
+        ('Sunday', 'Sunday'),
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+    ])
+
+    # Start and End Time
+    preferred_date = models.DateField(null=True,blank=True)
+    preferred_time = models.CharField(max_length=20, choices=[('09:00AM', '09:00AM'), ('10:00 AM', '10:00 AM'), ('11:00 AM', '11:00 AM'), ('12:00 PM', '12:00 PM'), ('01:00 PM', '01:00 PM')],null=True,blank=True)
+
+    def __str__(self):
+        return f'Schedule for {self.ashaworker.Name} ({self.available_days})'
 
 
 
@@ -136,7 +158,7 @@ class Image(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     image = models.ImageField(upload_to='gallery/')  # 'gallery/' is the directory where images will be stored
-
+    is_enabled = models.BooleanField(default=True) 
     def __str__(self):
         return self.title
     
@@ -154,7 +176,26 @@ class PatientProfile(models.Model):
     house_name = models.CharField(max_length=100, null=True,blank=True)
     house_no = models.IntegerField(null=True,blank=True)
     address = models.CharField(max_length=255,null=True,blank=True)
-    ward = models.CharField(max_length=100)
+    # ward = models.CharField(max_length=100)
+    ward = models.CharField(max_length=50, choices=[('ward1', 'Ward 1-VENGATHANAM'),
+    ('ward2', 'Ward 2-PALAPRA'),
+    ('ward3', 'Ward 3-VELICHIYANI'),
+    ('ward4', 'Ward 4-CHOTTY'),
+    ('ward5', 'Ward 5-MANGAPPARA'),
+    ('ward6', 'Ward 6-VADAKKEMALA'),
+    ('ward7', 'Ward 7-PARATHODU'),
+    ('ward8', 'Ward 8-NADUKANI'),
+    ('ward9', 'Ward 9-EDAKKUNNAM'),
+    ('ward10', 'Ward 10-KOORAMTHOOKKU'),
+    ('ward11', 'Ward 11-KOOVAPPALLY'),
+    ('ward12', 'Ward 12-KULAPPURAM'),
+    ('ward13', 'Ward 13-PALAMPRA'),
+    ('ward14', 'Ward 14-MUKKALY'),
+    ('ward15', 'Ward 15-PODIMATTAM'),
+    ('ward16', 'Ward 16-ANAKKALLU'),
+    ('ward17', 'Ward 17-PULKUNNU'),
+    ('ward18', 'Ward 18-PAZHUMALA'),
+    ('ward19', 'Ward 19-CHIRABHAGAM'),],null=True,blank=True)
     pin_code = models.IntegerField(null=True,blank=True)
     phone_number = models.IntegerField(null=True,blank=True)
     
@@ -173,10 +214,21 @@ class PatientProfile(models.Model):
     def _str_(self):
         return self.first_name
 
+
+
+class Slots(models.Model):
+    ashaworker = models.ForeignKey(Ashaworker, on_delete=models.CASCADE)
+    date = models.DateField(null=True,blank=True)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    
+    def _str_(self):
+        return f"Slot for Dr. {self.doctor.Name} on {self.date} at {self.start_time}-{self.end_time}"
+
 class Appointment(models.Model):
    
     is_approved=models.BooleanField(default=False)
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    # user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(max_length=255,null=True,blank=True)
     last_name = models.CharField(max_length=255,null=True,blank=True)
     email = models.EmailField(null=True,blank=True)
@@ -190,18 +242,71 @@ class Appointment(models.Model):
     urgency = models.CharField(max_length=50, choices=[('Routine check-up', 'Routine check-up'), ('Non-urgent medical check-up', 'Non-urgent medical check-up'), ('Urgent medical check-up', 'Urgent medical check-up')],null=True,blank=True)
     medication_names = models.TextField(null=True,blank=True)
     symptoms = models.TextField(null=True,blank=True)
-    preferred_date = models.DateField(null=True,blank=True)
-    preferred_time = models.CharField(max_length=20, choices=[('09:00 AM', '09:00 AM'), ('10:00 AM', '10:00 AM'), ('11:00 AM', '11:00 AM'), ('12:00 PM', '12:00 PM'), ('01:00 PM', '01:00 PM')],null=True,blank=True)
+    # preferred_date = models.DateField(null=True,blank=True)
+    # preferred_time = models.CharField(max_length=20, choices=[('09:00 AM', '09:00 AM'), ('10:00 AM', '10:00 AM'), ('11:00 AM', '11:00 AM'), ('12:00 PM', '12:00 PM'), ('01:00 PM', '01:00 PM')],null=True,blank=True)
+
+    ashaworker = models.ForeignKey(Ashaworker, on_delete=models.CASCADE, related_name='appointments',blank=True, null=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    slot = models.ForeignKey(Slots,on_delete=models.CASCADE,null=True,blank=True)
+    
+    date = models.DateField(blank=True, null=True)
+    status=models.BooleanField(default=True,blank=True, null=True)
 
     def __str__(self):
         return self.email
 
+#     def __str__(self):
+#         return self.email
+
+# class MedicalRecord(models.Model):
+#     first_name = models.CharField(max_length=255,null=True,blank=True)
+#     last_name = models.CharField(max_length=255,null=True,blank=True)
+#     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+#     date = models.DateField()
+#     doctor_notes = models.TextField()
+#     medications_needed = models.TextField()
+#     treatments = models.TextField()
+#     current_conditions = models.TextField()
+
 class MedicalRecord(models.Model):
-    first_name = models.CharField(max_length=255,null=True,blank=True)
-    last_name = models.CharField(max_length=255,null=True,blank=True)
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
-    date = models.DateField()
-    doctor_notes = models.TextField()
-    medications_needed = models.TextField()
-    treatments = models.TextField()
-    current_conditions = models.TextField()
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    # first_name = models.CharField(max_length=255, null=True, blank=True)
+    # last_name = models.CharField(max_length=255, null=True, blank=True)
+   
+    date = models.DateField( null=True, blank=True)
+    doctor_notes = models.TextField( null=True, blank=True)
+    medications_needed = models.TextField( null=True, blank=True)
+    treatments = models.TextField( null=True, blank=True)
+    current_conditions = models.TextField( null=True, blank=True)
+
+
+
+class Donation(models.Model):
+    donor_name = models.CharField(max_length=255)
+    email = models.EmailField()
+    donor_place = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    message = models.TextField(blank=True, null=True)
+    # order=models.CharField(max_length=255,blank=True, null=True)
+    def __str__(self):
+        return self.donor_name
+
+
+
+    
+
+
+class Blog(models.Model):
+    author=models.CharField(max_length=200, null=True,blank=True)
+    title = models.CharField(max_length=200, verbose_name='Blog Name')
+    images = models.ImageField(upload_to='blog_images/', verbose_name='Blog Images', null=True, blank=True)
+    category = models.CharField(max_length=100,choices = [('Health Care','Health Care'), ('Child', 'Child'),('Technology', 'Technology')])
+    blog_date = models.DateField(null=True,blank=True)
+    # sub_category = models.CharField(max_length=100, verbose_name='Blog Sub Category')
+    description = models.TextField(verbose_name='Blog Description')
+    # tags = models.CharField(max_length=200, verbose_name='Tags', help_text='Separated with a comma')
+    
+    def __str__(self):
+        return self.title
+
+

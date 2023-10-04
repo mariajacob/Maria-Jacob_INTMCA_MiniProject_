@@ -17,7 +17,7 @@ Including another URLconf
 from GHapp import views
 from django.contrib import admin
 from django.urls import path, include
-from GHapp.views import login_page,hca_signup, appointment_form,register,ad_gallery,loggout,add_asha,ResetPasswordView,ChangePasswordView
+from GHapp.views import login_page,hca_signup,edit_gallery_images, appointment_form,register,ad_gallery,loggout,add_asha,ResetPasswordView,ChangePasswordView
 from django.contrib.auth import views as auth_views
 
 from django.conf import settings
@@ -32,11 +32,34 @@ urlpatterns = [
     path('appointment_form', appointment_form, name="appointment_form"),
     path('about', views.about, name="about"),
     path('treatment', views.treatment, name="treatment"),
-    path('doctor', views.doctor, name="doctor"),
+    path('gallery', views.gallery, name="gallery"),
+
+    path('resources', views.resources, name="resources"),
+    path('resources_details/<int:blog_id>/', views.resources_details, name="resources_details"),
+     path('search-resources/', views.search_resources, name='search_resources'),
+
     path('testimonial', views.testimonial, name="testimonial"),
     path('contact', views.contact, name="contact"),
+    path('donation', views.donation, name="donation"),
+
+
+    path('blog', views.blog, name="blog"),
+    # path('blog-details', views.blog_details, name="blog-details"),
+    path('blog_details/<int:blog_id>/', views.blog_details, name='blog-details'),
+    path('add-blog', views.add_blog, name="add-blog"),
+   
+    path('edit_blog/<int:blog_id>/', views.edit_blog, name='edit_blog'),
     
-    path('medical_record', views.medical_record, name="medical_record"),
+
+
+
+
+
+    
+    # path('medical_record', views.medical_record, name="medical_record"),
+    path('medical_record/<int:patient_id>/', views.medical_record, name='medical_record'),
+
+    # path('medical_record/', views.medical_record, name='medical_record'),
     path('medical_record_display', views.medical_record_display, name="medical_record_display"),
     
    
@@ -56,10 +79,29 @@ urlpatterns = [
    
 
 
-
+    path('check-ward-exists/', views.check_ward_exists, name='check_ward_exists'),
     path('add_asha', add_asha, name="add_asha"),  # Add this line for adding Asha Worker
     path('patients', views.patients, name="patients"),
-    path('schedule', views.schedule, name="schedule"),
+    # path('schedule', views.schedule, name="schedule"),
+    path('schedule/', views.schedule, name='schedule'),
+    
+
+     path('get_dates_for_ashaworker/', views.get_dates_for_ashaworker, name='get_dates_for_ashaworker'),
+
+    # URL for getting time slots based on selected Ashaworker and date
+    path('get_timeslots_for_date/', views.get_timeslots_for_date, name='get_timeslots_for_date'),
+
+    # path('get_ashaworker_schedule/', views.get_ashaworker_schedule, name='get_ashaworker_schedule'),
+    # path('ashaworker_schedules/<int:ashaworker_id>/', views.ashaworker_schedules, name='ashaworker_schedules'),
+
+
+
+     path('asha_timeslots_shows', views.asha_timeslots_shows, name="asha_timeslots_shows"),
+     path('asha_timeslots', views.asha_timeslots, name="asha_timeslots"),
+    
+    
+    
+    
     # path('add-patient', views.addpatient, name="add-patient"),
     
 
@@ -91,7 +133,10 @@ urlpatterns = [
     path('hca_signup', hca_signup, name='hca_signup'),
     path('loggout', loggout, name='loggout'),  
 
-    path('edit_gallery', views.edit_gallery, name="edit_gallery"),
+    # path('edit_gallery', views.edit_gallery, name="edit_gallery"),
+    path('dis_gallery', views.dis_gallery, name='dis_gallery'),
+    path('edit_gallery_images/<int:image_id>/', edit_gallery_images, name='edit_gallery_images'),
+    path('soft_delete_image/<int:image_id>/', views.soft_delete_image, name='soft_delete_image'),
     
     path('delete_asha/<int:asha_id>/', views.delete_asha, name='delete_asha'),
 
@@ -115,6 +160,16 @@ path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
          name='password_reset_complete'),
 
     path('password-change/', ChangePasswordView.as_view(), name='password_change'),
+
+
+
+
+
+
+
+
+    path('payment/<int:donat_id>/', views.payment, name='payment'),
+    path('paymenthandler/', views.paymenthandler, name='paymenthandler'),
     
 ]
 

@@ -175,7 +175,7 @@
 
             {% comment %} <button type="submit" class="btn btn-primary">Login</button>
             <pre>Don't have an account? <a href="{% url 'register' %}" style="color: rgb(201, 7, 7); font-size: 14px;">Signup</a></pre> {% endcomment %}
-            <br><button type="submit" class="btn btn-primary" id="submit">LOGIN</button>
+            <br><button type="submit" id="login" class="btn btn-primary" id="submit">LOGIN</button>
             <pre>Don't have an account? <a href="{% url 'register' %}" >Signup</a></pre>
           </form>
           
@@ -231,7 +231,7 @@
       }
     } {% endcomment %}
 
-    function validateEmail() {
+    {% comment %} function validateEmail() {
       const emailValue = emailInput.value;
       const emailError = document.getElementById('emailError');
       
@@ -242,8 +242,20 @@
         emailError.textContent = '';
         return true;
       }
-    }
+    } {% endcomment %}
 
+    function validateEmail() {
+      const emailValue = emailInput.value;
+      const emailError = document.getElementById('emailError');
+      
+      if (!/^\S+@\S+(\.\S+)?$/.test(emailValue)) {
+        emailError.textContent = 'Enter a valid email address with an optional period (".").';
+        return false;
+      } else {
+        emailError.textContent = '';
+        return true;
+      }
+    }
     
 
     function validatePassword() {

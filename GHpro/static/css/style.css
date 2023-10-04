@@ -475,7 +475,7 @@ a:focus {
 .book_section h4::before {
   content: "";
   position: absolute;
-  left: 0;
+  left: 350px;
   bottom: 0;
   width: 75px;
   height: 2px;

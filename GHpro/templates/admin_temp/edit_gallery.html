@@ -179,8 +179,16 @@
                         <ul style="display: none;">
                             
                             <li><a href="{% url 'adgallery' %}">Add Image</a></li>
-                            <li><a href="{% url 'edit_gallery' %}">Edit Image</a></li>
-                            <li><a href="attendance.html">Attendance</a></li>
+                            <li><a href="{% url 'dis_gallery' %}">Edit Image</a></li>
+                            
+                        </ul>
+                    </li>
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
+                        <ul style="display: none;">
+                            <li><a href="{% url 'blog' %}">Blog View</a></li>
+                            <li><a href="{% url 'add-blog' %}">Add Blog</a></li>
+                           
                         </ul>
                     </li>
                 </ul>
@@ -192,19 +200,22 @@
         <h2>Gallery</h2>
         <div class="gallery">
             {% for image in images %}
-            <div class="gallery-item">
-                <img src="{{ image.image.url }}" alt="{{ image.title }}" class="image">
-                <div class="image-description">
-                    <div class="image-title">{{ image.title }}</div>
-                    <div class="image-description-text">{{ image.description }}</div>
-                    <div class="image-buttons">
-                        <a href="#" class="btn btn-edit">Edit</a>
-                        <a href="#" class="btn btn-delete">Delete</a>
-                    </div>
-                    
-                </div>
-            </div>
-            {% endfor %}
+<div class="gallery-item">
+    <img src="{{ image.image.url }}" alt="{{ image.title }}" class="image">
+    <div class="image-description">
+        <div class="image-title">{{ image.title }}</div>
+        <div class="image-description-text">{{ image.description }}</div>
+        <div class="image-buttons">
+            <a href="{% url 'edit_gallery_images' image.id %}" class="btn btn-edit">Edit</a>
+            <form method="post" action="{% url 'soft_delete_image' image.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-delete">Delete</button>
+            </form>
+           
+        </div>
+    </div>
+</div>
+{% endfor %}
         </div>
     </div>
 </div>

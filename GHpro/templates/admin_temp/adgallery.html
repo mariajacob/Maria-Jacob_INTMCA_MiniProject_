@@ -94,10 +94,18 @@
 							<ul style="display: none;">
 								
 								<li><a href="{% url 'adgallery' %}">Add Image</a></li>
-								<li><a href="{% url 'edit_gallery' %}">Edit Image</a></li>
-								<li><a href="attendance.html">Attendance</a></li>
+								<li><a href="{% url 'dis_gallery'  %}">Edit Image</a></li>
+								
 							</ul>
 						</li>
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a href="{% url 'blog' %}">Blog View</a></li>
+                                <li><a href="{% url 'add-blog' %}">Add Blog</a></li>
+                               
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>

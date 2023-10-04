@@ -65,14 +65,9 @@
                             <a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user-md"></i> <span>Asha Workers</span></a>
                         </li> {% endcomment %}
                         
-                        <li class="submenu">
-							<a href="#"><i class="fa fa-user"></i> <span>Asha Workers </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								
-								<li><a href="{% url 'ad_ashaworker' %}">Asha Workers List</a></li>
-								
-								
-							</ul>
+                        <li >
+							<a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user"></i> <span>Asha Workers List </span></a>
+							
 						</li>
 
 
@@ -95,10 +90,18 @@
 							<ul style="display: none;">
 								
 								<li><a href="{% url 'adgallery' %}">Add Image</a></li>
-								<li><a href="{% url 'edit_gallery' %}">Edit Image</a></li>
-								<li><a href="attendance.html">Attendance</a></li>
+								<li><a href="{% url 'dis_gallery' %}">Edit Image</a></li>
+								
 							</ul>
 						</li>
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a href="{% url 'blog' %}">Blog View</a></li>
+                                <li><a href="{% url 'add-blog' %}">Add Blog</a></li>
+                               
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -108,10 +111,10 @@
                 <div class="row">
 
                     <div class="col-sm-4 col-3">
-                        <h4 class="page-title">Add AshaWorker</h4>
+                        <h4  class="page-title" id="ashalist">Add AshaWorker</h4>
                     </div>
                     <div class="col-sm-8 col-9 text-right m-b-20">
-                        <a href="{% url 'add_asha' %}" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Add Asha Workers</a>
+                        <a href="{% url 'add_asha' %}"  class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus" id="addasha"></i> Add Asha Workers</a>
                     </div>
                 </div>
                 <div class="row">
@@ -135,10 +138,10 @@
                             {% if ashaworker.is_active %}
                             <div class="col-md-4 col-sm-4 col-lg-3">
                                 <div class="profile-widget">
-                                    {% comment %} <div class="doctor-img">
+                                  {% comment %} <div class="doctor-img">
                                         <a class="avatar" href="profile.html"><img alt="" src="{{ ashaworker.profile_photo.url }}"></a>
-                                    </div> {% endcomment %}
-                                    <div class="doctor-img">
+                                    </div>  {% endcomment %}
+                                     <div class="doctor-img">
                                         <a class="avatar" href="profile.html">
                                             <img alt="" src="{{ ashaworker.profile_photo.url }}">
                                         </a>
@@ -157,13 +160,13 @@
                                     <div>
                                         <p>Ashaworker ID: {{ ashaworker.id }}</p>
                                         <p class="card-text">Email: {{ ashaworker.email }}</p>
-                                        {% comment %} <p class="card-text">Password: {{ ashaworker.password }}</p> {% endcomment %}
+                                       <p class="card-text">Password: {{ ashaworker.password }}</p> 
                                         <p class="card-text">Date of Birth: {{ ashaworker.date_of_birth }}</p>
                                         <p class="card-text">Date of Join: {{ ashaworker.date_of_join }}</p>
                                         <p class="card-text">Gender: {{ ashaworker.get_gender_display }}</p>
                                         <p class="card-text">Taluk: {{ ashaworker.taluk }}</p>
                                         <p class="card-text">Panchayat: {{ ashaworker.Panchayat }}</p>
-                                        <p class="card-text">Ward: {{ ashaworker.ward }}</p>
+                                     <p class="card-text">Ward: {{ ashaworker.ward }}</p> 
                                         <p class="card-text">Postal: {{ ashaworker.postal }}</p>
                                         <p class="card-text">Phone: {{ ashaworker.phone }}</p>
                                     </div>

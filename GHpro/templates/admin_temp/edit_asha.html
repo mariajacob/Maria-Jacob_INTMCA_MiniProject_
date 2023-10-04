@@ -9,10 +9,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
     <title>GentleHaloes Admin Dashboard</title>
+    {% comment %} <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}"> {% endcomment %}
+
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/select2.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap-datetimepicker.min.css' %}">
     <!--[if lt IE 9]>
 		<script src="assets/js/html5shiv.min.js"></script>
 		<script src="assets/js/respond.min.js"></script>
@@ -92,10 +100,18 @@
 							<ul style="display: none;">
 								
 								<li><a href="{% url 'adgallery' %}">Add Image</a></li>
-								<li><a href="{% url 'edit_gallery' %}">Edit Image</a></li>
-								<li><a href="attendance.html">Attendance</a></li>
+								<li><a href="{% url 'dis_gallery' %}">Edit Image</a></li>
+								
 							</ul>
 						</li>
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a href="{% url 'blog' %}">Blog View</a></li>
+                                <li><a href="{% url 'add-blog' %}">Add Blog</a></li>
+                               
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -109,7 +125,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <form method="POST" action="" enctype="multipart/form-data" autocomplete="off">
+                        <form method="POST" action="" autocomplete="off" enctype="multipart/form-data" onsubmit="return validateWard()">
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-sm-6">
@@ -177,12 +193,42 @@
                                                 <input class="form-control"  id="panchayat" name="panchayat" value="{{ ashaworker.Panchayat }}" type="text">
 											</div>
 										</div>
-										<div class="col-sm-6 col-md-6 col-lg-4">
+										 <div class="col-sm-6 col-md-6 col-lg-4">
 											<div class="form-group">
 												<label>Ward</label>
-                                                <input type="text" class="form-control" name="ward" value="{{ ashaworker.ward }}" id="ward">
+                                                <input type="text" class="form-control" name="ward" value="{{ ashaworker.ward }}" id="ward" readonly>
 											</div>
-										</div>
+										</div> 
+                                        {% comment %} <div class="col-sm-6 col-md-6 col-lg-3">
+											<div class="form-group">
+												<label>Ward</label>
+                                                <select class="form-control select" name="ward" id="ward" size="100">
+													<option value="" disabled selected>-Select Ward-</option>
+                                                    <option value="Ward 1-VENGATHANAM" {% if ashaworker.ward == 'Ward 1-VENGATHANAM' %} selected {% endif %}>Ward 1-VENGATHANAM</option>
+                                                    <option value="Ward 1-VENGATHANAM" {% if ashaworker.ward == 'Ward 1-VENGATHANAM' %} selected {% endif %}>Ward 1-VENGATHANAM</option>
+                                                    <option value="Ward 2-PALAPRA" {% if ashaworker.ward == 'Ward 2-PALAPRA' %} selected {% endif %}>Ward 2-PALAPRA</option>
+                                                    <option value="Ward 3-VELICHIYANI" {% if ashaworker.ward == 'Ward 3-VELICHIYANI' %} selected {% endif %}>Ward 3-VELICHIYANI</option>
+                                                    <option value="Ward 4-CHOTTY" {% if ashaworker.ward == 'Ward 4-CHOTTY' %} selected {% endif %}>Ward 4-CHOTTY</option>
+                                                    <option value="Ward 5-MANGAPPARA" {% if ashaworker.ward == 'Ward 5-MANGAPPARA' %} selected {% endif %}>Ward 5-MANGAPPARA</option>
+                                                    <option value="Ward 6-VADAKKEMALA" {% if ashaworker.ward == 'Ward 6-VADAKKEMALA' %} selected {% endif %}>Ward 6-VADAKKEMALA</option>
+                                                    <option value="Ward 7-PARATHODU" {% if ashaworker.ward == 'Ward 7-PARATHODU' %} selected {% endif %}>Ward 7-PARATHODU</option>
+                                                    <option value="Ward 8-NADUKANI" {% if ashaworker.ward == 'Ward 8-NADUKANI' %} selected {% endif %}>Ward 8-NADUKANI</option>
+                                                    <option value="Ward 9-EDAKKUNNAM" {% if ashaworker.ward == 'Ward 9-EDAKKUNNAM' %} selected {% endif %}>Ward 9-EDAKKUNNAM</option>
+                                                    <option value="Ward 10-KOORAMTHOOKKU" {% if ashaworker.ward == 'Ward 10-KOORAMTHOOKKU' %} selected {% endif %}>Ward 10-KOORAMTHOOKKU</option>
+                                                    <option value="Ward 11-KOOVAPPALLY" {% if ashaworker.ward == 'Ward 11-KOOVAPPALLY' %} selected {% endif %}>Ward 11-KOOVAPPALLY</option>
+                                                    <option value="Ward 12-KULAPPURAM" {% if ashaworker.ward == 'Ward 12-KULAPPURAM' %} selected {% endif %}>Ward 12-KULAPPURAM</option>
+                                                    <option value="Ward 13-PALAMPRA" {% if ashaworker.ward == 'Ward 13-PALAMPRA' %} selected {% endif %}>Ward 13-PALAMPRA</option>
+                                                    <option value="Ward 14-MUKKALY" {% if ashaworker.ward == 'Ward 14-MUKKALY' %} selected {% endif %}>Ward 14-MUKKALY</option>
+                                                    <option value="Ward 15-PODIMATTAM" {% if ashaworker.ward == 'Ward 15-PODIMATTAM' %} selected {% endif %}>Ward 15-PODIMATTAM</option>
+                                                    <option value="Ward 16-ANAKKALLU" {% if ashaworker.ward == 'Ward 16-ANAKKALLU' %} selected {% endif %}>Ward 16-ANAKKALLU</option>
+                                                    <option value="Ward 17-PULKUNNU" {% if ashaworker.ward == 'Ward 17-PULKUNNU' %} selected {% endif %}>Ward 17-PULKUNNU</option>
+                                                    <option value="Ward 18-PAZHUMALA" {% if ashaworker.ward == 'Ward 18-PAZHUMALA' %} selected {% endif %}>Ward 18-PAZHUMALA</option>
+                                                    <option value="Ward 19-CHIRABHAGAM" {% if ashaworker.ward == 'Ward 19-CHIRABHAGAM' %} selected {% endif %}>Ward 19-CHIRABHAGAM</option>
+
+												</select>
+                                                <div id="ward-validation-message"></div>
+											</div>
+										</div> {% endcomment %}
 										<div class="col-sm-6 ">
 											<div class="form-group">
 												<label>Postal Code</label>
@@ -257,6 +303,31 @@
 	<script src="{% static 'assets/js/moment.min.js' %}"></script>
 	<script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
     <script src="{% static 'assets/js/app.js' %}"></script>
+    {% comment %} <script>
+        function validateWard() {
+            const wardSelect = document.getElementById("ward");
+            const selectedWard = wardSelect.value;
+            
+            // Make an AJAX request to check if the ward exists
+            fetch(`/check-ward-exists/?ward=${selectedWard}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        // Ward already assigned, show a popup alert
+                        alert("This ward is already assigned to another Ashaworker. Please select a different ward.");
+                    } else {
+                        // Ward is available, continue with form submission
+                        document.querySelector("form").submit();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking ward existence:", error);
+                });
+    
+            // Prevent the form from submitting immediately
+            return false;
+        }
+    </script> {% endcomment %}
     <style>
         .header {
             background-color: #00c6a9;

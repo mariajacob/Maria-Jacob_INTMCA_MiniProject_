@@ -60,11 +60,7 @@
     <div class="delete-box">
         <h1>Delete AshaWorker</h1>
         <p>Are you sure you want to delete {{ ashaworker.Name }}?</p>
-        {% comment %} <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn-delete">Yes, Delete</button>
-            <a href="{% url 'ad_ashaworker' %}" class="btn-cancel">Cancel</a>
-        </form> {% endcomment %}
+       
         <form method="post">
             {% csrf_token %}
             <button type="submit" class="btn-delete">Yes, Delete</button>
