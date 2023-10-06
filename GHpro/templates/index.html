@@ -198,10 +198,7 @@
                             <i class="fa fa-user" aria-hidden="true"></i>
                             <span>Patient Login</span>
                         </a>
-                        <a class="dropdown-item" href="{% url 'hca_signup' %}">
-                          <i class="fa fa-user" aria-hidden="true"></i>
-                          <span>Hospital Login</span> 
-                      </a>
+                        
                         
                     </div>
                 </div>
@@ -252,7 +249,7 @@
                         Are you or a loved one living with a serious illness? Palliative Care can help. Palliative care is specialized medical care focused on relieving the symptoms and stress of a serious illness. It is appropriate at any age and at any stage, and you can have it along with curative treatment. The goal is to improve your quality of life.
                     </p>
                     
-                  <a href="{% url 'appointment_form' %}" style="margin-right: 20px;">
+                  <a href="{% url 'appointment_form' %}" style="margin-right: 20px;" id="appid">
                       MAKE APPOINTMENT
                   </a>
                   <a href="{% url 'donation' %}">

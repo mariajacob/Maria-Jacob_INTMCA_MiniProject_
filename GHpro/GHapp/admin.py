@@ -9,6 +9,8 @@ from . models import Donation
 from . models import AshaworkerSchedule
 from . models import Slots
 from . models import Blog
+from . models import Hca
+
 
 
 
@@ -25,6 +27,7 @@ admin.site.register(MedicalRecord)
 admin.site.register(Donation)
 admin.site.register(Slots)
 admin.site.register(Blog)
+admin.site.register(Hca)
 
 
 

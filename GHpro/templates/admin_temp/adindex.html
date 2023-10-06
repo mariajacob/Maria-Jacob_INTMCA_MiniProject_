@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
     <title>GentleHaloes Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
@@ -65,15 +66,28 @@
 							<a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user" id="ashaind"></i> <span>Asha Workers List </span> </a>
 							
 						</li>
-
+                        
+                        <li>
+							<a href="{% url 'ad_hca' %}"><i class="fa fa-user" id="ashaind"></i> <span>Primary Health Center </span> </a>
+							
+						</li>
 
 
                          <li>
                             <a href="{% url 'patients' %}"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                         </li>
-                        <li>
-                            <a href="{% url 'appointments' %}"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
-                        </li>
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span>Appointments </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'appointments' %}">All Appointments</a></li>
+                                <li><a href="{% url 'current_appointment' %}">Current Appointments</a></li>
+                                <li><a href="{% url 'future_appointment' %}">Future Appointments</a></li>
+                                <li><a href="{% url 'past_appointment' %}">Past Appointments</a></li>
+								
+								
+							</ul>
+						</li>
                         <li>
                             <a href="{% url 'schedule' %}"><i class="fa fa-calendar-check-o"></i> <span>Asha Workers Schedule</span></a>
                         </li> 
@@ -99,7 +113,12 @@
                                
                             </ul>
                         </li>
-
+                        <li>
+                            <a href="{% url 'appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart</span></a>
+                        </li> 
+                        <li>
+                            <a href="{% url 'ashaworker_appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart1</span></a>
+                        </li> 
                     </ul>
                 </div>
             </div>
@@ -109,18 +128,19 @@
                 <div class="row">
                     <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
                         <div class="dash-widget">
-							<span class="dash-widget-bg1"><i class="fa fa-stethoscope" aria-hidden="true"></i></span>
-							<div class="dash-widget-info text-right">
-								<h3>98</h3>
-								<span class="widget-title1">Doctors <i class="fa fa-check" aria-hidden="true"></i></span>
-							</div>
+                            <span class="dash-widget-bg1"><i class="fa fa-stethoscope" aria-hidden="true"></i></span>
+                            <div class="dash-widget-info text-right">
+                                <h3>{{ ashaworker_count }}</h3>
+                                <span class="widget-title1">AshaWorkers <i class="fa fa-check" aria-hidden="true"></i></span>
+                            </div>
                         </div>
                     </div>
+                    
                     <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
                         <div class="dash-widget">
                             <span class="dash-widget-bg2"><i class="fa fa-user-o"></i></span>
                             <div class="dash-widget-info text-right">
-                                <h3>1072</h3>
+                                <h3>{{ patients_count }}</h3>
                                 <span class="widget-title2">Patients <i class="fa fa-check" aria-hidden="true"></i></span>
                             </div>
                         </div>
@@ -129,8 +149,8 @@
                         <div class="dash-widget">
                             <span class="dash-widget-bg3"><i class="fa fa-user-md" aria-hidden="true"></i></span>
                             <div class="dash-widget-info text-right">
-                                <h3>72</h3>
-                                <span class="widget-title3">Attend <i class="fa fa-check" aria-hidden="true"></i></span>
+                                <h3>{{ appointments_count }}</h3>
+                                <span class="widget-title3">All Appointment <i class="fa fa-check" aria-hidden="true"></i></span>
                             </div>
                         </div>
                     </div>
@@ -138,8 +158,8 @@
                         <div class="dash-widget">
                             <span class="dash-widget-bg4"><i class="fa fa-heartbeat" aria-hidden="true"></i></span>
                             <div class="dash-widget-info text-right">
-                                <h3>618</h3>
-                                <span class="widget-title4">Pending <i class="fa fa-check" aria-hidden="true"></i></span>
+                                <h3>{{ approved_appointments }}</h3>
+                                <span class="widget-title4">Approved Appointments <i class="fa fa-check" aria-hidden="true"></i></span>
                             </div>
                         </div>
                     </div>
@@ -149,29 +169,55 @@
 						<div class="card">
 							<div class="card-body">
 								<div class="chart-title">
-									<h4>Patient Total</h4>
+									<h4>Patient & Appointments</h4>
 									<span class="float-right"><i class="fa fa-caret-up" aria-hidden="true"></i> 15% Higher than Last Month</span>
 								</div>	
-								<canvas id="linegraph"></canvas>
+                                <canvas id="appointmentChart" width="400" height="200"></canvas>
+                                <script>
+                                    var ctx = document.getElementById('appointmentChart').getContext('2d');
+                                    var patientUsernames = {{ patient_usernames|safe }};
+                                    var appointmentCounts = {{ appointment_counts|safe }};
+                            
+                                    var chart = new Chart(ctx, {
+                                        type: 'bar',
+                                        data: {
+                                            labels: patientUsernames,
+                                            datasets: [{
+                                                label: 'Appointments',
+                                                data: appointmentCounts,
+                                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                                borderColor: 'rgba(75, 192, 192, 1)',
+                                                borderWidth: 1
+                                            }]
+                                        },
+                                        options: {
+                                            scales: {
+                                                y: {
+                                                    beginAtZero: true
+                                                }
+                                            }
+                                        }
+                                    });
+                                </script>
 							</div>
 						</div>
 					</div>
 					<div class="col-12 col-md-6 col-lg-6 col-xl-6">
-						<div class="card">
-							<div class="card-body">
-								<div class="chart-title">
-									<h4>Patients In</h4>
-									<div class="float-right">
-										<ul class="chat-user-total">
-											<li><i class="fa fa-circle current-users" aria-hidden="true"></i>ICU</li>
-											<li><i class="fa fa-circle old-users" aria-hidden="true"></i> OPD</li>
-										</ul>
-									</div>
-								</div>	
-								<canvas id="bargraph"></canvas>
-							</div>
-						</div>
-					</div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="chart-title">
+                                    <h4>AshaWorkers In</h4>
+                                    <div class="float-right">
+                                        <!-- Add any additional content or details here -->
+                                    </div>
+                                </div>
+                                <div>
+                                    <img src="data:image/png;base64,{{ plot_data }}" alt="Line Chart">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
 				</div>
 				<div class="row">
 					<div class="col-12 col-md-6 col-lg-8 col-xl-8">
@@ -185,38 +231,36 @@
 										<thead class="d-none">
 											<tr>
 												<th>Patient Name</th>
-												<th>Email ID</th>
-												<th>Date</th>
-                                                <th>Timing</th>
-												<th class="text-right">Status</th>
+												<th>Email</th>
+                                                <th>Date</th>
+												<th>Timing</th>
+												
 											</tr>
 										</thead>
 										<tbody>
-                                            {% for appointment in future_appointments %}
-                                            <tr>
-                                                <td style="min-width: 200px;">
-                                                    {% comment %} <a class="avatar" href="profile_page">{{ appointment.patient_name.0 }}</a> {% endcomment %}
-                                                    
-                                                    <h2><a href="profile_page">{{ appointment.first_name }} {{ appointment.last_name }}<span>{{ appointment.address }}</span></a></h2>
-                                                </td>                 
+                                        {% for appointment in future_appointments %}
+											<tr>
+												<td style="min-width: 200px;">
+													
+													<h2>{{ appointment.first_name }} {{ appointment.last_name }}<span>{{ appointment.address }}</span></h2>
+												</td>                 
+												<td>
+													<h5 class="time-title p-0">Email</h5>
+													<p>{{ appointment.email }}</p>
+												</td>
+												<td>
+													<h5 class="time-title p-0">Date</h5>
+													<p>{{ appointment.date }}</p>
+												</td>
                                                 <td>
-                                                    <h5 class="time-title p-0">Email ID</h5>
-                                                    <p>{{ appointment.email }}</p>
-                                                </td>
-                                                <td>
-                                                    <h5 class="time-title p-0">Date</h5>
-                                                    <p>{{ appointment.preferred_date }}</p>
-                                                </td>
-                                                <td>
-                                                    <h5 class="time-title p-0">Time</h5>
-                                                    <p>{{ appointment.preferred_time }}</p>
-                                                </td>
-                                                <td class="text-right">
-                                                    <a href="{% url 'appointments' %}" class="btn btn-outline-primary take-btn">Take up</a>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-											
+													<h5 class="time-title p-0">Timing</h5>
+													<p> {{ appointment.slot.start_time }} {{ appointment.slot.end_time }}</p>
+												</td>
+												{% comment %} <td class="text-right">
+													<a href="appointments.html" class="btn btn-outline-primary take-btn">Take up</a>
+												</td> {% endcomment %}
+											</tr>
+                                        {% endfor %}
 										</tbody>
 									</table>
 								</div>
@@ -303,6 +347,7 @@
         height: 50px;
         box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     }
+    
 </style>
 
 

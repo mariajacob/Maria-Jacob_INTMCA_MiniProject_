@@ -1,0 +1,325 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    {% comment %} <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}"> {% endcomment %}
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/select2.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap-datetimepicker.min.css' %}">
+    <!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.min.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+			<div class="header-left">
+				<a href="{% url 'index-2' %}" class="logo">
+					<img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+				</a>
+			</div>
+			 <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+					</div>
+                    {% else %}
+
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+					</div>
+                    
+                    {% endif %}
+                </li>
+            </ul>
+            
+        </div> 
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+                        <li class="active">
+                            <a href="{% url 'index-2' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                        </li> 
+						
+                        
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span>Asha Workers </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'ad_ashaworker' %}">Asha Workers List</a></li>
+								
+								
+							</ul>
+						</li>
+
+
+
+                         <li>
+                            <a href="{% url 'patients' %}"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
+                        </li>
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span>Appointments </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'appointments' %}">All Appointments</a></li>
+                                <li><a href="{% url 'current_appointment' %}">Current Appointments</a></li>
+                                <li><a href="{% url 'future_appointment' %}">Future Appointments</a></li>
+                                <li><a href="{% url 'past_appointment' %}">Past Appointments</a></li>
+								
+								
+							</ul>
+						</li>
+                        <li>
+                            <a href="{% url 'schedule' %}"><i class="fa fa-calendar-check-o"></i> <span>Asha Workers Schedule</span></a>
+                        </li> 
+                        
+                        {% comment %} <li>
+                            <a href="{% url 'adgallery' %}"><i class="fa fa-calendar-check-o"></i> <span>Gallery</span></a>
+                        </li>  {% endcomment %}
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span> Gallery </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'adgallery' %}">Add Image</a></li>
+								<li><a href="{% url 'dis_gallery' %}">Edit Image</a></li>
+								
+							</ul>
+						</li>
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a href="{% url 'blog' %}">Blog View</a></li>
+                                <li><a href="{% url 'add-blog' %}">Add Blog</a></li>
+                               
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="page-wrapper">
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2">
+                        <h4 class="page-title">Edit Hospital</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2">
+                        <form method="POST" action="" autocomplete="off" enctype="multipart/form-data" onsubmit="return validateWard()">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Name of Hospital<span class="text-danger">*</span></label>
+                                        <input class="form-control" id="name" value="{{ hca.hcaname }}"  name="hcaname" type="text">
+                                        <span class="error" id="name-error"></span> <!-- Display validation error message here -->
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Email <span class="text-danger">*</span></label>
+                                        <input class="form-control" id="email" value="{{ hca.email }}" name="email" type="email" readonly>
+                                        <span class="text-danger" id="email-error"></span>
+                                    </div>
+                                </div>
+                                {% comment %} <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input class="form-control" id="pass" value="{{ hca.password }}" name="password" type="password">
+                                        <span class="text-danger" id="password-error"></span>
+                                    </div>
+                                </div> {% endcomment %}
+                                
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Yaer of Hospital<span class="text-danger">*</span></label>
+                                        <input class="form-control" value="{{ hca.year_hca }}" id="year_hca" name="year_hca" type="text" readonly>
+                                        <span class="error" id="name-error"></span> <!-- Display validation error message here -->
+                                    </div>
+                                </div>
+								
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Date of Join</label>
+                                        <div class="cal-icon">
+                                            <input type="text" id="doj" value="{{ hca.date_of_join }}" name="date_of_join" class="form-control datetimepicker" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                               
+                               
+								<div class="col-sm-12">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label>Address</label>
+												<input type="text" value="{{ hca.address }}" name="address" id="address" class="form-control">
+											</div>
+										</div>
+										<div class="col-sm-6 col-md-6 col-lg-3">
+											<div class="form-group">
+												<label>Taluk</label>
+												{% comment %} <select class="form-control select" name="taluk" id="taluk">
+                                                    <option></option>
+													<option>Kanjirappally</option>
+													
+												</select> {% endcomment %}
+                                                <input class="form-control" value="Kanjirappally" id="taluk" name="taluk" type="text" readonly >
+											</div>
+										</div>
+										<div class="col-sm-6 col-md-6 col-lg-3">
+											<div class="form-group">
+												<label>Panchayat</label>
+											{% comment %} <select class="form-control select" name="panchayat" id="panchayat">
+                                                    <option></option>
+													<option>Parathodu</option> 
+													
+												</select> {% endcomment %}
+                                                <input class="form-control" value="Parathodu" id="panchayat" name="panchayat" type="text" readonly>
+											</div>
+										</div>
+										
+										<div class="col-sm-6 col-md-6 col-lg-3">
+                                            <div class="form-group">
+                                                <label>Postal Code</label>
+                                                <input type="number" class="form-control" value="{{ hca.postal }}" name="postal" id="pin">
+                                                <span class="text-danger" id="pin-error"></span>
+                                            </div>
+                                        </div>
+                                        
+									</div>
+								</div>
+                               
+                                <div class="col-sm-6">
+                                    <br>  <br><div class="form-group">
+                                        <label>Phone </label>
+                                        <input class="form-control" type="number" value="{{ hca.phone }}" name="phone" id="phone">
+                                        <span class="text-danger" id="phone-error"></span>
+                                    </div>
+                                </div>
+                               
+                                
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <img alt="" src="{{ hca.profile_photo.url }}" height="70px" width="90px">
+                                        <label>Profile Photo</label>
+                                        
+                                        <input type="file" class="form-control" name="new_profile_photo">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <img alt="" src="{{ hca.license_certificate.url }}" height="70px" width="90px">
+                                        <label>License Certificate</label>
+                                        
+                                        <input type="file" class="form-control" name="new_li_photo">
+                                    </div>
+                                </div>
+
+                            </div>
+                           
+						
+                        <div>
+                            <div class="m-t-20 text-center">
+                                <button class="btn btn-primary submit-btn">Edit Hospital</button>
+                            </div>
+                        </div>
+                        </form>
+
+                        {% if messages %}
+                        <div class="messages">
+                        {% for message in messages %}
+                        <div class="message">{{ message }}</div>
+                        {% endfor %}
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+		
+        </div>
+    </div>
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/select2.min.js' %}"></script>
+	<script src="{% static 'assets/js/moment.min.js' %}"></script>
+	<script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+    {% comment %} <script>
+        function validateWard() {
+            const wardSelect = document.getElementById("ward");
+            const selectedWard = wardSelect.value;
+            
+            // Make an AJAX request to check if the ward exists
+            fetch(`/check-ward-exists/?ward=${selectedWard}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        // Ward already assigned, show a popup alert
+                        alert("This ward is already assigned to another Ashaworker. Please select a different ward.");
+                    } else {
+                        // Ward is available, continue with form submission
+                        document.querySelector("form").submit();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking ward existence:", error);
+                });
+    
+            // Prevent the form from submitting immediately
+            return false;
+        }
+    </script> {% endcomment %}
+    <style>
+        .header {
+            background-color: #00c6a9;
+            left: 0;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 1039;
+            height: 50px;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</body>
+
+
+<!-- add-doctor24:06-->
+</html>

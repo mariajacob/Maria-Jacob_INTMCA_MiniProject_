@@ -172,7 +172,7 @@ class PatientProfile(models.Model):
     birth_date = models.CharField(max_length=100,null=True,blank=True)
     email = models.EmailField(max_length=100,null=True,blank=True)
     profile_pic = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
-    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')],null=True,blank=True)
     house_name = models.CharField(max_length=100, null=True,blank=True)
     house_no = models.IntegerField(null=True,blank=True)
     address = models.CharField(max_length=255,null=True,blank=True)
@@ -223,7 +223,7 @@ class Slots(models.Model):
     end_time = models.TimeField()
     
     def _str_(self):
-        return f"Slot for Dr. {self.doctor.Name} on {self.date} at {self.start_time}-{self.end_time}"
+        return f"Slot for Ashaworker. {self.ashaworker.Name} on {self.date} at {self.start_time}-{self.end_time}"
 
 class Appointment(models.Model):
    
@@ -233,10 +233,10 @@ class Appointment(models.Model):
     last_name = models.CharField(max_length=255,null=True,blank=True)
     email = models.EmailField(null=True,blank=True)
     # date_of_birth = models.DateField(null=True,blank=True)
-    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')],null=True,blank=True)
     address = models.TextField(null=True,blank=True)
     ward_asha = models.CharField(max_length=255,null=True,blank=True)
-    phone_number = models.CharField(max_length=15)
+    phone_number = models.CharField(max_length=15,null=True,blank=True)
     # id_proof = models.FileField(upload_to='id_proofs/',null=True,blank=True)
     medical_conditions = models.TextField(null=True,blank=True)
     urgency = models.CharField(max_length=50, choices=[('Routine check-up', 'Routine check-up'), ('Non-urgent medical check-up', 'Non-urgent medical check-up'), ('Urgent medical check-up', 'Urgent medical check-up')],null=True,blank=True)
@@ -309,4 +309,40 @@ class Blog(models.Model):
     def __str__(self):
         return self.title
 
+class Hca(models.Model):
+     
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    
+    hcaname = models.CharField(max_length=100)
+    
+    email = models.EmailField(blank=True, null=True)
+    admin_set_password = models.CharField(max_length=128, blank=True, null=True)
 
+    def set_password(self, password):
+        # Hash and set the password
+        self.admin_set_password = make_password(password)
+    
+    date_of_join = models.CharField(max_length=100)
+    
+    
+    address = models.TextField()
+    taluk = models.CharField(max_length=100)
+    panchayat = models.CharField(max_length=100)
+    
+    
+    postal = models.IntegerField()
+    phone = models.IntegerField()
+    profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
+    
+    
+    license_certificate=models.FileField(upload_to='lic_cert/', blank=True, null=True)
+    
+    year_hca=models.IntegerField(blank=True, null=True)
+    
+
+    is_active = models.BooleanField(default=True)
+    
+   
+
+    def _str_(self):
+        return self.hcaname

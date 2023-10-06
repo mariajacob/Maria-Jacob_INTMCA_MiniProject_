@@ -1,0 +1,296 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.min.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+			<div class="header-left">
+				<a href="{% url 'index-2' %}" class="logo">
+					<img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+				</a>
+			</div>
+			 <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+           
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu">
+						<a class="dropdown-item" href="{% url 'pro_ashaworker' %}">Profile</a>
+						<a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+					</div>
+                    {% else %}
+
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+					</div>
+                    
+                    {% endif %}
+                </li>
+           
+        </div> 
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+                        <li class="active">
+                            <a href="{% url 'asha_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                           
+                        </li> 
+                        <li>
+                            <a href="{% url 'asha_approved_appo' %}"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                        </li>
+                        <li>
+                            <a href="{% url 'asha_timeslots'%}"><i class="fa fa-calendar"></i> <span>Schedules</span></a> 
+                        </li>
+                        <li>
+                            <a href="{% url 'asha_timeslots_shows'%}"><i class="fa fa-calendar"></i> <span>View Schedules</span></a> 
+                        </li> 
+                        {% comment %} <li>
+                            <a href="{% url 'patient_users' %}"><i class="fa fa-wheelchair"></i> <span>Patients List</span></a>
+                            
+                        </li> {% endcomment %}
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span>Patients </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'patient_users' %}">All Patients List</a></li>
+                                <li><a href="{% url 'patients_by_ward' %}"> Patients By Ward</a></li>
+                                
+								
+								
+							</ul>
+						</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="page-wrapper">
+            <div class="content">
+                <div class="row">
+                    <div class="col-sm-4 col-3">
+                        <h4 class="page-title">PATIENTS LISTS</h4>
+                    </div>
+                    {% comment %} <div class="col-sm-8 col-9 text-right m-b-20">
+                        <a href="{% url 'add_asha' %}" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Add Asha Workers</a>
+                    </div> {% endcomment %}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <form id="search-form" method="GET" action="{% url 'search_patient' %}">
+                            <div class="input-group">
+                                <a href="{% url 'patient_users' %}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>&ensp;&ensp;&ensp;&ensp;
+                                <input type="text" class="form-control" name="patientname" placeholder="Search by patient Name">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div><br><br>
+                <div class="search-bar">
+                    <form method="GET" action="{% url 'patients_by_ward' %}">
+                        <label for="ward">Select Ward:</label>
+                        <select name="ward" id="ward">
+                            <option value="">All Wards</option>
+                            {% for ward_number in ward_numbers %}
+                                <option value="{{ ward_number }}">{{ ward_number }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Filter</button>
+                    </form>
+                </div>
+                
+                <div class="row doctor-grid">
+                    {% comment %} <form method="GET" action="{% url 'patients_by_ward' %}">
+                        <label for="ward">Select Ward:</label>
+                        <select name="ward" id="ward">
+                            <option value="">All Wards</option>
+                            {% for ward_number in ward_numbers %}
+                                <option value="{{ ward_number }}">{{ ward_number }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Filter</button>
+                    </form> {% endcomment %}
+
+                    {% for patient in patients %}
+                    
+                    <div class="col-md-4 col-sm-4  col-lg-3">
+                        <div class="profile-widget">
+                             
+                            <div class="doctor-img">
+                                <a class="avatar" href="profile.html">
+                                    <img alt="" src="{{ patient.profile_pic.url }}">
+                                </a>
+                            </div> 
+                            <div class="dropdown profile-action">
+                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                 {% comment %} <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href=" {% url 'edit_asha' ashaworker.id  %}"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item" href=" {% url 'delete_asha' ashaworker.id  %}"><i class="fa fa-pencil m-r-5"></i> Delete</a>
+                                </div>   {% endcomment %}
+                            </div>
+                            <h4 class="doctor-name text-ellipsis"><a href="profile.html"> {{ patient.Name }}</a></h4>
+                            
+                            
+                            <div>
+                                <p>Name: {{ patient.id}}</p>
+                                <p>Name: {{ patient.first_name }} {{ patient.last_name }}</p>
+                                {% comment %} <p>Last Name: {{ patient.last_name }}</p> {% endcomment %}
+                                <p>Email: {{ patient.email }}</p>
+                                <div class="user-country">
+                                    <i class="fa fa-map-marker"></i> {{ patient.address }}
+                                </div><br>
+                                <p>Gender: {{ patient.gender }}</p>
+                                <p>Address: {{ patient.address }}</p>
+                                <p>ward: {{ patient.ward }}</p>
+                                <p>Phone: {{ patient.phone_number }}</p>
+                                <p>House Name: {{ patient.house_name }}</p>
+                                <p>House Number: {{ patient.house_no }}</p>
+                                <p>Medications Currently Taking: {{ patient.medication_names }}</p>
+                                <p>Current Diagnosis or Health Concern: {{ patient.current_diagnosis }}</p>
+                                <p>Past Medical Conditions: {{ patient.past_med_condition }}</p>
+                                <p>Surgical Historys:{{ patient.surgical_history }}</p>
+                                <p>Allergies (Medications, Food, Environmental): {{ patient.allergies }}</p>
+                                
+                                {% comment %} <div class="card shadow-sm">
+                                    <div class="card-header bg-transparent text-center">
+                                        <h3>Medical Record</h3>
+                                        <br>
+                                        <a href="{% url 'medical_record' %}" class="btn-show-medical-record">Add Medical Records</a> <br>
+                                        <br><a href="{% url 'medical_record_display' %}" class="btn-show-medical-record">View Medical Records</a>
+                                    </div>
+                                </div> {% endcomment %}
+                            </div>
+                            <form method="GET" action="{% url 'medical_record' patient.id %}">
+                                <button type="submit" class="btn-show-medical-record">Add Medical Records</button>
+                            </form>
+                                                   
+                        </div>
+                    </div>
+                    {% endfor %} 
+                </div> 
+            </div>
+            
+        </div>
+		<div id="delete_doctor" class="modal fade delete-modal" role="dialog">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-body text-center">
+						<img src="assets/img/sent.png" alt="" width="50" height="46">
+						<h3>Are you sure want to delete this Doctor?</h3>
+						<div class="m-t-20"> <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
+							<button type="submit" class="btn btn-danger">Delete</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+    </div>
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/select2.min.js' %}"></script>
+    <script src="{% static 'ssets/js/moment.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+</body>
+
+<style>
+    .btn-show-medical-record {
+        display: inline-block;
+        padding: 10px 20px; /* Adjust padding as needed */
+        background-color: #007BFF; /* Button background color */
+        color: #fff; /* Button text color */
+        border: none;
+        border-radius: 4px; /* Rounded corners */
+        text-decoration: none;
+        transition: background-color 0.3s ease; /* Smooth transition on hover */
+    }
+    
+    /* Hover effect */
+    .btn-show-medical-record:hover {
+        background-color: #0056b3; /* Change background color on hover */
+        /* You can also add other hover effects like changing text color, adding shadows, etc. */
+    }
+    
+    .header {
+        background-color: #00c6a9;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 1039;
+        height: 50px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-bar {
+        background-color: #f4f4f4;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Style the label */
+    .search-bar label {
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    
+    /* Style the select dropdown */
+    .search-bar select {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 16px;
+    }
+    
+    /* Style the filter button */
+    .search-bar button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        padding: 5px 10px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    /* Hover effect for the filter button */
+    .search-bar button:hover {
+        background-color: #0056b3;
+    }
+</style>
+<!-- doctors23:17-->
+</html>

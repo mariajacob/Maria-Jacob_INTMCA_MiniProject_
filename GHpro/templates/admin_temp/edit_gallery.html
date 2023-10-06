@@ -164,8 +164,17 @@
                      <li>
                         <a href="{% url 'patients' %}"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                     </li>
-                    <li>
-                        <a href="{% url 'appointments' %}"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-user"></i> <span>Appointments </span> <span class="menu-arrow"></span></a>
+                        <ul style="display: none;">
+                            
+                            <li><a href="{% url 'appointments' %}">All Appointments</a></li>
+                            <li><a href="{% url 'current_appointment' %}">Current Appointments</a></li>
+                            <li><a href="{% url 'future_appointment' %}">Future Appointments</a></li>
+                            <li><a href="{% url 'past_appointment' %}">Past Appointments</a></li>
+                            
+                            
+                        </ul>
                     </li>
                     <li>
                         <a href="{% url 'schedule' %}"><i class="fa fa-calendar-check-o"></i> <span>Asha Workers Schedule</span></a>

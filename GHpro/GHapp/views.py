@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
-from .models import Ashaworker,Blog,AshaworkerSchedule
+from .models import Ashaworker,Blog,AshaworkerSchedule,Hca
 from .models import Appointment,Slots
 from .models import PatientProfile
 from .models import MedicalRecord
@@ -21,6 +21,24 @@ from .decorators import patient_required
 from django.shortcuts import render, get_object_or_404, redirect
 from .decorators import ashaworker_required
 from django.core.mail import send_mail
+from io import BytesIO
+from django.db.models import Count
+import matplotlib.pyplot as plt
+from django.shortcuts import render
+from django.db.models import Count
+from .models import CustomUser
+
+
+from .models import Ashaworker, PatientProfile, Appointment
+from django.utils import timezone
+import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
+
+
+
+
+
 from django.conf import settings
 
 
@@ -55,36 +73,12 @@ def contact(request):
 def index2(request):
     return render(request,'admin_temp/index-2.html')
 
-# def schedule(request):
-#     # Retrieve the schedule data from your database (adjust the query as needed)
-#     schedules = AshaworkerSchedule.objects.all()
 
-#     context = {
-#         'schedules': schedules,
-#     }
+def index(request):
+    return render(request,'index.html')
 
-#     return render(request, 'admin_temp/schedule.html', context)
-
-
-# def schedule(request):
-#     # Get all Ashaworkers
-#     ashaworkers = Ashaworker.objects.all()
-
-#     # Create a list to store each Ashaworker's schedule
-#     schedules = []
-
-#     # Iterate through all Ashaworkers and fetch their schedules
-#     for ashaworker in ashaworkers:
-#         # Fetch time slots associated with each Ashaworker
-#         time_slots = Slots.objects.filter(ashaworker=ashaworker)
-        
-#         # Append the Ashaworker and their schedule to the list
-#         schedules.append({
-#             'ashaworker': ashaworker,
-#             'time_slots': time_slots,
-#         })
-
-#     return render(request, 'admin_temp/schedule.html', {'schedules': schedules})
+def hca_index(request):
+    return render(request,'hca_temp/hca_index.html')
 
 def schedule(request):
     # Get all Ashaworkers
@@ -337,9 +331,20 @@ def donation(request):
 
 @login_required(login_url='login_page')
 def patients(request):
-    # patients = CustomUser.objects.filter(role=CustomUser.PATIENTS)
     patients = PatientProfile.objects.filter()
-    return render(request, 'admin_temp/patients.html ', {'patients': patients})
+    ward_filter = request.GET.get('ward')
+    
+    if ward_filter:
+        patients = PatientProfile.objects.filter(ward=ward_filter)
+    else:
+        patients = PatientProfile.objects.all()
+    
+    ward_numbers = PatientProfile.objects.values_list('ward', flat=True).distinct()
+    
+    return render(request, 'admin_temp/patients.html', {'patients': patients, 'ward_numbers': ward_numbers})
+    # patients = CustomUser.objects.filter(role=CustomUser.PATIENTS)
+    # patients = PatientProfile.objects.filter()
+    # return render(request, 'admin_temp/patients.html ', {'patients': patients})
 
 
 from django.contrib.auth.decorators import login_required
@@ -578,6 +583,38 @@ def ad_appointment(request):
         'past_appointments': past_appointments,
     })
 
+def current_appointment(request):
+    current_date = timezone.now().date()
+    current_appointments = Appointment.objects.filter(date=current_date).order_by('date', 'slot__start_time')
+    
+    
+    return render(request, 'admin_temp/current_appointment.html', {
+        'current_appointments': current_appointments,
+        
+    })
+
+def future_appointment(request):
+    current_date = timezone.now().date()
+    
+    future_appointments = Appointment.objects.filter(date__gt=current_date).order_by('date', 'slot__start_time')
+    
+    
+    return render(request, 'admin_temp/future_appointment.html', {
+        
+        'future_appointments': future_appointments,
+        
+    })
+
+def past_appointment(request):
+    current_date = timezone.now().date()
+    
+    past_appointments = Appointment.objects.filter(date__lt=current_date).order_by('-date', 'slot__start_time')
+    
+    return render(request, 'admin_temp/past_appointment.html', {
+        
+        'past_appointments': past_appointments,
+    })
+
 
 @login_required(login_url='login_page')
 def asha_approved_appointments(request):
@@ -606,6 +643,22 @@ def patient_users(request):
     # patients = CustomUser.objects.filter(role=CustomUser.PATIENTS)
     patients = PatientProfile.objects.filter()
     return render(request, 'asha_temp/patient_users.html', {'patients': patients})
+
+def patients_by_ward(request):
+    ward_filter = request.GET.get('ward')
+    
+    if ward_filter:
+        patients = PatientProfile.objects.filter(ward=ward_filter)
+    else:
+        patients = PatientProfile.objects.all()
+    
+    ward_numbers = PatientProfile.objects.values_list('ward', flat=True).distinct()
+    
+    return render(request, 'asha_temp/patients_by_ward.html', {'patients': patients, 'ward_numbers': ward_numbers})
+
+
+
+
 
 @login_required(login_url='login_page')
 def search_patient(request):
@@ -671,7 +724,7 @@ def appointment_form(request, appointment_id=None):
             )
             appointment.save()
             subject = 'Appointment is Successful'
-            message = f'Your appointment for home visit is successful. Your Scheduled date: {date_id}, Your Scheduled Time: {slot}'
+            message = f'Your appointment for home visit is successful. Your Scheduled date: {date_id}, Your Scheduled Time: {selected_time_slot}'
             from_email = settings.EMAIL_HOST_USER
             recipient_list = [request.user.email]
             send_mail(subject, message, from_email, recipient_list)
@@ -850,17 +903,70 @@ def delete_asha(request, asha_id):
 @login_required(login_url='login_page')
 def admin_dashboard(request):
     # Get the current date and time
-    
+    current_date = timezone.now().date()
+
     # Retrieve Asha Workers
     ashaworkers = Ashaworker.objects.all()
 
     # Retrieve Patients
     patients = PatientProfile.objects.all()
+    appointments = Appointment.objects.all()
+    
+    approved_appointments = Appointment.objects.filter(is_approved=True)
+
+
+    # Query the database to count the number of appointments for each patient
+    appointments_count = Appointment.objects.values('user__email').annotate(appointment_count=Count('id'))
+
+    # Extract the patient usernames and appointment counts for the chart
+    patient_usernames = [appointment['user__email'] for appointment in appointments_count]
+    appointment_counts = [appointment['appointment_count'] for appointment in appointments_count]
+
+    ashaworkers = Ashaworker.objects.annotate(appointment_count=Count('appointments'))
+    ashaworker_count = ashaworkers.count()
+    patients_count = patients.count()
+    appointments_count = appointments.count()
+    approved_appointments=approved_appointments.count()
+    # Create a DataFrame to store the data
+    data = {
+        'Ashaworker': [worker.Name for worker in ashaworkers],
+        'Appointment Count': [worker.appointment_count for worker in ashaworkers],
+    }
+
+    # Convert the data to a DataFrame
+    import pandas as pd
+    df = pd.DataFrame(data)
+
+    # Create a line chart
+    plt.figure(figsize=(6, 4))
+    plt.plot(data['Ashaworker'], data['Appointment Count'], marker='o', linestyle='-', color='b')
+    plt.title('Ashaworker Appointment Count')
+    plt.xlabel('Ashaworker')
+    plt.ylabel('Appointment Count')
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+    plt.tight_layout()
+
+    # Save the plot to a BytesIO object
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+
+    # Convert the plot to base64 for embedding in the HTML template
+    plot_data = base64.b64encode(buffer.read()).decode('utf-8')
 
     return render(request, 'admin_temp/adindex.html', {
-        
         'ashaworkers': ashaworkers,
         'patients': patients,
+        'patient_usernames': patient_usernames,
+        'appointment_counts': appointment_counts,
+        'current_date': current_date,
+        'plot_data': plot_data,
+        'ashaworker_count': ashaworker_count,
+        'patients_count': patients_count,
+        'appointments_count': appointments_count,
+        'approved_appointments': approved_appointments,
+        
+        
     })
 
 
@@ -896,7 +1002,7 @@ def login_page(request):
                 return redirect('/')
             elif user.role == CustomUser.HCA:
                 login(request, user)
-                return redirect('/')
+                return redirect('hca_index')
             elif user.role == CustomUser.ADMIN:
                 login(request, user)
                 return redirect('admin_dashboard')
@@ -909,34 +1015,34 @@ def login_page(request):
         return render(request, 'login.html')    
 
 
-def hca_signup(request):
-    if request.method == "POST":
-        # username = request.POST['email']
-        email = request.POST['email']
-        password = request.POST['password']
-        confirm_password = request.POST['confirmPassword']
-        role = User.HCA 
+# def hca_signup(request):
+#     if request.method == "POST":
+#         # username = request.POST['email']
+#         email = request.POST['email']
+#         password = request.POST['password']
+#         confirm_password = request.POST['confirmPassword']
+#         role = User.HCA 
 
-        if password == confirm_password:
-            # if User.objects.filter(username=username).exists():
-            #     # messages.info(request, 'Username already exists')
-            #     # return redirect('register')
-            #     return render(request, 'signup.html', {'username_exists': True})
-            if User.objects.filter(email=email).exists():
-                messages.info(request, 'Email already exists') 
-                return redirect('hca_signup')
-            else:
-                # user = User.objects.create_user(email=email,password=password)
-                user = User.objects.create_user(email=email, password=password, role=role)
+#         if password == confirm_password:
+#             # if User.objects.filter(username=username).exists():
+#             #     # messages.info(request, 'Username already exists')
+#             #     # return redirect('register')
+#             #     return render(request, 'signup.html', {'username_exists': True})
+#             if User.objects.filter(email=email).exists():
+#                 messages.info(request, 'Email already exists') 
+#                 return redirect('hca_signup')
+#             else:
+#                 # user = User.objects.create_user(email=email,password=password)
+#                 user = User.objects.create_user(email=email, password=password, role=role)
                 
-                user.save()
-                messages.success(request, 'Registration successful. You can now log in.')
-                return redirect('login_page')
-        else:
-            messages.error(request, 'Password confirmation does not match')
-            return redirect('hca_signup')
-    else:
-        return render(request, 'hca_signup.html')
+#                 user.save()
+#                 messages.success(request, 'Registration successful. You can now log in.')
+#                 return redirect('login_page')
+#         else:
+#             messages.error(request, 'Password confirmation does not match')
+#             return redirect('hca_signup')
+#     else:
+#         return render(request, 'hca_signup.html')
 
 
 
@@ -1225,9 +1331,252 @@ def medical_record(request, patient_id):
 
 
 @login_required
-def medical_record_display(request):
-    # Retrieve medical records for the currently logged-in user
-    # medical_record = MedicalRecord.objects.filter(user=request.user)
-    medical_record = MedicalRecord.objects.filter(user=request.user).order_by('-date')
+def medical_record_search(request):
+    if request.method == 'GET':
+        selected_date = request.GET.get('selected_date')
 
+        if selected_date:
+            medical_record = MedicalRecord.objects.filter(user=request.user, date=selected_date).order_by('-date')
+        else:
+            medical_record = MedicalRecord.objects.filter(user=request.user).order_by('-date')
+
+        return render(request, "medical_record_display.html", {"medical_record": medical_record})
+
+@login_required
+def medical_record_display(request):
+    medical_record = MedicalRecord.objects.filter(user=request.user).order_by('-date')
     return render(request, "medical_record_display.html", {"medical_record": medical_record})
+
+from django.http import HttpResponse, FileResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from io import BytesIO
+
+def generate_medical_record_pdf(request):
+    # Get the logged-in user's medical records
+    medical_records = MedicalRecord.objects.filter(user=request.user).order_by('-date')
+
+    # Retrieve the patient's first name and last name
+    patient_profile = request.user.patientprofile  # Assuming you have a one-to-one relationship
+    first_name = patient_profile.first_name
+    last_name = patient_profile.last_name
+    # Get the user's full name
+
+    # Create a BytesIO buffer to receive the PDF data
+    buffer = BytesIO()
+
+    # Create the PDF object, using the BytesIO buffer as its "file."
+    pdf = SimpleDocTemplate(buffer, pagesize=letter)
+
+    # Create a list to hold the data for the table
+    data = [["Date", "Doctor's Notes", "Medications Needed", "Treatments", "Current Conditions"]]
+
+    # Populate the data list with medical record information
+    for record in medical_records:
+        data.append([
+            str(record.date),
+            record.doctor_notes,
+            record.medications_needed,
+            record.treatments,
+            record.current_conditions
+        ])
+
+    # Create a table style and apply it to the table
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ])
+    
+    table = Table(data)
+    table.setStyle(table_style)
+
+    # Create a Paragraph for the heading and the user's name
+    styles = getSampleStyleSheet()
+    main_heading_style = ParagraphStyle(
+        name='MainHeadingStyle',
+        parent=styles['Heading1'],
+        alignment=1  # Center alignment
+    )
+    main_heading_text = Paragraph("<b>Gentle Haloes Palliative Care</b>", main_heading_style)
+    
+    sub_heading_style = ParagraphStyle(
+        name='SubHeadingStyle',
+        parent=styles['Heading2'],
+        alignment=1  # Center alignment
+    )
+    sub_heading_text = Paragraph("<b>Parathodu Grama Panchayath</b>", sub_heading_style)
+
+    sub_heading_medical_record = Paragraph("<b>Medical Record</b>", sub_heading_style)  # Converted to subheading
+
+    user_name_text = Paragraph("<b>Patient Name:</b> {} {}".format(first_name, last_name), styles['Normal'])
+
+    # Build the PDF document with the desired structure and reduced spacing
+    elements = [main_heading_text, sub_heading_text, Spacer(1, 5), sub_heading_medical_record, Spacer(1, 5), user_name_text, Spacer(1, 10), table]
+    pdf.build(elements)
+
+    # Move the buffer position to the beginning
+    buffer.seek(0)
+
+    # Create a response with the PDF data
+    response = FileResponse(buffer, as_attachment=True, filename="medical_record.pdf")
+
+    return response
+
+  # Import the User model
+
+def appointment_chart(request):
+    # Query the database to count the number of appointments for each patient
+    appointments_count = Appointment.objects.values('user__email').annotate(appointment_count=Count('id'))
+
+    # Extract the patient usernames and appointment counts for the chart
+    patient_usernames = [appointment['user__email'] for appointment in appointments_count]
+    appointment_counts = [appointment['appointment_count'] for appointment in appointments_count]
+
+    return render(request, 'admin_temp/appointment_chart.html', {'patient_usernames': patient_usernames, 'appointment_counts': appointment_counts})
+
+
+
+
+
+
+def ashaworker_appointment_chart(request):
+    # Get the Ashaworkers and their associated appointment counts
+    ashaworkers = Ashaworker.objects.annotate(appointment_count=Count('appointments'))
+
+    # Create a DataFrame to store the data
+    data = {
+        'Ashaworker': [worker.Name for worker in ashaworkers],
+        'Appointment Count': [worker.appointment_count for worker in ashaworkers],
+    }
+
+    # Convert the data to a DataFrame
+    import pandas as pd
+    df = pd.DataFrame(data)
+
+    # Create a line chart
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(10, 6))
+    plt.plot(df['Ashaworker'], df['Appointment Count'], marker='o', linestyle='-', color='b')
+    plt.title('Ashaworker Appointment Count')
+    plt.xlabel('Ashaworker')
+    plt.ylabel('Appointment Count')
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+    plt.tight_layout()
+
+    # Save the plot to a BytesIO object
+    from io import BytesIO
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+
+    # Convert the plot to base64 for embedding in the HTML template
+    import base64
+    plot_data = base64.b64encode(buffer.read()).decode('utf-8')
+
+    return render(request, 'admin_temp/appointment_chart1.html', {'plot_data': plot_data})
+
+def add_hca(request):
+    if request.method == 'POST':
+        # Retrieve data from the POST request
+        hcaname = request.POST.get('hcaname')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        date_of_join = request.POST.get('date_of_join')
+        
+        address = request.POST.get('address')
+        taluk = request.POST.get('taluk')
+        panchayat = request.POST.get('panchayat')
+        
+        postal = request.POST.get('postal')
+        phone = request.POST.get('phone')
+        profile_photo = request.FILES.get('profile_photo')
+        license_certificate=request.FILES.get('license_certificate')
+        year_hca=request.FILES.get('year_hca')
+        role = CustomUser.HCA
+        print(role)
+
+        # Check if a user with the same email and role exists
+        if CustomUser.objects.filter(email=email, role=CustomUser.HCA).exists():
+            messages.info(request, 'Email already exists')
+            return redirect('add_hca')
+
+        # Check if a user with the same ward exists
+        
+
+        # Create the user and Ashaworker records
+        user = CustomUser.objects.create_user(email=email, password=password)
+        user.role = CustomUser.HCA
+        user.save()
+        hca = Hca(user=user, hcaname=hcaname, email=email,date_of_join=date_of_join,
+                         address=address, taluk=taluk, panchayat=panchayat,
+                         postal=postal, phone=phone, profile_photo=profile_photo,license_certificate=license_certificate,year_hca=year_hca)
+        hca.save()
+
+        subject = 'Hospital Login Details'
+        message = f'Registered as an Hospital. Your username: {email}, Password: {password}'
+        from_email = settings.EMAIL_HOST_USER  # Your email address
+        recipient_list = [user.email]  # Employee's email address
+
+        send_mail(subject, message, from_email, recipient_list)
+
+        return redirect('ad_hca')
+    else:
+        return render(request, 'admin_temp/add_hca.html')
+    
+@login_required(login_url='login_page')
+def edit_hca(request, hca_id):
+    hca = get_object_or_404(Hca, id=hca_id)
+    if request.method == 'POST':
+        hcaname = request.POST.get('hcaname')
+        email = request.POST.get('email')
+        password=request.POST.get('password')
+        
+        date_of_join = request.POST.get('date_of_join')
+        
+        address = request.POST.get('address')
+        taluk = request.POST.get('taluk')
+        panchayat = request.POST.get('panchayat')
+       
+        postal = request.POST.get('postal')
+        phone = request.POST.get('phone')
+        
+        year_hca=request.FILES.get('year_hca')
+        new_profile_photo = request.FILES.get('new_profile_photo')
+        if new_profile_photo:
+            hca.profile_photo = new_profile_photo
+        
+        new_li_photo = request.FILES.get('new_li_photo')
+        if new_li_photo:
+            hca.license_certificate = new_li_photo
+
+        hca.hcaname = hcaname
+        hca.email = email
+        hca.set_password(password)
+        
+        hca.date_of_join = date_of_join
+        
+        hca.address = address
+        hca.taluk = taluk
+        hca.panchayat = panchayat
+        
+        hca.postal = postal
+        hca.phone = phone
+        
+        hca.year_hca = year_hca
+        hca.save()
+        return redirect('ad_hca')
+    return render(request, 'admin_temp/edit_hca.html', {'hca': hca})
+
+@login_required(login_url='login_page')
+def ad_hca(request):
+    hca = Hca.objects.all()
+    return render(request, 'admin_temp/ad_hca.html', {'hca': hca})
+

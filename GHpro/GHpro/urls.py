@@ -17,7 +17,7 @@ Including another URLconf
 from GHapp import views
 from django.contrib import admin
 from django.urls import path, include
-from GHapp.views import login_page,hca_signup,edit_gallery_images, appointment_form,register,ad_gallery,loggout,add_asha,ResetPasswordView,ChangePasswordView
+from GHapp.views import login_page,edit_gallery_images, appointment_form,register,ad_gallery,loggout,add_asha,ResetPasswordView,ChangePasswordView
 from django.contrib.auth import views as auth_views
 
 from django.conf import settings
@@ -61,7 +61,8 @@ urlpatterns = [
 
     # path('medical_record/', views.medical_record, name='medical_record'),
     path('medical_record_display', views.medical_record_display, name="medical_record_display"),
-    
+    path('medical_record_search/', views.medical_record_search, name='medical_record_search'),
+
    
     
     path('index-2', views.index2, name="index-2"), 
@@ -105,7 +106,11 @@ urlpatterns = [
     # path('add-patient', views.addpatient, name="add-patient"),
     
 
-    path('appointments', views.ad_appointment, name="appointments"), 
+    path('appointments', views.ad_appointment, name="appointments"),
+    path('current_appointment', views.current_appointment, name="current_appointment"),
+    path('future_appointment', views.future_appointment, name="future_appointment"),
+    path('past_appointment', views.past_appointment, name="past_appointment"), 
+    
    
 
     path('adgallery', ad_gallery, name="adgallery"), 
@@ -125,12 +130,14 @@ urlpatterns = [
     # path('pending-appointment/<int:appointment_id>/', views.pending_appointment, name='pending_appointment'),
     
     path('patient_users/', views.patient_users, name='patient_users'),
+    path('patients_by_ward/', views.patients_by_ward, name='patients_by_ward'),
+
     path('search-patient/', views.search_patient, name='search_patient'),
    
 
     path('login_page', login_page, name='login_page'),
     path('register', register, name='register'),
-    path('hca_signup', hca_signup, name='hca_signup'),
+   
     path('loggout', loggout, name='loggout'),  
 
     # path('edit_gallery', views.edit_gallery, name="edit_gallery"),
@@ -170,7 +177,20 @@ path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
 
     path('payment/<int:donat_id>/', views.payment, name='payment'),
     path('paymenthandler/', views.paymenthandler, name='paymenthandler'),
+
+    path('generate_pdf/', views.generate_medical_record_pdf, name='generate_medical_record_pdf'),
     
+
+    path('appointment_chart/', views.appointment_chart, name='appointment_chart'),
+    path('ashaworker_appointment_chart/', views.ashaworker_appointment_chart, name='ashaworker_appointment_chart'),
+
+    path('ad_hca', views.ad_hca, name="ad_hca"),
+    path('add_hca', views.add_hca, name="add_hca"),
+    path('edit_hca/<int:hca_id>/', views.edit_hca, name='edit_hca'),
+
+    path('hca_index', views.hca_index, name="hca_index"),
+
+
 ]
 
 if settings.DEBUG:

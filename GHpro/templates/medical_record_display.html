@@ -36,6 +36,11 @@
   <!-- responsive style -->
   <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
 
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
 </head>
 
 <body>
@@ -144,14 +149,7 @@
                                   <i class="fa fa-user" aria-hidden="true"></i>
                                   <span>Login Here</span>
                               </a>
-                              {% comment %} <a class="dropdown-item" href="{% url 'admin_login' %}">
-                                  <i class="fa fa-user" aria-hidden="true"></i>
-                                  <span>AshaWorker Login</span> 
-                              </a> {% endcomment %}
-                              {% comment %} <a class="dropdown-item" href="{% url 'hca_signup' %}">
-                                <i class="fa fa-user" aria-hidden="true"></i>
-                                <span>Hospital Login</span> 
-                            </a> {% endcomment %}
+                            
                           </div>
                       </div>
                       {% endif %}
@@ -183,10 +181,7 @@
                                   <i class="fa fa-user" aria-hidden="true"></i>
                                   <span>Patient Login</span>
                               </a>
-                              <a class="dropdown-item" href="{% url 'hca_signup' %}">
-                                <i class="fa fa-user" aria-hidden="true"></i>
-                                <span>Hospital Login</span> 
-                            </a>
+                             
                               
                           </div>
                       </div>
@@ -205,55 +200,72 @@
               </nav>
             </div>
           </div>
-        </header>
+        </header><BR><BR><BR>
+          <div class="row">
+            <div class="col-md-12">
+                <div class="search-bar">
+                    <a href="{% url 'medical_record_display' %}" class="back-button">
+                        <i class="fa fa-arrow-left"></i> Back to All Records
+                    </a>
+                    <form method="GET" action="{% url 'medical_record_search' %}">
+                        <div class="center-content">
+                    
+                            <a href="{% url 'generate_medical_record_pdf' %}" class="btn btn-primary custom-button" id="center-button" >Download Medical Record</a>
+                      
+                            &ensp;&ensp;&ensp;&ensp;<label for="selected_date">Select Date:</label>
+                            <input type="date" id="selected_date" name="selected_date" class="date-input">
+                            &ensp;&ensp;<button type="submit" class="search-button"> Search </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+
+     
+
+
+
+        
+
     <BR><BR><BR>
-      {% comment %} <div class="button-container">
-      <a href="{% url 'print_patient_profile' %}" class="centered-button">Go to Profile</a>
-      <a href="{% url 'medical_record' %}" class="centered-button">Add Medical Record</a>
-    </div> {% endcomment %}
+     
     <h1>Medical Record Details</h1>
     
+    
 <BR>
-    <div class="record-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Doctor's Notes</th>
-                    <th>Medications Needed</th>
-                    <th>Treatments</th>
-                    <th>Current Conditions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for medical_record in medical_record %}
-                    <tr>
-                        <td>{{ medical_record.date }}</td>
-                        <td>{{ medical_record.doctor_notes }}</td>
-                        <td>{{ medical_record.medications_needed }}</td>
-                        <td>{{ medical_record.treatments }}</td>
-                        <td>{{ medical_record.current_conditions }}</td>
+
+  <div class="row doctor-grid">
+    {% for medical_record in medical_record %}
+            <div class="col-md-4 col-sm-4 col-lg-3">
+                <div class="profile-widget">
+                  
+                    <h4 class="doctor-name text-ellipsis"><a href="profile.html"><i class="fa fa-calendar"> </i> {{ medical_record.date }}</a></h4>
                       
-                    </tr>
-                    
-                {% endfor %}
-                
-            </tbody>
-            <br><br>
-              
-        </table>
-        
-    </div>
-
+                    <div class="user-country">
+                         <br>
+                    </div>
+                    <div>
+                      
+                        {% comment %} <p class="card-text">Date: {{ medical_record.date }}</p> {% endcomment %}
+                        <p class="card-text">Doctor's Notes: {{ medical_record.doctor_notes }}</p> 
+                        <p class="card-text">Medications Needed: {{ medical_record.medications_needed }}</p>
+                        <p class="card-text">Treatments: {{ medical_record.treatments }}</p>
+                        <p class="card-text">Current Conditions: {{ medical_record.current_conditions }}</p>
+                        
+                    </div>
+                </div>
+            </div>
+           
+        {% endfor %}
+   </div>
     
-    
-
-    <style>
+<style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
             margin: 0;
-            padding: 0;
+            padding:50px;
             background: #f2e6dc;  /* fallback for old browsers */
             background: -webkit-linear-gradient(to right, #4ca2cd, #67B26F);  /* Chrome 10-25, Safari 5.1-6 */
             background: linear-gradient(to right, #cdfaf2, #ecdaf7); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
@@ -262,30 +274,9 @@
         h1 {
             text-align: center;
             margin: 20px 0;
-        }
-
-        table {
-            width: 80%;
-            max-width: 800px;
-            margin: 0 auto;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-            background-color: white;
-        }
-
-        th {
-            {% comment %} background-color: #f2f2f2; {% endcomment %}
-            background-color: #faf4d4;
+            color:black;
             font-weight: bold;
-        }
-
-        tr:nth-child(even) {
-            background-color: white; /* Make every row white */
+            text-decoration: underline;
         }
 
         .record-container {
@@ -342,17 +333,76 @@
   margin-top: 20px; /* Add margin to separate the table and button */
 }
 
-.centered-button {
-  /* Style your button here */
-  padding: 10px 20px; /* Adjust padding as needed */
-  background-color: #007bff; /* Button background color */
-  color: #fff; /* Button text color */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  
+
+
+/* Style the search bar container */
+.search-bar {
+    background-color: #f4f4f4;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between; /* Align content to both ends */
+    align-items: center; /* Center vertically */
 }
+
+/* Style the back button */
+.back-button {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* Style the label */
+.search-bar label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+/* Style the date input */
+.date-input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 16px;
+}
+
+/* Style the filter button */
+.search-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Hover effect for the filter button */
+.search-button:hover {
+    background-color: #0056b3;
+}
+
+/* Center content within the search bar */
+.center-content {
+    display: flex;
+    align-items: center;
+}
+.profile-widget {
+  color:black;
+  background-color:#f7f1e4; /* Add your desired background color */
+  font-size: 20px; /* Set the font size to 20px */
+  padding: 15px; /* Add padding for spacing */
+}
+
+/* Apply styles to the label elements inside "profile-widget" */
+  .profile-widget label {
+  font-weight: bold; /* Make the label text bold */
+}
+
     </style>
 
     <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
@@ -366,6 +416,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
     <!-- custom js -->
     <script src="{% static 'js/custom.js' %}"></script>
-
+     
 </body>
 </html>

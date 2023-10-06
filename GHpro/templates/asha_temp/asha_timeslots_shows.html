@@ -71,10 +71,17 @@
                         <li>
                             <a href="{% url 'asha_timeslots_shows'%}"><i class="fa fa-calendar"></i> <span>View Schedules</span></a> 
                         </li> 
-                        <li>
-                            <a href="{% url 'patient_users' %}"><i class="fa fa-wheelchair"></i> <span>Patients List</span></a>
-                            
-                        </li>
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span>Patients </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'patient_users' %}">All Patients List</a></li>
+                                <li><a href="{% url 'patients_by_ward' %}"> Patients By Ward</a></li>
+                                
+								
+								
+							</ul>
+						</li>
                     </ul>
                 </div>
             </div>
@@ -162,7 +169,8 @@
     }
    .page-wrapper{
     color:black;
-    margin-left:300px;
+    margin-left:250px;
+    padding:20px;
 
    }
    .profile-widget {
