@@ -63,9 +63,11 @@ urlpatterns = [
     path('medical_record_display', views.medical_record_display, name="medical_record_display"),
     path('medical_record_search/', views.medical_record_search, name='medical_record_search'),
 
+    path('ashaworker/medical_record/<int:patient_id>/', views.ashaworker_view_medical_record, name='ashaworker_view_medical_record'),
+
    
     
-    path('index-2', views.index2, name="index-2"), 
+    
     
   
     path('edit_patient_profile', views.edit_patient_profile, name='edit_patient_profile'),
@@ -83,6 +85,9 @@ urlpatterns = [
     path('check-ward-exists/', views.check_ward_exists, name='check_ward_exists'),
     path('add_asha', add_asha, name="add_asha"),  # Add this line for adding Asha Worker
     path('patients', views.patients, name="patients"),
+
+    path('delete_patients/<int:patient_id>/', views.delete_patients, name='delete_patients'),
+
     # path('schedule', views.schedule, name="schedule"),
     path('schedule/', views.schedule, name='schedule'),
     
@@ -131,6 +136,7 @@ urlpatterns = [
     
     path('patient_users/', views.patient_users, name='patient_users'),
     path('patients_by_ward/', views.patients_by_ward, name='patients_by_ward'),
+    path('add_view_rec/', views.add_view_rec, name='add_view_rec'),
 
     path('search-patient/', views.search_patient, name='search_patient'),
    
@@ -184,11 +190,21 @@ path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
     path('appointment_chart/', views.appointment_chart, name='appointment_chart'),
     path('ashaworker_appointment_chart/', views.ashaworker_appointment_chart, name='ashaworker_appointment_chart'),
 
+    path('appointment_chart_asha/', views.appointment_chart_asha, name='appointment_chart_asha'),
+
     path('ad_hca', views.ad_hca, name="ad_hca"),
     path('add_hca', views.add_hca, name="add_hca"),
     path('edit_hca/<int:hca_id>/', views.edit_hca, name='edit_hca'),
 
     path('hca_index', views.hca_index, name="hca_index"),
+    path('hca_patient_users/', views.hca_patient_users, name='hca_patient_users'),
+    path('hca_patients_by_ward/', views.hca_patients_by_ward, name='hca_patients_by_ward'),
+    path('hca_add_view_rec/', views.hca_add_view_rec, name='hca_add_view_rec'),
+    path('hca_search_patient/', views.hca_search_patient, name='hca_search_patient'),
+    path('hca_med_search_patient/', views.hca_med_search_patient, name='hca_med_search_patient'),
+    path('hca/medical_record/<int:patient_id>/', views.hca_view_medical_record, name='hca_view_medical_record'),
+    path('edit_hca_pro', views.edit_hca_pro, name='edit_hca_pro'),
+    path('pro_hca', views.pro_hca, name='pro_hca'),
 
 
 ]

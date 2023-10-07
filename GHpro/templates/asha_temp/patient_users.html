@@ -23,7 +23,7 @@
     <div class="main-wrapper">
         <div class="header">
 			<div class="header-left">
-				<a href="{% url 'index-2' %}" class="logo">
+				<a href="{% url 'asha_index' %}" class="logo">
 					<img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
 				</a>
 			</div>
@@ -80,7 +80,7 @@
 								
 								<li><a href="{% url 'patient_users' %}">All Patients List</a></li>
                                 <li><a href="{% url 'patients_by_ward' %}"> Patients By Ward</a></li>
-                                
+                                <li><a href="{% url 'add_view_rec' %}"> Medical Record</a></li>
 								
 								
 							</ul>
@@ -125,18 +125,25 @@
                                     <img alt="" src="{{ patient.profile_pic.url }}">
                                 </a>
                             </div> 
+                           
                             <div class="dropdown profile-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-                                 {% comment %} <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href=" {% url 'edit_asha' ashaworker.id  %}"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                    <a class="dropdown-item" href=" {% url 'delete_asha' ashaworker.id  %}"><i class="fa fa-pencil m-r-5"></i> Delete</a>
-                                </div>   {% endcomment %}
+                                 <div class="dropdown-menu dropdown-menu-right">
+                                    <form method="GET" action="{% url 'medical_record' patient.id %}">
+                                        <button type="submit" class="btn-show-medical-record">Add Medical Records</button>
+                                    </form><br>
+                                    <form method="get" action="{% url 'ashaworker_view_medical_record' patient.id %}">
+                                        <button type="submit" class="btn-show-medical-record" >View Medical Record</button>
+                                      </form>
+                                </div>   
                             </div>
                             <h4 class="doctor-name text-ellipsis"><a href="profile.html"> {{ patient.Name }}</a></h4>
                             
                             
                             <div>
                                 <p>ID: {{ patient.id}}</p>
+
+                                
                                 <p>Name: {{ patient.first_name }} {{ patient.last_name }}</p>
                                 {% comment %} <p>Last Name: {{ patient.last_name }}</p> {% endcomment %}
                                 <p>Email: {{ patient.email }}</p>
@@ -164,9 +171,7 @@
                                     </div>
                                 </div> {% endcomment %}
                             </div>
-                            <form method="GET" action="{% url 'medical_record' patient.id %}">
-                                <button type="submit" class="btn-show-medical-record">Add Medical Records</button>
-                            </form>
+                            
                                                    
                         </div>
                     </div>

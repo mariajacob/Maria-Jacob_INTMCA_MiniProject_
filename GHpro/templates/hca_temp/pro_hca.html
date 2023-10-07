@@ -1,0 +1,518 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+    <!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.min.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+			<div class="header-left">
+				<a href="{% url 'hca_index' %}" class="logo">
+					<img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+				</a>
+			</div>
+			 <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+           
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu">
+						{% comment %} <a class="dropdown-item" href="{% url 'edit_asha_profile' %}">Profile</a> {% endcomment %}
+						{% comment %} <a class="dropdown-item" href="{% url 'pro_ashaworker' %}">Profile</a> {% endcomment %}
+                        <a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+					</div>
+                    {% else %}
+
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+					</div>
+                    
+                    {% endif %}
+                </li>
+           
+        </div> 
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+                        <li class="active">
+                            <a href="{% url 'hca_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                           
+                        </li> 
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span>Patients </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'hca_patient_users' %}">All Patients List</a></li>
+                                <li><a href="{% url 'hca_patients_by_ward' %}"> Patients By Ward</a></li>
+                                <li><a href="{% url 'hca_add_view_rec' %}"> Medical Record</a></li>
+                                
+								
+								
+							</ul>
+						</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+<div class="page-wrapper">
+<header class="ScriptHeader">
+    <div class="rt-container">
+    	<div class="col-rt-12">
+        	<div class="rt-heading">
+            	<h1>Hospital Profile </h1>
+                
+            </div>
+        </div>
+    </div>
+</header>
+
+<section>
+    <div class="rt-container">
+          <div class="col-rt-12">
+              <div class="Scriptcontent">
+              
+<!-- Student Profile -->
+<div class="student-profile py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card shadow-sm">
+            <div class="card-header bg-transparent text-center">
+                {% if hca.profile_photo.url %}
+                    <img class="profile_img" src="{{ hca.profile_photo.url }}" alt="{{ hca.hcaname }}'s Profile Photo">
+                {% else %}
+                    <img src="/path/to/default/profile_photo.jpg" alt="Default Profile Photo">
+                {% endif %}
+                <h3>{{ hca.hcaname }}</h3>
+            </div>
+            
+            <div class="card-body">
+              <p class="mb-0"><strong class="pr-1">Email:</strong>{{ user.email }}</p>
+              <p class="mb-0"><strong class="pr-1">Phone Number:</strong>{{ hca.phone }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="card shadow-sm">
+            <div class="card-header bg-transparent border-0">
+              <h3 class="mb-0"><i class="far fa-clone pr-1"></i>General Information</h3>
+            </div>
+            <div class="card-body pt-0">
+              <table class="table table-bordered">
+                <tr>
+                  <th width="30%">Address</th>
+                  <td width="2%">:</td>
+                  <td>{{ hca.address }}</td>
+                </tr>
+                <tr>
+                  <th width="30%">Taluk</th>
+                  <td width="2%">:</td>
+                  <td>{{ hca.taluk }}</td>
+                </tr>
+                <tr>
+                  <th width="30%">Panchayat</th>
+                  <td width="2%">:</td>
+                  <td>{{ hca.panchayat }}</td>
+                </tr>
+                <tr>
+                  <th width="30%">Pin Code</th>
+                  <td width="2%">:</td>
+                  <td>{{ hca.postal }}</td>
+                </tr>
+                {% comment %} <tr>
+                  <th width="30%">Year of Hospital</th>
+                  <td width="2%">:</td>
+                  <td>{{ hca.year_hca }}</td>
+                </tr> {% endcomment %}
+                <tr>
+                    <th width="30%">Hospital License:</th>
+                    <td width="2%">:</td>
+                    <td>
+                        {% if hca.license_certificate %}
+                            Download :  <a href="{{ hca.license_certificate.url }}" download>{{ hca.license_certificate.name }}</a>
+                        {% else %}
+                            No Hospital License
+                        {% endif %}
+                    </td>
+                </tr>
+                
+                
+              </table>
+            </div>
+          </div>
+          <div class="section edit-profile-button">
+            <a href="{% url 'edit_hca_pro' %}" class="edit-button">Edit Profile</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- partial -->
+           
+    		</div>
+		</div>
+    </div>
+</section>
+     
+</div>
+<div class="sidebar-overlay" data-reff=""></div>
+<script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'assets/js/popper.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+<script src="{% static 'assets/js/Chart.bundle.js' %}"></script>
+<script src="{% static 'assets/js/chart.js' %}"></script>
+<script src="{% static 'assets/js/app.js' %}"></script>
+
+    <!-- Analytics -->
+    <style>
+        .edit-button {
+            background-color: #007bff; /* Button color */
+            color: #fff; /* Text color */
+            padding: 10px 20px; /* Increase padding for a larger button */
+            border: none;
+            border-radius:10px; /* Rounded corners for the button */
+            font-size: 18px; /* Increase font size */
+            transition: background-color 0.3s ease; /* Smooth transition effect */
+            text-decoration: none; /* Remove underlines */
+            display: inline-block;
+            margin-top: 10px; /* Add some space at the top of the button */
+            margin-left: 290px;
+          }
+        
+          /* Hover effect for the edit button */
+          .edit-button:hover {
+            background-color: #0056b3; /* Change to the desired hover color */
+          }
+        body {
+            background: #f2e6dc;  /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, white, #67B26F);  /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, white, #ecdaf7); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            padding: 0;
+            margin: 0;
+            font-family: 'Lato', sans-serif;
+            color: #000;
+        }
+        
+        .student-profile .card {
+            border-radius: 10px;
+        }
+        
+        .student-profile .card .card-header .profile_img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin: 10px auto;
+            border: 10px solid #ccc;
+            border-radius: 50%;
+        }
+        
+        .student-profile .card h3 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .student-profile .card p {
+            font-size: 16px;
+            color: #000;
+        }
+        
+        .student-profile .table th,
+        .student-profile .table td {
+            font-size: 14px;
+            padding: 5px 10px;
+            color: #000;
+        }
+
+html {
+    box-sizing: border-box;
+  }
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+  
+  article, header, section, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {
+      display: block;
+  }
+  body {
+      color: #222;
+      font-size: 100%;
+      line-height: 24px;
+      margin: 0;
+      padding:0;
+      font-family: "Raleway",sans-serif;
+  }
+  a{
+      font-family: "Raleway",sans-serif;
+      text-decoration: none;
+      outline: none;
+  }
+  a:hover, a:focus {
+      color: #373e18;
+  }
+  section {
+      float: left;
+      width: 100%;
+      padding-bottom:3em;
+  }
+  h2 {
+      color: #1a0e0e;
+      font-size: 26px;
+      font-weight: 700;
+      margin: 0;
+      line-height: normal;
+      text-transform:uppercase;
+  }
+  h2 span {
+      display: block;
+      padding: 0;
+      font-size: 18px;
+      opacity: 0.7;
+      margin-top: 5px;
+      text-transform:uppercase;
+  }
+  
+  #float-right{
+      float:right;	
+  }
+  
+  /* ******************************************************
+      Script Top
+  *********************************************************/
+  
+  .ScriptTop {
+      background: #fff none repeat scroll 0 0;
+      float: left;
+      font-size: 0.69em;
+      font-weight: 600;
+      line-height: 2.2;
+      padding: 12px 0;
+      text-transform: uppercase;
+      width: 100%;
+  }
+  
+  /* To Navigation Style 1*/
+  .ScriptTop ul {
+      margin: 24px 0;
+      padding: 0;
+      text-align: left;
+  }
+  .ScriptTop li{
+      list-style:none;	
+      display:inline-block;
+  }
+  .ScriptTop li a {
+      background: #6a4aed none repeat scroll 0 0;
+      color: #fff;
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 5px 18px;
+      text-decoration: none;
+      text-transform: capitalize;
+  }
+  .ScriptTop li a:hover{
+      background:#000;
+      color:#fff;
+  }
+  
+  
+  /* ******************************************************
+      Script Header
+  *********************************************************/
+  
+  .ScriptHeader {
+      float: left;
+      width: 100%;
+      padding: 2em 0;
+  }
+  .rt-heading {
+      margin: 0 auto;
+      text-align:center;
+  }
+  .Scriptcontent{
+      line-height:28px;	
+  }
+  .ScriptHeader h1{
+    font-family: "brandon-grotesque", "Brandon Grotesque", "Source Sans Pro", "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+      color: #050505;
+      font-size: 26px;
+      font-weight: 700;
+      margin: 0;
+      line-height: normal;
+  
+  }
+  .ScriptHeader h2 {
+      color: #312c8f;
+      font-size: 20px;
+      font-weight: 400;
+      margin: 5px 0 0;
+      line-height: normal;
+  
+  }
+  .ScriptHeader h1 span {
+      display: block;
+      padding: 0;
+      font-size: 22px;
+      opacity: 0.7;
+      margin-top: 5px;
+  
+  }
+  .ScriptHeader span {
+      display: block;
+      padding: 0;
+      font-size: 22px;
+      opacity: 0.7;
+      margin-top: 5px;
+  }
+  
+  
+  
+  
+  /* ******************************************************
+      Live Demo
+  *********************************************************/
+  
+  
+  
+  
+  
+  /* ******************************************************
+      Responsive Grids
+  *********************************************************/
+  
+  .rt-container {
+      margin: 0 auto;
+      padding-left:12px;
+      padding-right:12px;
+  }
+  .rt-row:before, .rt-row:after {
+    display: table;
+    line-height: 0;
+    content: "";
+  }
+  
+  .rt-row:after {
+    clear: both;
+  }
+  [class^="col-rt-"] {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    padding: 0 15px;
+    min-height: 1px;
+    position: relative;
+  }
+  
+  
+  @media (min-width: 768px) {
+    .rt-container {
+      width: 750px;
+    }
+    [class^="col-rt-"] {
+      float: left;
+      width: 49.9999999999%;
+    }
+    .col-rt-6, .col-rt-12 {
+      width: 100%;
+    }
+    
+  }
+  
+  @media (min-width: 1200px) {
+      .rt-container {
+          width: 1170px;
+      }
+      .col-rt-1 {
+          width:16.6%;
+      }
+      .col-rt-2 {
+          width:30.33%;
+      }
+      .col-rt-3 {
+          width:50%;
+      }
+      .col-rt-4 {
+          width: 67.664%;
+      }
+      .col-rt-5 {
+          width: 83.33%;
+      }
+      
+  
+  }
+  
+  @media only screen and (min-width:240px) and (max-width: 768px){
+       .ScriptTop h1, .ScriptTop ul {
+          text-align: center;
+      }
+      .ScriptTop h1{
+          margin-top:0;
+          margin-bottom:15px;
+      }
+      .ScriptTop ul{
+           margin-top:12px;		
+      }
+      
+      .ScriptHeader h1,
+      .ScriptHeader h2, 
+      .scriptnav ul{
+          text-align:center;	
+      }
+      .scriptnav ul{
+           margin-top:12px;		
+      }
+      #float-right{
+          float:none;	
+      }
+      
+  }
+  .header {
+        background-color: #00c6a9;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 1039;
+        height: 50px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    }
+  
+  
+  
+  
+    </style>
+	</body>
+</html>

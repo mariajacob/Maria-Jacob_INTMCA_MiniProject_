@@ -1,0 +1,240 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+    <!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.min.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+			<div class="header-left">
+				<a href="{% url 'hca_index' %}" class="logo">
+					<img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+				</a>
+			</div>
+			 <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+           
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu">
+						{% comment %} <a class="dropdown-item" href="{% url 'edit_asha_profile' %}">Profile</a> {% endcomment %}
+						{% comment %} <a class="dropdown-item" href="{% url 'pro_ashaworker' %}">Profile</a> {% endcomment %}
+                        <a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+					</div>
+                    {% else %}
+
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+					</div>
+                    
+                    {% endif %}
+                </li>
+           
+        </div> 
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+                        <li class="active">
+                            <a href="{% url 'hca_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                           
+                        </li> 
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span>Patients </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'hca_patient_users' %}">All Patients List</a></li>
+                                <li><a href="{% url 'hca_patients_by_ward' %}"> Patients By Ward</a></li>
+                                <li><a href="{% url 'hca_add_view_rec' %}"> Medical Record</a></li>
+                                
+								
+								
+							</ul>
+						</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="page-wrapper">
+        <div class="content">
+            <div class="card-header bg-transparent border-0">
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2">
+                        <h4 class="page-title">My Profile</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    
+                    
+                    <div class="col-lg-8 offset-lg-2"><br>
+                        <h4 class="page-title" style="color: black; font-weight: bold;">General Informations</h4>  
+                        <form method="POST" action="" enctype="multipart/form-data" autocomplete="off">
+
+                            {% csrf_token %}
+                            
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Name of Hospital <span class="text-danger">*</span></label>
+                                        <input class="form-control" id="name" value="{{ hca.hcaname }}" name="hcaname" type="text" readonly>
+                                    </div>
+                                </div>
+                               
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Email <span class="text-danger">*</span></label>
+                                        <input class="form-control" id="email" value="{{ user.email }}" name="email" type="email" readonly>
+                                    </div>
+                                </div>
+                                {% comment %} <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input class="form-control" id="pass" name="pass"  type="password">
+                                    </div>
+                                </div> {% endcomment %}
+                               
+								
+                               
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <input type="text" name="address" id="address" value="{{ hca.address }}" class="form-control ">
+                                    </div>
+                                </div>
+                                {% comment %} <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Year Of Hospital</label>
+                                        <input type="Number" name="year_hca" id="address" value="{{ hca.year_hca }}" class="form-control ">
+                                    </div>
+                                </div> {% endcomment %}
+								<div class="col-sm-12">
+									<div class="row">
+										
+										<div class="col-sm-6 col-md-6 col-lg-3">
+											<div class="form-group">
+												<label>Taluk</label>
+												
+                                                <input class="form-control"  id="taluk" value="{{ hca.taluk }}" name="taluk" type="text"readonly>
+											</div>
+										</div>
+										<div class="col-sm-6 col-md-6 col-lg-3">
+											<div class="form-group">
+												<label>Panchayat</label>
+											
+                                                <input class="form-control"  id="panchayat" name="panchayat" value="{{ hca.panchayat }}" type="text"readonly>
+											</div>
+										</div>
+										
+										<div class="col-sm-6 col-md-6 col-lg-3">
+											<div class="form-group">
+												<label>Postal Code</label>
+												<input type="text" class="form-control" value="{{ hca.postal }}"  name="postal" id="pin"readonly>
+											</div>
+										</div>
+									</div>
+								</div>
+                                <div class="col-sm-6">
+                                    <br><br><div class="form-group">
+                                        <label>Phone </label>
+                                        <input class="form-control" type="text" value="{{ hca.phone }}" name="phone" id="phone">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <img alt="" src="{{ hca.profile_photo.url }}" height="70px" width="90px">
+                                        <label>Edit Profile Photo</label>
+                                        <input type="file" class="form-control" name="new_profile_photo">
+                                    </div>
+                                </div>
+                                
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Edit Hospital License</label>
+                                        <input type="file" class="form-control" name="new_li_photo">
+                                        {% if hca.license_certificate %}
+                                            <p>Current License Certificate: {{ hca.license_certificate.name }}</p>
+                                        {% else %}
+                                            <p>No Hospital License</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            
+                            
+                           
+                            <div>
+                                <div class="m-t-20 text-center">
+                                    <button class="btn btn-primary submit-btn">Edit Profile</button>
+                                </div>
+                            </div>
+                        </form>
+                        
+                    </div>
+                    
+                
+               
+            </div>
+            
+            </div>
+		</div>
+        </div>
+    </div>
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/select2.min.js' %}"></script>
+	<script src="{% static 'assets/js/moment.min.js' %}"></script>
+	<script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+    <style>
+        .header {
+            background-color: #00c6a9;
+            left: 0;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 1039;
+            height: 50px;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+        body{
+            background: white;  /* fallback for old browsers */
+            
+        }
+    </style>
+</body>
+
+
+<!-- add-doctor24:06-->
+</html>

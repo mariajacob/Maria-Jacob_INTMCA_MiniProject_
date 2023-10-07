@@ -210,6 +210,7 @@ class PatientProfile(models.Model):
     medication_names = models.CharField(max_length=100, null=True,blank=True)
     dosage = models.CharField(max_length=12,null=True,blank=True)
     frequency = models.CharField(max_length=12,null=True,blank=True)
+    is_active = models.BooleanField(default=True,null=True,blank=True)
     
     def _str_(self):
         return self.first_name

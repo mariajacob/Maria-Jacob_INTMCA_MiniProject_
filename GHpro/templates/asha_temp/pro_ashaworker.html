@@ -23,7 +23,7 @@
 	<div class="main-wrapper">
     <div class="header">
   <div class="header-left">
-    <a href="{% url 'index-2' %}" class="logo">
+    <a href="{% url 'asha_index' %}" class="logo">
       <img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
     </a>
   </div>
@@ -81,7 +81,7 @@
                 
                   <li><a href="{% url 'patient_users' %}">All Patients List</a></li>
                     <li><a href="{% url 'patients_by_ward' %}"> Patients By Ward</a></li>
-                          
+                    <li><a href="{% url 'add_view_rec' %}"> Medical Record</a></li>     
           
           
         </ul>
@@ -325,8 +325,8 @@
           }
         body {
             background: #f2e6dc;  /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #4ca2cd, #67B26F);  /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #cdfaf2, #ecdaf7); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: -webkit-linear-gradient(to right, white, #67B26F);  /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, white, #ecdaf7); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
             padding: 0;
             margin: 0;
             font-family: 'Lato', sans-serif;
@@ -473,7 +473,7 @@ html {
       line-height:28px;	
   }
   .ScriptHeader h1{
-      font-family: "brandon-grotesque", "Brandon Grotesque", "Source Sans Pro", "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+    font-family: "brandon-grotesque", "Brandon Grotesque", "Source Sans Pro", "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
       color: #050505;

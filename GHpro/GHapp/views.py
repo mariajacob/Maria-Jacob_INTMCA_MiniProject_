@@ -6,7 +6,6 @@ from .models import Ashaworker,Blog,AshaworkerSchedule,Hca
 from .models import Appointment,Slots
 from .models import PatientProfile
 from .models import MedicalRecord
-
 from .models import Image 
 from datetime import datetime, timedelta
 from django.urls import reverse_lazy
@@ -27,26 +26,20 @@ import matplotlib.pyplot as plt
 from django.shortcuts import render
 from django.db.models import Count
 from .models import CustomUser
-
-
 from .models import Ashaworker, PatientProfile, Appointment
 from django.utils import timezone
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
-
-
-
-
-
 from django.conf import settings
-
-
-
 from django.contrib.auth import get_user_model
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Slots
+from .models import Donation
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 # Create your views here.
-
-
 
 User=get_user_model()
 
@@ -70,15 +63,8 @@ patient_required
 def contact(request):
     return render(request,'contact.html')
 
-def index2(request):
-    return render(request,'admin_temp/index-2.html')
-
-
 def index(request):
     return render(request,'index.html')
-
-def hca_index(request):
-    return render(request,'hca_temp/hca_index.html')
 
 def schedule(request):
     # Get all Ashaworkers
@@ -103,49 +89,6 @@ def schedule(request):
             })
 
     return render(request, 'admin_temp/schedule.html', {'schedules': schedules})
-
-
-# def add_schedule(request):
-#     time_slots = []  # Initialize an empty list for time slots
-#     if request.method == 'POST':
-#         # Get data from the HTML form
-#         Name = request.POST['Name']
-#         print(Name)
-#         available_days = request.POST['available_days']
-#         preferred_date = request.POST.get('preferred_date')
-#         preferred_time = request.POST.get('preferred_time')
-
-#         try:
-#             # Find the Ashaworker by ID
-#             # ashaworker = Ashaworker.objects.get(pk=ashaworker_id,Name=Name)
-#             ashaworker = Ashaworker.objects.get(Name=Name)
-#             # Create a new AshaworkerSchedule instance and save it
-#             schedule = AshaworkerSchedule(
-#             ashaworker=ashaworker,
-#             # Name=Name,
-#             available_days=available_days,
-#             preferred_date=preferred_date,
-#             preferred_time=preferred_time
-#             )
-#             schedule.save()
-#             return redirect('schedule')
-#             # return HttpResponse('Schedule created successfully')  # You can customize this response
-
-#         except Ashaworker.DoesNotExist:
-#             return HttpResponse('Ashaworker not found')  # You can customize this response
-#     else:
-#         # Generate time slots with 30-minute intervals for AM and PM
-#         start_time = datetime.strptime("06:00 AM", "%I:%M %p")
-#         end_time = datetime.strptime("09:00 PM", "%I:%M %p")
-#         interval = timedelta(minutes=30)
-
-#         while start_time <= end_time:
-#             time_slots.append(start_time.strftime("%I:%M %p"))
-#             start_time += interval
-#     # Handle GET request (display the form)
-#     # You may want to pass a list of Ashaworkers to the template for the dropdown
-#     ashaworkers = Ashaworker.objects.all()
-#     return render(request, 'admin_temp/add_schedule.html', {'ashaworkers': ashaworkers,'time_slots': time_slots,})
 
 
 def asha_timeslots(request):
@@ -182,9 +125,7 @@ def asha_timeslots(request):
     # Render the template for both GET and POST requests
     return render(request, 'asha_temp/asha_timeslots.html', {'asha_name': asha_name})
 
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from .models import Slots
+
 
 @login_required
 def asha_timeslots_shows(request):
@@ -271,10 +212,6 @@ def add_blog(request):
 
     return render(request, 'admin_temp/add-blog.html')
 
-
-# def edit_blog(request):
-#     return render(request,'admin_temp/edit-blog.html')
-
 def edit_blog(request, blog_id):
     # Get the blog instance to be edited
     blog = get_object_or_404(Blog, id=blog_id)
@@ -302,8 +239,6 @@ def edit_blog(request, blog_id):
 
 
 
-from .models import Donation
-from django.urls import reverse
 @login_required(login_url='login_page')
 def donation(request):
     if request.method == 'POST':
@@ -331,23 +266,39 @@ def donation(request):
 
 @login_required(login_url='login_page')
 def patients(request):
-    patients = PatientProfile.objects.filter()
+    # Filter out only active patients
+    patients = PatientProfile.objects.filter(is_active=True)
+    
     ward_filter = request.GET.get('ward')
     
     if ward_filter:
-        patients = PatientProfile.objects.filter(ward=ward_filter)
-    else:
-        patients = PatientProfile.objects.all()
+        patients = patients.filter(ward=ward_filter)
     
     ward_numbers = PatientProfile.objects.values_list('ward', flat=True).distinct()
     
     return render(request, 'admin_temp/patients.html', {'patients': patients, 'ward_numbers': ward_numbers})
-    # patients = CustomUser.objects.filter(role=CustomUser.PATIENTS)
-    # patients = PatientProfile.objects.filter()
-    # return render(request, 'admin_temp/patients.html ', {'patients': patients})
 
 
-from django.contrib.auth.decorators import login_required
+def delete_patients(request, patient_id):
+    patients = get_object_or_404(PatientProfile, id=patient_id)
+
+    if request.method == 'POST':
+        # Set the is_active attribute to False instead of deleting
+        patients.is_active = False
+        patients.save()
+
+        # Add a success message to the session
+        request.session['deleted_asha_success'] = True
+
+        # Redirect to the 'ad_ashaworker' page (or adjust the URL as needed)
+        return redirect('patients')
+        
+    return render(request, 'admin_temp/delete_patients.html', {'patients': patients})
+
+
+
+
+
 
 @login_required(login_url='login_page')
 def edit_patient_profile(request):
@@ -641,7 +592,8 @@ def approve_appointment(request, appointment_id):
 @ashaworker_required
 def patient_users(request):
     # patients = CustomUser.objects.filter(role=CustomUser.PATIENTS)
-    patients = PatientProfile.objects.filter()
+    # patients = PatientProfile.objects.filter()
+    patients = PatientProfile.objects.filter(is_active=True)
     return render(request, 'asha_temp/patient_users.html', {'patients': patients})
 
 def patients_by_ward(request):
@@ -656,7 +608,17 @@ def patients_by_ward(request):
     
     return render(request, 'asha_temp/patients_by_ward.html', {'patients': patients, 'ward_numbers': ward_numbers})
 
-
+def add_view_rec(request):
+    ward_filter = request.GET.get('ward')
+    
+    if ward_filter:
+        patients = PatientProfile.objects.filter(ward=ward_filter)
+    else:
+        patients = PatientProfile.objects.all()
+    
+    ward_numbers = PatientProfile.objects.values_list('ward', flat=True).distinct()
+    
+    return render(request, 'asha_temp/add_view_rec.html', {'patients': patients, 'ward_numbers': ward_numbers})
 
 
 
@@ -973,13 +935,77 @@ def admin_dashboard(request):
 
 @ashaworker_required
 def asha_index(request):
+    current_date = timezone.now().date()
 
-    return render(request, 'asha_temp/asha_index.html')
+    # Retrieve Asha Workers
+    ashaworkers = Ashaworker.objects.all()
 
-@ashaworker_required
-def asha_profile(request):
-     
-    return render(request, 'asha_temp/asha_profile.html')
+    # Retrieve Patients
+    patients = PatientProfile.objects.all()
+    appointments = Appointment.objects.all()
+    
+    approved_appointments = Appointment.objects.filter(is_approved=True)
+
+
+    # Query the database to count the number of appointments for each patient
+    appointments_count = Appointment.objects.values('user__email').annotate(appointment_count=Count('id'))
+
+    # Extract the patient usernames and appointment counts for the chart
+    patient_usernames = [appointment['user__email'] for appointment in appointments_count]
+    appointment_counts = [appointment['appointment_count'] for appointment in appointments_count]
+
+    ashaworkers = Ashaworker.objects.annotate(appointment_count=Count('appointments'))
+    ashaworker_count = ashaworkers.count()
+    patients_count = patients.count()
+    appointments_count = appointments.count()
+    approved_appointments=approved_appointments.count()
+    # Create a DataFrame to store the data
+    data = {
+        'Ashaworker': [worker.Name for worker in ashaworkers],
+        'Appointment Count': [worker.appointment_count for worker in ashaworkers],
+    }
+
+    # Convert the data to a DataFrame
+    import pandas as pd
+    df = pd.DataFrame(data)
+
+    # Create a line chart
+    plt.figure(figsize=(6, 4))
+    plt.plot(data['Ashaworker'], data['Appointment Count'], marker='o', linestyle='-', color='b')
+    plt.title('Ashaworker Appointment Count')
+    plt.xlabel('Ashaworker')
+    plt.ylabel('Appointment Count')
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+    plt.tight_layout()
+
+    # Save the plot to a BytesIO object
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+
+    # Convert the plot to base64 for embedding in the HTML template
+    plot_data = base64.b64encode(buffer.read()).decode('utf-8')
+
+    return render(request, 'asha_temp/asha_index.html', {
+        'ashaworkers': ashaworkers,
+        'patients': patients,
+        'patient_usernames': patient_usernames,
+        'appointment_counts': appointment_counts,
+        'current_date': current_date,
+        'plot_data': plot_data,
+        'ashaworker_count': ashaworker_count,
+        'patients_count': patients_count,
+        'appointments_count': appointments_count,
+        'approved_appointments': approved_appointments,
+        
+        
+    })
+
+    
+
+# @ashaworker_required
+# def asha_profile(request):
+#     return render(request, 'asha_temp/asha_profile.html')
 
 
 def login_page(request):
@@ -1014,35 +1040,6 @@ def login_page(request):
     else:
         return render(request, 'login.html')    
 
-
-# def hca_signup(request):
-#     if request.method == "POST":
-#         # username = request.POST['email']
-#         email = request.POST['email']
-#         password = request.POST['password']
-#         confirm_password = request.POST['confirmPassword']
-#         role = User.HCA 
-
-#         if password == confirm_password:
-#             # if User.objects.filter(username=username).exists():
-#             #     # messages.info(request, 'Username already exists')
-#             #     # return redirect('register')
-#             #     return render(request, 'signup.html', {'username_exists': True})
-#             if User.objects.filter(email=email).exists():
-#                 messages.info(request, 'Email already exists') 
-#                 return redirect('hca_signup')
-#             else:
-#                 # user = User.objects.create_user(email=email,password=password)
-#                 user = User.objects.create_user(email=email, password=password, role=role)
-                
-#                 user.save()
-#                 messages.success(request, 'Registration successful. You can now log in.')
-#                 return redirect('login_page')
-#         else:
-#             messages.error(request, 'Password confirmation does not match')
-#             return redirect('hca_signup')
-#     else:
-#         return render(request, 'hca_signup.html')
 
 
 
@@ -1325,9 +1322,9 @@ def medical_record(request, patient_id):
             current_conditions=current_conditions,
         )
 
-        return redirect("medical_record_display")
+        return redirect(reverse("ashaworker_view_medical_record", args=[patient_id]))
 
-    return render(request, "medical_record.html", {"patient": patient})
+    return render(request, "medical_record.html", {"patient": patient,"medical_record": medical_record})
 
 
 @login_required
@@ -1346,6 +1343,17 @@ def medical_record_search(request):
 def medical_record_display(request):
     medical_record = MedicalRecord.objects.filter(user=request.user).order_by('-date')
     return render(request, "medical_record_display.html", {"medical_record": medical_record})
+
+def ashaworker_view_medical_record(request, patient_id):
+    # Retrieve the patient based on the patient_id
+    patient = get_object_or_404(PatientProfile, pk=patient_id)
+
+    # Retrieve the patient's medical records
+    medical_record = MedicalRecord.objects.filter(user=patient.user).order_by('-date')
+
+    return render(request, "asha_temp/asha_med_rec.html", {"patient": patient, "medical_record": medical_record})
+
+
 
 from django.http import HttpResponse, FileResponse
 from reportlab.lib.pagesizes import letter
@@ -1442,6 +1450,15 @@ def appointment_chart(request):
     return render(request, 'admin_temp/appointment_chart.html', {'patient_usernames': patient_usernames, 'appointment_counts': appointment_counts})
 
 
+def appointment_chart_asha(request):
+    # Query the database to count the number of appointments for each patient
+    appointments_count = Appointment.objects.values('user__email').annotate(appointment_count=Count('id'))
+
+    # Extract the patient usernames and appointment counts for the chart
+    patient_usernames = [appointment['user__email'] for appointment in appointments_count]
+    appointment_counts = [appointment['appointment_count'] for appointment in appointments_count]
+
+    return render(request, 'asha_temp/appointment_chart_asha.html', {'patient_usernames': patient_usernames, 'appointment_counts': appointment_counts})
 
 
 
@@ -1580,3 +1597,198 @@ def ad_hca(request):
     hca = Hca.objects.all()
     return render(request, 'admin_temp/ad_hca.html', {'hca': hca})
 
+def hca_index(request):
+    current_date = timezone.now().date()
+
+    # Retrieve Asha Workers
+    ashaworkers = Ashaworker.objects.all()
+
+    # Retrieve Patients
+    patients = PatientProfile.objects.all()
+    appointments = Appointment.objects.all()
+    
+    approved_appointments = Appointment.objects.filter(is_approved=True)
+
+
+    # Query the database to count the number of appointments for each patient
+    appointments_count = Appointment.objects.values('user__email').annotate(appointment_count=Count('id'))
+
+    # Extract the patient usernames and appointment counts for the chart
+    patient_usernames = [appointment['user__email'] for appointment in appointments_count]
+    appointment_counts = [appointment['appointment_count'] for appointment in appointments_count]
+
+    ashaworkers = Ashaworker.objects.annotate(appointment_count=Count('appointments'))
+    ashaworker_count = ashaworkers.count()
+    patients_count = patients.count()
+    appointments_count = appointments.count()
+    approved_appointments=approved_appointments.count()
+    # Create a DataFrame to store the data
+    data = {
+        'Ashaworker': [worker.Name for worker in ashaworkers],
+        'Appointment Count': [worker.appointment_count for worker in ashaworkers],
+    }
+
+    # Convert the data to a DataFrame
+    import pandas as pd
+    df = pd.DataFrame(data)
+
+    # Create a line chart
+    plt.figure(figsize=(6, 4))
+    plt.plot(data['Ashaworker'], data['Appointment Count'], marker='o', linestyle='-', color='b')
+    plt.title('Ashaworker Appointment Count')
+    plt.xlabel('Ashaworker')
+    plt.ylabel('Appointment Count')
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+    plt.tight_layout()
+
+    # Save the plot to a BytesIO object
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+
+    # Convert the plot to base64 for embedding in the HTML template
+    plot_data = base64.b64encode(buffer.read()).decode('utf-8')
+
+    return render(request, 'hca_temp/hca_index.html', {
+        'ashaworkers': ashaworkers,
+        'patients': patients,
+        'patient_usernames': patient_usernames,
+        'appointment_counts': appointment_counts,
+        'current_date': current_date,
+        'plot_data': plot_data,
+        'ashaworker_count': ashaworker_count,
+        'patients_count': patients_count,
+        'appointments_count': appointments_count,
+        'approved_appointments': approved_appointments,
+    })
+
+@login_required(login_url='login_page')
+def hca_patient_users(request):
+    # patients = CustomUser.objects.filter(role=CustomUser.PATIENTS)
+    patients = PatientProfile.objects.filter(is_active=True)
+    return render(request, 'hca_temp/hca_patient_users.html', {'patients': patients})
+
+
+@login_required(login_url='login_page')
+def hca_patients_by_ward(request):
+    ward_filter = request.GET.get('ward')
+    
+    if ward_filter:
+        patients = PatientProfile.objects.filter(ward=ward_filter)
+    else:
+        patients = PatientProfile.objects.filter(is_active=True)
+    
+    ward_numbers = PatientProfile.objects.values_list('ward', flat=True).distinct()
+    
+    return render(request, 'hca_temp/hca_patients_by_ward.html', {'patients': patients, 'ward_numbers': ward_numbers})
+
+
+@login_required(login_url='login_page')
+def hca_add_view_rec(request):
+    ward_filter = request.GET.get('ward')
+    
+    if ward_filter:
+        patients = PatientProfile.objects.filter(ward=ward_filter)
+    else:
+        patients = PatientProfile.objects.filter(is_active=True)
+    
+    ward_numbers = PatientProfile.objects.values_list('ward', flat=True).distinct()
+    
+    return render(request, 'hca_temp/hca_add_view_rec.html', {'patients': patients, 'ward_numbers': ward_numbers})
+
+def hca_view_medical_record(request, patient_id):
+    # Retrieve the patient based on the patient_id
+    patient = get_object_or_404(PatientProfile, pk=patient_id)
+
+    # Retrieve the patient's medical records
+    medical_record = MedicalRecord.objects.filter(user=patient.user).order_by('-date')
+
+    return render(request, "hca_temp/hca_med_rec.html", {"patient": patient, "medical_record": medical_record})
+
+@login_required(login_url='login_page')
+def hca_search_patient(request):
+    # Get the search query from the GET request
+    search_query = request.GET.get('patientname', '')
+
+    # Filter Ashaworkers whose name contains the search query
+    patients = PatientProfile.objects.filter(first_name__icontains=search_query)
+    # patients = PatientProfile.objects.filter(last_name__icontains=search_query)
+    
+
+    context = {
+        'patients': patients,
+        'search_query': search_query,
+    }
+
+    return render(request, 'hca_temp/hca_patients_by_ward.html', context)
+
+@login_required(login_url='login_page')
+def hca_med_search_patient(request):
+    # Get the search query from the GET request
+    search_query = request.GET.get('patientname', '')
+
+    # Filter Ashaworkers whose name contains the search query
+    patients = PatientProfile.objects.filter(first_name__icontains=search_query)
+    # patients = PatientProfile.objects.filter(last_name__icontains=search_query)
+    
+
+    context = {
+        'patients': patients,
+        'search_query': search_query,
+    }
+
+    return render(request, 'hca_temp/hca_add_view_rec.html', context)
+
+
+@login_required(login_url='login_page')
+def edit_hca_pro(request):
+    user = request.user
+    hca = get_object_or_404(Hca, user=user)
+
+    if request.method == "POST":
+        # Process the form data and save/update the profile
+        hca.hcaname = request.POST.get('hcaname')
+        hca.email = request.POST.get('email')
+        hca.address = request.POST.get('address')
+        hca.postal = request.POST.get('postal')
+        hca.phone = request.POST.get('phone')
+        hca.panchayat = request.POST.get('panchayat')
+        hca.taluk = request.POST.get('taluk')
+        # hca.year_hca = request.POST.get('year_hca')
+        new_li_photo = request.FILES.get('new_li_photo')
+        if new_li_photo:
+            # Delete the old license certificate if it exists
+            if hca.license_certificate:
+                fs = FileSystemStorage()
+                fs.delete(hca.license_certificate.name)
+
+            # Save the new license certificate to a specific directory
+            fs = FileSystemStorage()
+            filename = fs.save(f"lic_cert/{new_li_photo.name}", new_li_photo)
+            hca.license_certificate = filename
+        new_profile_photo = request.FILES.get('new_profile_photo')
+        if new_profile_photo:
+            # Delete the old profile photo if it exists
+            if hca.profile_photo:
+                fs = FileSystemStorage()
+                fs.delete(hca.profile_photo.name)
+
+            # Save the new profile photo to a specific directory
+            fs = FileSystemStorage()
+            filename = fs.save(f"profile_photos/{new_profile_photo.name}", new_profile_photo)
+            hca.profile_photo = filename 
+        hca.save()
+        messages.success(request, 'Profile updated successfully.')
+        return redirect('pro_hca')  # Redirect to the profile page
+    
+    context = {
+        'user': user,
+        'hca': hca
+    }
+
+    return render(request, 'hca_temp/edit_hca_pro.html', context)
+
+@login_required(login_url='login_page')
+def pro_hca(request):
+    hca = Hca.objects.filter(user=request.user).first() 
+    return render(request, 'hca_temp/pro_hca.html', {'hca': hca})
