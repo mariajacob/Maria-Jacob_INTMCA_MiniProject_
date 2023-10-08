@@ -206,6 +206,9 @@ path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
     path('edit_hca_pro', views.edit_hca_pro, name='edit_hca_pro'),
     path('pro_hca', views.pro_hca, name='pro_hca'),
 
+    path('appointment_view/', views.appointment_view, name='appointment_view'),
+    path('cancel_appointment/<int:appointment_id>/', views.cancel_appointment, name='cancel_appointment'),
+
 
 ]
 

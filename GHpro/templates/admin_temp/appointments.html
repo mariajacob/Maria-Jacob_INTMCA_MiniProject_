@@ -23,7 +23,7 @@
     <div class="main-wrapper">
         <div class="header">
 			<div class="header-left">
-				<a href="{% url 'index-2' %}" class="logo">
+				<a href="{% url 'appointments' %}" class="logo">
 					<img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
 				</a>
 			</div>
@@ -210,7 +210,7 @@
                                 </thead>
                                 <tbody>
                                     {% for appointment in future_appointments %}
-                                    <tr>
+                                 
                                         <td>{{ appointment.first_name }}</td>
                                         <td>{{ appointment.last_name }}</td>
                                         <td>{{ appointment.email }}</td>
@@ -225,7 +225,8 @@
                                         <td>{{ appointment.slot.start_time }}</td>
                                         <td>{{ appointment.slot.end_time }}</td>
                                         <td>{{ appointment.ashaworker.Name }}</td>
-                                        <td>
+                                     
+                                       <td>
                                             <a href="{% url 'asha_approved_appo' %}">
                                                 {% if appointment.is_approved %}
                                                     <button class="btn btn-danger">Approved</button>
@@ -233,7 +234,8 @@
                                                     <a href="{% url 'approve_appointment' appointment.id %}" class="btn btn-success">Approve</a>
                                                 {% endif %}
                                             </a>
-                                        </td>
+                                        </td>  
+                                        
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -352,6 +354,25 @@
         });
     </script>
 
+<script>
+    function cancelAppointment(appointmentId) {
+        $.ajax({
+            url: "{% url 'cancel_appointment' 0 %}".replace('0', appointmentId),
+            type: "POST",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (response) {
+                if (response.success) {
+                    // Remove the canceled appointment row from the table
+                    $("#appointment_" + appointmentId).remove();
+                } else {
+                    alert('Failed to cancel the appointment.');
+                }
+            }
+        });
+    }
+</script>
 
 
 

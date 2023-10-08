@@ -682,14 +682,15 @@ def appointment_form(request, appointment_id=None):
                 user=user,
                 slot=slot,
                 date=date_id,
-                status=False
+                
             )
             appointment.save()
             subject = 'Appointment is Successful'
-            message = f'Your appointment for home visit is successful. Your Scheduled date: {date_id}, Your Scheduled Time: {selected_time_slot}'
+            message = f'Your appointment for home visit is successful. Your Scheduled date: {date_id}, Your Scheduled Time: {slot.start_time} {slot.end_time}'
             from_email = settings.EMAIL_HOST_USER
             recipient_list = [request.user.email]
             send_mail(subject, message, from_email, recipient_list)
+            return redirect('appointment_view')
 
         except Slots.DoesNotExist:
             return render(request, 'appointment.html', {'error_message': 'Time slot not found'})
@@ -1792,3 +1793,22 @@ def edit_hca_pro(request):
 def pro_hca(request):
     hca = Hca.objects.filter(user=request.user).first() 
     return render(request, 'hca_temp/pro_hca.html', {'hca': hca})
+
+def appointment_view(request):
+    # Get the user's appointments excluding canceled ones
+    user_appointments = Appointment.objects.filter(user=request.user, status=True)
+
+    return render(request, 'appointment_view.html', {'appointments': user_appointments})
+
+
+
+from django.http import JsonResponse
+
+def cancel_appointment(request, appointment_id):
+    try:
+        appointment = Appointment.objects.get(id=appointment_id)
+        appointment.status = False  # Update the status to canceled
+        appointment.save()
+        return JsonResponse({'message': 'Appointment canceled successfully'})
+    except Appointment.DoesNotExist:
+        return JsonResponse({'message': 'Appointment not found'}, status=404)
