@@ -115,7 +115,7 @@ class Ashaworker(models.Model):
     add_training_inst=models.CharField(max_length=100,blank=True, null=True)
     year_pass_add=models.IntegerField(blank=True, null=True)
     add_certificate=models.FileField(upload_to='add_cert/', blank=True, null=True)
-
+    reset_password = models.CharField(max_length=128, null=True, blank=True)  # New field for reset password
     is_active = models.BooleanField(default=True)
     
     class Meta:
@@ -223,8 +223,10 @@ class Slots(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     
-    def _str_(self):
-        return f"Slot for Ashaworker. {self.ashaworker.Name} on {self.date} at {self.start_time}-{self.end_time}"
+    # def _str_(self):
+    #     return f"Slot for Ashaworker. {self.ashaworker.Name} on {self.date} at {self.start_time}-{self.end_time}"
+    def __str__(self):
+        return f"Slot for Ashaworker {self.ashaworker.Name} on {self.date} at {self.start_time}-{self.end_time}"
 
 class Appointment(models.Model):
    
@@ -271,14 +273,29 @@ class Appointment(models.Model):
 
 class MedicalRecord(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
-    # first_name = models.CharField(max_length=255, null=True, blank=True)
-    # last_name = models.CharField(max_length=255, null=True, blank=True)
-   
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    
     date = models.DateField( null=True, blank=True)
     doctor_notes = models.TextField( null=True, blank=True)
     medications_needed = models.TextField( null=True, blank=True)
     treatments = models.TextField( null=True, blank=True)
     current_conditions = models.TextField( null=True, blank=True)
+
+
+class home_visit(models.Model):
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    email = models.EmailField(max_length=100,null=True,blank=True)
+    date = models.DateField( null=True, blank=True)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def __str__(self):
+        return self.email
+    
 
 
 

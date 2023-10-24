@@ -64,11 +64,15 @@ urlpatterns = [
     path('medical_record_search/', views.medical_record_search, name='medical_record_search'),
 
     path('ashaworker/medical_record/<int:patient_id>/', views.ashaworker_view_medical_record, name='ashaworker_view_medical_record'),
-
-   
+    path('asha_search_patient/', views.asha_search_patient, name='asha_search_patient'),
     
-    
-    
+    path('Home_visit/', views.Home_visit, name='Home_visit'),
+    path('add_home_visit/<int:patient_id>/', views.add_home_visit, name='add_home_visit'),
+    path('ashaworker/add_home_visit/<int:patient_id>/', views.view_visit_history, name='view_visit_history'),
+    path('ad_home_visit/', views.ad_home_visit, name='ad_home_visit'),
+    path('ashaworker/ad_view_home_visits/<int:patient_id>/', views.ad_view_home_visits, name='ad_view_home_visits'),
+  
+    path('admin_search_patient/', views.admin_search_patient, name='admin_search_patient'),
   
     path('edit_patient_profile', views.edit_patient_profile, name='edit_patient_profile'),
     path('print_patient_profile', views.print_patient_profile, name='print_patient_profile'),
@@ -208,7 +212,7 @@ path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
 
     path('appointment_view/', views.appointment_view, name='appointment_view'),
     path('cancel_appointment/<int:appointment_id>/', views.cancel_appointment, name='cancel_appointment'),
-
+    path('check_approval_status/<int:appointment_id>/', views.check_approval_status, name='check_approval_status'),
 
 ]
 

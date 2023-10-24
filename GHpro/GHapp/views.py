@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from .models import Ashaworker,Blog,AshaworkerSchedule,Hca
 from .models import Appointment,Slots
-from .models import PatientProfile
+from .models import PatientProfile,home_visit
 from .models import MedicalRecord
 from .models import Image 
 from datetime import datetime, timedelta
@@ -400,7 +400,7 @@ def print_patient_profile(request):
     return render(request, 'print_patient_profile.html', {'profile': [profile]})
 
 
-
+from django.contrib.auth import update_session_auth_hash
 @login_required(login_url='login_page')
 def edit_asha_pro(request):
     
@@ -455,6 +455,25 @@ def edit_asha_pro(request):
         asha.year_pass_add = request.POST.get('year_pass_add')
 
         new_id_proof = request.FILES.get('id_proof')
+
+        reset_password = request.POST.get('reset_password')
+        old_password = request.POST.get('old_password')
+
+
+        if old_password and reset_password and request.POST.get('cpass') == reset_password:
+            if user.check_password(old_password):
+                # The old password is correct, set the new password
+                user.set_password(reset_password)
+                user.save()
+                update_session_auth_hash(request, request.user)  # Update the session to prevent logging out
+            else:
+                messages.error(request, "Incorrect old password. Password not updated.")
+        else:
+            print("Please fill all three password fields correctly.")
+        
+        asha.reset_password = reset_password
+         
+
         if new_id_proof:
             # Delete the old ID proof if it exists
             if asha.id_proof:
@@ -524,15 +543,30 @@ from django.utils import timezone
 @login_required(login_url='login_page')
 def ad_appointment(request):
     current_date = timezone.now().date()
-    current_appointments = Appointment.objects.filter(date=current_date).order_by('date', 'slot__start_time')
-    future_appointments = Appointment.objects.filter(date__gt=current_date).order_by('date', 'slot__start_time')
-    past_appointments = Appointment.objects.filter(date__lt=current_date).order_by('-date', 'slot__start_time')
+    
+    # Filter out canceled appointments by excluding those with status=False
+    current_appointments = Appointment.objects.filter(date=current_date, status=True).order_by('date', 'slot__start_time')
+    future_appointments = Appointment.objects.filter(date__gt=current_date, status=True).order_by('date', 'slot__start_time')
+    past_appointments = Appointment.objects.filter(date__lt=current_date, status=True).order_by('-date', 'slot__start_time')
     
     return render(request, 'admin_temp/appointments.html', {
         'current_appointments': current_appointments,
         'future_appointments': future_appointments,
         'past_appointments': past_appointments,
     })
+
+
+# def ad_appointment(request):
+#     current_date = timezone.now().date()
+#     current_appointments = Appointment.objects.filter(date=current_date).order_by('date', 'slot__start_time')
+#     future_appointments = Appointment.objects.filter(date__gt=current_date).order_by('date', 'slot__start_time')
+#     past_appointments = Appointment.objects.filter(date__lt=current_date).order_by('-date', 'slot__start_time')
+    
+#     return render(request, 'admin_temp/appointments.html', {
+#         'current_appointments': current_appointments,
+#         'future_appointments': future_appointments,
+#         'past_appointments': past_appointments,
+#     })
 
 def current_appointment(request):
     current_date = timezone.now().date()
@@ -586,6 +620,11 @@ def approve_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, pk=appointment_id)
     appointment.is_approved = True
     appointment.save()
+    subject = 'Appointment is Successful'
+    message = f'Your appointment for home visit is approved.Your Scheduled date: {appointment.date_id}, Your Scheduled Time: {appointment.slot.start_time} {appointment.slot.end_time}'
+    from_email = settings.EMAIL_HOST_USER
+    recipient_list = [request.user.email]
+    send_mail(subject, message, from_email, recipient_list)
     # messages.success(request, 'Appointment approval successful. An approval email with the login link has been sent to the Patient.')
     return redirect("appointments")
 
@@ -684,9 +723,19 @@ def appointment_form(request, appointment_id=None):
                 date=date_id,
                 
             )
+            # one_week_ago = datetime.now() - timedelta(days=7)
+            # existing_appointments = Appointment.objects.filter(
+            #     user=request.user,
+            #     date__gte=one_week_ago
+            # )
+
+            # if existing_appointments.exists():
+            #     error_message = 'You already have an appointment within the last week.'
+            #     return render(request, 'appointment.html', {'error_message': error_message, 'error_flag': True})
+
             appointment.save()
             subject = 'Appointment is Successful'
-            message = f'Your appointment for home visit is successful. Your Scheduled date: {date_id}, Your Scheduled Time: {slot.start_time} {slot.end_time}'
+            message = f'Your appointment for home visit is successful. Wait for the appointment approval message. Once the appointments is approved the you will get an approval message. Your Scheduled date: {date_id}, Your Scheduled Time: {slot.start_time} {slot.end_time}'
             from_email = settings.EMAIL_HOST_USER
             recipient_list = [request.user.email]
             send_mail(subject, message, from_email, recipient_list)
@@ -700,15 +749,75 @@ def appointment_form(request, appointment_id=None):
     return render(request, 'appointment.html', {'patientprofile': patientprofile, 'appointment_id': appointment_id,'ashaworkers': ashaworkers})
 
 
+# def get_dates_for_ashaworker(request):
+#     ashaworker_id = request.GET.get('ashaworker_id')
+#     try:
+#         ashaworker = Ashaworker.objects.get(id=ashaworker_id)
+#         slots = Slots.objects.filter(ashaworker=ashaworker)
+#         date_options = [slot.date.strftime('%Y-%m-%d') for slot in slots]
+#         return JsonResponse({'date_options': date_options})
+#     except Ashaworker.DoesNotExist:
+#         return JsonResponse({'error_message': 'Ashaworker not found'})
+
+from django.http import JsonResponse
+from datetime import datetime
+
+
+from django.db.models import Subquery, OuterRef
+
 def get_dates_for_ashaworker(request):
     ashaworker_id = request.GET.get('ashaworker_id')
+    
     try:
         ashaworker = Ashaworker.objects.get(id=ashaworker_id)
-        slots = Slots.objects.filter(ashaworker=ashaworker)
-        date_options = [slot.date.strftime('%Y-%m-%d') for slot in slots]
+        
+        # Get all available date options for the specific Ashaworker
+        slots = Slots.objects.filter(ashaworker=ashaworker).values_list('date', flat=True).distinct()
+        date_options = [slot.strftime('%Y-%m-%d') for slot in slots]
+        print('ok', date_options)
+        
+        # Get the selected dates for the Ashaworker from previous appointments
+        selected_dates = Appointment.objects.filter(
+            ashaworker=ashaworker,
+            date__in=date_options,
+        ).values_list('date', flat=True)
+        print('seected_dates', selected_dates)
+        
+        # Filter out dates that have been assigned to other patients for the same Ashaworker
+        other_patients_selected_dates = Appointment.objects.filter(date__in=date_options, ashaworker_id=ashaworker_id).values_list('date', flat=True)
+        print('other seected_dates', other_patients_selected_dates)
+        
+        date_options = list(filter(lambda date: date not in other_patients_selected_dates, date_options))
+        print('dates', date_options)
+
         return JsonResponse({'date_options': date_options})
     except Ashaworker.DoesNotExist:
         return JsonResponse({'error_message': 'Ashaworker not found'})
+
+
+
+# def get_dates_for_ashaworker(request):
+#     ashaworker_id = request.GET.get('ashaworker_id')
+#     try:
+#         ashaworker = Ashaworker.objects.get(id=ashaworker_id)
+        
+#         # Get all available date options for the Ashaworker
+#         slots = Slots.objects.filter(ashaworker=ashaworker)
+#         date_options = [slot.date.strftime('%Y-%m-%d') for slot in slots]
+        
+#         # Get the selected dates for the Ashaworker from previous appointments
+#         selected_dates = Appointment.objects.filter(
+#             ashaworker=ashaworker,
+#             date__in=date_options,
+#         ).values_list('date', flat=True)
+        
+#         # Filter out already selected dates
+#         date_options = [date for date in date_options if date not in selected_dates]
+        
+#         return JsonResponse({'date_options': date_options})
+#     except Ashaworker.DoesNotExist:
+#         return JsonResponse({'error_message': 'Ashaworker not found'})
+
 
 @login_required
 def get_timeslots_for_date(request):
@@ -1291,6 +1400,7 @@ def paymenthandler(request):
 
     return HttpResponse(status=400)
 
+# for ashaworker page
 @login_required
 def medical_record(request, patient_id):
     # Retrieve the patient based on the patient_id
@@ -1302,8 +1412,8 @@ def medical_record(request, patient_id):
     if request.method == "POST":
         # Get the data from the form
         date = request.POST.get("date")
-        # first_name = request.POST.get("first_name")
-        # last_name = request.POST.get("last_name")
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
         doctor_notes = request.POST.get("doctor_notes")
         medications_needed = request.POST.get("medications_needed")
         treatments = request.POST.get("treatments")
@@ -1315,8 +1425,8 @@ def medical_record(request, patient_id):
         MedicalRecord.objects.create(
             user=patient.user,
             date=date,
-            # first_name=first_name,
-            # last_name=last_name,
+            first_name=first_name,
+            last_name=last_name,
             doctor_notes=doctor_notes,
             medications_needed=medications_needed,
             treatments=treatments,
@@ -1327,7 +1437,132 @@ def medical_record(request, patient_id):
 
     return render(request, "medical_record.html", {"patient": patient,"medical_record": medical_record})
 
+# for ashaworker page
+def view_visit_history(request, patient_id):
+    # Retrieve the patient based on the patient_id
+    patient = get_object_or_404(PatientProfile, pk=patient_id)
 
+    # Retrieve the patient's medical records
+    hv = home_visit.objects.filter(user=patient.user).order_by('-date')
+
+    return render(request, "asha_temp/view_visit_history.html", {"patient": patient, "hv": hv})
+# for admin page
+def ad_view_home_visits(request, patient_id):
+    # Retrieve the patient based on the patient_id
+    patient = get_object_or_404(PatientProfile, pk=patient_id)
+
+    # Retrieve the patient's medical records
+    hv = home_visit.objects.filter(user=patient.user).order_by('-date')
+
+    return render(request, "admin_temp/ad_view_home_visits.html", {"patient": patient, "hv": hv})
+# for admin page
+def ad_home_visit(request):
+    ward_filter = request.GET.get('ward')
+    
+    if ward_filter:
+        patients = PatientProfile.objects.filter(ward=ward_filter)
+    else:
+        patients = PatientProfile.objects.all()
+    
+    ward_numbers = PatientProfile.objects.values_list('ward', flat=True).distinct()
+    
+    return render(request, 'admin_temp/ad_home_visit.html', {'patients': patients, 'ward_numbers': ward_numbers})
+
+
+@login_required(login_url='login_page')
+def admin_search_patient(request):
+    # Get the search query from the GET request
+    search_query = request.GET.get('patientname', '')
+
+    # Filter Ashaworkers whose name contains the search query
+    patients = PatientProfile.objects.filter(first_name__icontains=search_query)
+    # patients = PatientProfile.objects.filter(last_name__icontains=search_query)
+    
+
+    context = {
+        'patients': patients,
+        'search_query': search_query,
+    }
+
+    return render(request, 'admin_temp/ad_home_visit.html', context)
+
+
+
+# for ashaworker page
+@login_required
+def add_home_visit(request, patient_id):
+    # Retrieve the patient based on the patient_id
+    try:
+        patient = PatientProfile.objects.get(pk=patient_id)
+    except PatientProfile.DoesNotExist:
+        return HttpResponse("Patient not found", status=404)
+
+    if request.method == "POST":
+        # Get the data from the form
+        date = request.POST.get("date")
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        email= request.POST.get("email")
+        start_time= request.POST.get("start_time")
+        end_time= request.POST.get("end_time")
+
+        # Create a new MedicalRecord object with the associated patient
+        # You need to ensure that user field receives a CustomUser instance
+        # Assuming that patient.user is the related CustomUser instance
+        home_visit.objects.create(
+            user=patient.user,
+            date=date,
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            start_time=start_time,
+            end_time=end_time,
+            
+        )
+
+        return redirect(reverse("view_visit_history", args=[patient_id]))
+
+    return render(request, "add_home_visit.html", {"patient": patient,"add_home_visit": add_home_visit})
+
+
+# for ashaworker page
+def Home_visit(request):
+    ward_filter = request.GET.get('ward')
+    
+    if ward_filter:
+        patients = PatientProfile.objects.filter(ward=ward_filter)
+    else:
+        patients = PatientProfile.objects.all()
+    
+    ward_numbers = PatientProfile.objects.values_list('ward', flat=True).distinct()
+    
+    return render(request, 'asha_temp/home_visit.html', {'patients': patients, 'ward_numbers': ward_numbers})
+
+
+
+
+
+
+@login_required(login_url='login_page')
+def asha_search_patient(request):
+    # Get the search query from the GET request
+    search_query = request.GET.get('patientname', '')
+
+    # Filter Ashaworkers whose name contains the search query
+    patients = PatientProfile.objects.filter(first_name__icontains=search_query)
+    # patients = PatientProfile.objects.filter(last_name__icontains=search_query)
+    
+
+    context = {
+        'patients': patients,
+        'search_query': search_query,
+    }
+
+    return render(request, 'asha_temp/add_view_rec.html', context)
+
+
+
+# for patient page
 @login_required
 def medical_record_search(request):
     if request.method == 'GET':
@@ -1340,6 +1575,7 @@ def medical_record_search(request):
 
         return render(request, "medical_record_display.html", {"medical_record": medical_record})
 
+# for patient page
 @login_required
 def medical_record_display(request):
     medical_record = MedicalRecord.objects.filter(user=request.user).order_by('-date')
@@ -1801,14 +2037,40 @@ def appointment_view(request):
     return render(request, 'appointment_view.html', {'appointments': user_appointments})
 
 
-
 from django.http import JsonResponse
-
 def cancel_appointment(request, appointment_id):
     try:
         appointment = Appointment.objects.get(id=appointment_id)
-        appointment.status = False  # Update the status to canceled
+        
+        # Check if the appointment is approved
+        if appointment.is_approved:
+            return JsonResponse({'message': 'Cannot cancel an approved appointment'}, status=400)
+        
+        # Update the status to canceled
+        appointment.status = False
         appointment.save()
-        return JsonResponse({'message': 'Appointment canceled successfully'})
+        
+        return JsonResponse({'message': 'Appointment canceled successfully', 'appointment_id': appointment_id})
+    except Appointment.DoesNotExist:
+        return JsonResponse({'message': 'Appointment not found'}, status=404)
+
+# def cancel_appointment(request, appointment_id):
+#     try:
+#         appointment = Appointment.objects.get(id=appointment_id)
+#         appointment.status = False  # Update the status to canceled
+#         appointment.save()
+#         return JsonResponse({'message': 'Appointment canceled successfully', 'appointment_id': appointment_id})
+#     except Appointment.DoesNotExist:
+#         return JsonResponse({'message': 'Appointment not found'}, status=404)
+
+from django.http import JsonResponse
+
+def check_approval_status(request, appointment_id):
+    try:
+        appointment = Appointment.objects.get(id=appointment_id)
+        if appointment.is_approved:
+            return JsonResponse({'approved': True})
+        else:
+            return JsonResponse({'approved': False})
     except Appointment.DoesNotExist:
         return JsonResponse({'message': 'Appointment not found'}, status=404)

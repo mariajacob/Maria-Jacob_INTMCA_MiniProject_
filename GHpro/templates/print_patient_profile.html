@@ -128,6 +128,14 @@
                         <i class="fa fa-sign-out" aria-hidden="true"></i>
                         <span>Profile</span>
                        </a>
+                       <a class="dropdown-item" href="{% url 'appointment_form' %}">
+                        <i class="fa fa-sign-out" aria-hidden="true"></i>
+                        <span>Make Appointments</span>
+                       </a>
+                       <a class="dropdown-item" href="{% url 'appointment_view' %}">
+                        <i class="fa fa-sign-out" aria-hidden="true"></i>
+                        <span>View Appointments</span>
+                       </a>
                         <a class="dropdown-item" href="{% url 'loggout' %}">
                             <i class="fa fa-sign-out" aria-hidden="true"></i>
                             <span>Logout</span>
@@ -374,8 +382,15 @@
 		</div>
     </div>
 </section>
-     
-</div>
+
+
+
+
+
+
+
+
+
 <div class="sidebar-overlay" data-reff=""></div>
 <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
 <script src="{% static 'assets/js/popper.min.js' %}"></script>

@@ -149,6 +149,14 @@
                         <i class="fa fa-sign-out" aria-hidden="true"></i>
                         <span>Profile</span>
                        </a>
+                       <a class="dropdown-item" href="{% url 'appointment_form' %}">
+                        <i class="fa fa-sign-out" aria-hidden="true" ></i>
+                        <span>Make Appointments</span>
+                       </a>
+                       <a class="dropdown-item" href="{% url 'appointment_view' %}">
+                        <i class="fa fa-sign-out" aria-hidden="true"></i>
+                        <span>View Appointments</span>
+                       </a>
                         <a class="dropdown-item" id="logout-button-id" href="{% url 'loggout' %}">
                             <i class="fa fa-sign-out" id="logout-button-id" aria-hidden="true"></i>
                             <span id="logout-button-id">Logout</span>
@@ -249,7 +257,7 @@
                         Are you or a loved one living with a serious illness? Palliative Care can help. Palliative care is specialized medical care focused on relieving the symptoms and stress of a serious illness. It is appropriate at any age and at any stage, and you can have it along with curative treatment. The goal is to improve your quality of life.
                     </p>
                     
-                  <a href="{% url 'appointment_form' %}" style="margin-right: 20px;" id="appid">
+                  <a href="{% url 'appointment_form' %}" id="makeapp" style="margin-right: 20px;">
                       MAKE APPOINTMENT
                   </a>
                   <a href="{% url 'donation' %}">
@@ -651,14 +659,7 @@
             <img src="{% static 'images/ghbc1.png' %}" alt="" style="width:140px; height:90px;">
           </a>
         </div>
-        {% comment %} <div class="info_form">
-          <form action="">
-            <input type="email" placeholder="Your email">
-            <button>
-              Subscribe
-            </button>
-          </form>
-        </div> {% endcomment %}
+       
       </div>
       <div class="info_bottom layout_padding2">
         <div class="row info_main_row">
@@ -718,55 +719,7 @@
               </div>
             </div>
           </div>
-          {% comment %} <div class="col-md-6 col-lg-3">
-            <div class="info_post">
-              <h5>
-                LATEST POSTS
-              </h5>
-              <div class="post_box">
-                <div class="img-box">
-                  <img src="{% static 'images/post1.jpg' %}" alt="">
-                </div>
-                <p>
-                  Normal
-                  distribution
-                </p>
-              </div>
-              <div class="post_box">
-                <div class="img-box">
-                  <img src="{% static 'images/post2.jpg' %}" alt="">
-                </div>
-                <p>
-                  Normal
-                  distribution
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-            <div class="info_post">
-              <h5>
-                News
-              </h5>
-              <div class="post_box">
-                <div class="img-box">
-                  <img src="{% static 'images/post3.jpg' %}" alt="">
-                </div>
-                <p>
-                  Normal
-                  distribution
-                </p>
-              </div>
-              <div class="post_box">
-                <div class="img-box">
-                  <img src="{% static 'images/post4.png' %}" alt="">
-                </div>
-                <p>
-                  Normal
-                  distribution
-                </p>
-              </div>
-            </div> {% endcomment %}
+         
           </div>
         </div>
       </div>

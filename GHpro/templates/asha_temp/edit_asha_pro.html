@@ -301,6 +301,23 @@
                                         </div>
                                     </div>
                                     
+
+
+
+                                    <div>
+                                        <label for="address" id="carde" class="form-label text animated zoomIn">Reset Password:</label>
+                                        <hr class=" text animated zoomIn" id="signintext2">
+                                        <input type="Password" class="form-control text animated zoomIn"  id="cardelement" name="old_password" placeholder="current password">
+                                        <input type="Password" class="form-control text animated zoomIn"  id="cardelement" name="reset_password" style="margin-top:20px;" placeholder="new password">
+                                        <input type="Password" class="form-control text animated zoomIn"  id="cardelement" name="cpass" style="margin-top:20px;" placeholder="confirm new password">
+                                        <span id="pspan" class="text-danger" style="margin-left:50%;"></span>
+                                    </div>
+                                    {% if messages %}
+                                    {% for message in messages %}
+                                        <p class="text-danger" >{{ message }}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                    </div>
                                 </div>
                             </div>
                             <div>

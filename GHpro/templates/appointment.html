@@ -124,6 +124,14 @@
                           <i class="fa fa-sign-out" aria-hidden="true"></i>
                           <span>Profile</span>
                          </a>
+                         <a class="dropdown-item" href="{% url 'appointment_form' %}">
+                          <i class="fa fa-sign-out" aria-hidden="true"></i>
+                          <span>Make Appointments</span>
+                         </a>
+                         <a class="dropdown-item" href="{% url 'appointment_view' %}">
+                          <i class="fa fa-sign-out" aria-hidden="true"></i>
+                          <span>View Appointments</span>
+                         </a>
                           <a class="dropdown-item" href="{% url 'loggout' %}">
                               <i class="fa fa-sign-out" aria-hidden="true"></i>
                               <span>Logout</span>
@@ -210,124 +218,123 @@
         <div class="col">
           <form method="POST" action="" autocomplete="off" enctype="multipart/form-data">
             {% csrf_token %}
-            <h4>
-              BOOK <span>APPOINTMENT</span>
-            </h4>
-            <div class="form-row">
-              <!-- Patient Information -->
-              <div class="form-group col-lg-4">
-                
-                <label for="inputPatientName">first Name</label>
-                <input type="text" name="first_name" value="{{ patientprofile.first_name}}" class="form-control" id="inputPatientName" placeholder="Full Name" readonly>
-              </div>
-              <div class="form-group col-lg-4">
-                <label for="inputPatientName">Last Name</label>
-                <input type="text" name="last_name" value="{{ patientprofile.last_name}}" class="form-control" id="inputPatientName" placeholder="Full Name" readonly>
-              </div>
-              <div class="form-group col-lg-4">
-                <label for="inputEmail">Email</label>
-                <input type="email" name="email" value="{{ patientprofile.email}}" class="form-control" id="inputEmail" placeholder="Email Address" readonly>
-              </div>
-              {% comment %} <div class="form-group col-lg-4">
-                <label for="inputDateOfBirth">Date of Birth</label>
-                <input type="date" name="date_of_birth" class="form-control" id="inputDateOfBirth">
-              </div> {% endcomment %}
-
-              <div class="form-group col-lg-4">
-                <label for="inputEmail">Gender</label>
-                <input type="text" name="gender" value="{{ patientprofile.gender}}" class="form-control" id="inputEmail" placeholder="Email Address" readonly>
-              </div>
+            <h4 id="bookid">BOOK <span>APPOINTMENT</span></h4>
             
+            <!-- General Information Section -->
+            <div class="form-section">
+                <h5>General Information</h5>
+                <br> 
+                <div class="form-row">
+                    <!-- Patient Information -->
+                    <div class="form-group col-lg-4">
+                        <label for="inputPatientName">First Name</label>
+                        <input type="text" name="first_name" value="{{ patientprofile.first_name }}" class="form-control" id="inputPatientName" placeholder="Full Name" readonly>
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="inputPatientName">Last Name</label>
+                        <input type="text" name="last_name" value="{{ patientprofile.last_name }}" class="form-control" id="inputPatientName" placeholder="Full Name" readonly>
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="inputEmail">Email</label>
+                        <input type="email" name="email" value="{{ patientprofile.email }}" class="form-control" id="inputEmail" placeholder="Email Address" readonly>
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="inputAddress">Address</label>
+                        <input type="text" class="form-control" value="{{ patientprofile.address }}" name="address" readonly>
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="inputPhoneNumber">Phone Number</label>
+                        <input type="tel" name="phone_number" value="{{ patientprofile.phone_number }}" class="form-control" id="inputPhoneNumber" readonly>
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="inputMedications">Medications Currently Taking</label>
+                        <input type="text" class="form-control" value="{{ patientprofile.medication_names }}" name="medication_names" readonly>
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="inputEmail">Gender</label>
+                        <input type="text" name="gender" value="{{ patientprofile.gender }}" class="form-control" id="inputEmail" placeholder="Email Address" readonly>
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="inputAddress">Ward</label>
+                        <input type="number" class="form-control" value="{{ patientprofile.ward }}" name="ward" readonly>
+                    </div>
+                    <!-- Add more fields for general information here -->
+                </div>
+            </div>
+                <br>   <br> 
+            <!-- Fill Data Section -->
+            <div class="form-section">
+                <h5>Fill Your Informations</h5>
+                <br>
+                <div class="form-row">
+                  <div class="form-group col-lg-4">
+                    <label for="ashaworker" >Select Your Ashaworker:</label>
+                    <select class="form-control" id="ashaworker" name="ashaworker" required>
+                        <option value="" disabled selected>-Select Your Ashaworker-</option>
+                        {% for ashaworker in ashaworkers %}
+                        <option value="{{ ashaworker.id }}">{{ ashaworker.Name }} : {{ ashaworker.ward }}</option>
+   
+                        {% comment %} <option value="{{ ashaworker.id }}" {% if selected_asha == ashaworker.id %} selected {% endif %}>{{ ashaworker.Name }} : {{ ashaworker.ward }}</option> {% endcomment %}
+                        {% endfor %}
+                    </select>
+                </div>
 
-              <div class="form-group col-lg-4">
-                <label for="inputAddress">Address</label>
+                <div class="form-group col-lg-4">
+                    <label for="date" >Select a Date:</label>
+                    <select class="form-control" id="date" name="date" required>
+                        <option value="">Select a Date</option>
+                        {% for date in date_options %}
+                            <option value="{{ date.date }}">{{ date.date }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group col-lg-4">
+                    <label for="time" >Select a Time Slot:</label>
+                    <select class="form-control" id="time" name="time" required>
+                        <option value="" disabled selected>Select a Time Slot</option>
+                        {% for option in time_options %}
+                            <option value="{{ option.id }}">{{ option.text }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                    <!-- Appointment Status/Urgency Selection -->
+                    <div class="form-group col-lg-4">
+                        <label for="urgency" >Appointment Status/Urgency</label>
+                        <select class="form-control" name="urgency" id="urgency" required>
+                            <option value="" disabled selected>-Select Appointment Status/Urgency-</option>
+                            <option value="Routine check-up">Routine check-up</option>
+                            <option value="Non-urgent medical check-up">Non-urgent medical check-up</option>
+                            <option value="Urgent medical check-up">Urgent medical check-up</option>
+                        </select>
+                        <span id="urgencyError" class="text-danger"></span>
+                    </div>
+    
+                    <div class="form-group col-lg-4">
+                        <label for="inputMedicalConditions" >Existing Medical Conditions</label>
+                        <textarea class="form-control" name="medical_conditions" id="inputMedicalConditions" rows="3" placeholder="Enter existing medical conditions"></textarea>
+                        <div id="medicalConditionsError" style="color: red;"></div>
+                    </div>
+    
+                    <div class="form-group col-lg-4">
+                        <label for="inputSymptoms" >Symptoms/Reason for Visit</label>
+                        <textarea class="form-control" name="symptoms" id="inputSymptoms" rows="3" placeholder="Describe symptoms or reason for the visit"></textarea>
+                        <div id="symptomsError" style="color: red;"></div>
+                    </div>
+    
+                    
+                    <div class="btn-box">
+                      <button type="submit" class="btn" class="form-group col-lg-6" id="schedule">Schedule Now</button>
+                    </div>&ensp;&ensp;&ensp;&ensp;
+                    <div class="btn-box">
+                    {% comment %} <a href="{% url 'appointment_view' %}">View Appointments</a> {% endcomment %}
+                    <button  class="btn"  ="form-group col-lg-6" onclick="window.location.href = '{% url 'appointment_view' %}'">View Appointments</button>
+                  </div>
+                    <!-- Add more fields for filling data here -->
+                </div>
                 
-                <input type="text" class="form-control floating" value="{{ patientprofile.address }}" name="address" readonly>
-              </div>
-              <div class="form-group col-lg-4">
-                <label for="inputAddress">Ward</label>
-                <input type="number" class="form-control floating" value="{{ patientprofile.ward }}" name="ward" readonly>
-              </div>
-
-             
             </div>
-            <!-- Contact Information -->
-            <div class="form-row">
-              
-
-              <div class="form-group col-lg-4">
-                <label for="inputPhoneNumber">Phone Number</label>
-                <input type="tel" name="phone_number" value="{{ patientprofile.phone_number}}" class="form-control" id="inputPhoneNumber"  readonly>
-              </div>
-              <div class="form-group col-lg-4">
-                <label for="inputMedications">Medications Currently Taking</label>
-                <input type="text" class="form-control floating" value="{{ patientprofile.medication_names }}" name="medication_names" readonly>
-              </div>
-             
-             
-              
-
-              <!-- Appointment Status/Urgency Selection -->
-              <div class="form-group col-lg-4">
-                <label for="urgency" style="color: black; font-size: 20px; font-weight: bold;">Appointment Status/Urgency</label>
-                <select class="form-control" name="urgency" id="urgency" required>
-                  <option value="" disabled selected>-Select Appointment Status/Urgency-</option>
-                  <option value="Routine check-up">Routine check-up</option>
-                  <option value="Non-urgent medical check-up">Non-urgent medical check-up</option>
-                  <option value="Urgent medical check-up">Urgent medical check-up</option>
-                </select>
-                <span id="urgencyError" class="text-danger"></span>
-              </div>
-              
-              <div class="form-group col-lg-4">
-                <label for="inputMedicalConditions" style="color: black; font-size: 20px; font-weight: bold;">Existing Medical Conditions</label>
-                <textarea class="form-control" name="medical_conditions" id="inputMedicalConditions" rows="3" placeholder="Enter existing medical conditions"></textarea>
-                <div id="medicalConditionsError" style="color: red;"></div>
-              </div>
-              
-              <div class="form-group col-lg-4">
-                <label for="inputSymptoms" style="color: black; font-size: 20px; font-weight: bold;">Symptoms/Reason for Visit</label>
-                <textarea class="form-control" name="symptoms" id="inputSymptoms" rows="3" placeholder="Describe symptoms or reason for the visit"></textarea>
-                <div id="symptomsError" style="color: red;"></div>
-              </div>
-               
-              <div class="form-group col-lg-4">
-                <label for="ashaworker" style="color: black; font-size: 20px; font-weight: bold;">Select Your Ashaworker:</label>
-                <select class="form-control" id="ashaworker" name="ashaworker" required>
-                  <option value="" disabled selected>-Select Your Ashaworker-</option>
-                    {% for ashaworker in ashaworkers %}
-                        <option value="{{ ashaworker.id }}" {% if selected_asha == ashaworker.id %} selected {% endif %}>{{ ashaworker.Name }} : {{ ashaworker.ward }}</option>
-                    {% endfor %}
-                </select>
-              </div>
-          
-
-              <div class="form-group col-lg-6">
-                <label for="date" style="color: black; font-size: 20px; font-weight: bold;">Select a Date:</label>
-                <select class="form-control" id="date" name="date" required>
-                    <option value="" >Select a Date</option>
-                    {% for date in date_options %}
-                        <option value="{{ date.date }}">{{ date.date }}</option>
-                    {% endfor %}
-                </select>
-              </div>
-
-              <div class="form-group col-lg-6">
-                <label for="time" style="color: black; font-size: 20px; font-weight: bold;">Select a Time Slot:</label>
-                <select class="form-control" id="time" name="time" required>
-                    <option value="" disabled selected>Select a Time Slot</option>
-                    {% for option in time_options %}
-                        <option value="{{ option.id }}">{{ option.text }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="btn-box">
-              <button type="submit" class="btn" class="form-group col-lg-6" id="submitButton">Schedule Now</button>
-            </div>&ensp;&ensp;&ensp;&ensp;
-            <div class="btn-box">
-            {% comment %} <a href="{% url 'appointment_view' %}">View Appointments</a> {% endcomment %}
-            <button class="btn" class="form-group col-lg-6" onclick="window.location.href = '{% url 'appointment_view' %}'">View Appointments</button>
-          </div>
+            
           </div>
          </div>
         
@@ -505,58 +512,75 @@
     </script> 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   
     <script>
-        $(document).ready(function () {
-            $("#ashaworker").change(function () {
-                var ashaworker_id = $(this).val();
-    
-                // Send an AJAX request to get available dates for the selected Ashaworker
-                $.ajax({
-                    url: "{% url 'get_dates_for_ashaworker' %}",
-                    data: { 'ashaworker_id': ashaworker_id },
-                    dataType: 'json',
-                    success: function (data) {
-                        var dateSelect = $("#date");
-                        dateSelect.empty().append('<option value="" selected>Select a Date</option>');
-                        $.each(data.date_options, function (index, value) {
-                            dateSelect.append($('<option>', {
-                                value: value,
-                                text: value
-                            }));
-                        });
-                    },
-                    error: function (data) {
-                        console.log(data.error_message);
-                    }
-                });
-            });
-    
-            $("#date").change(function () {
-                var ashaworker_id = $("#ashaworker").val();
-                var selected_date = $(this).val();
-    
-                // Send an AJAX request to get available time slots for the selected Ashaworker and date
-                $.ajax({
-                    url: "{% url 'get_timeslots_for_date' %}",
-                    data: { 'ashaworker_id': ashaworker_id, 'selected_date': selected_date },
-                    dataType: 'json',
-                    success: function (data) {
-                        var timeSelect = $("#time");
-                        timeSelect.empty().append('<option value="" selected>Select a Time Slot</option>');
-                        $.each(data.time_options, function (index, value) {
-                            timeSelect.append($('<option>', {
-                                value: value.id,
-                                text: value.text
-                            }));
-                        });
-                    },
-                    error: function (data) {
-                        console.log(data.error_message);
-                    }
-                });
-            });
-        });
+      var selectedDatesAndTimes = {};
+
+      $(document).ready(function () {
+          var dateSelect = $("#date");
+          var timeSelect = $("#time");
+      
+          $("#ashaworker").change(function () {
+              var ashaworker_id = $(this).val();
+      
+              // Send an AJAX request to get available dates for the selected Ashaworker
+              $.ajax({
+                  url: "{% url 'get_dates_for_ashaworker' %}",
+                  data: { 'ashaworker_id': ashaworker_id },
+                  dataType: 'json',
+                  success: function (data) {
+                      dateSelect.empty().append('<option value="" selected>Select a Date</option');
+                      timeSelect.empty().append('<option value="" selected>Select a Time Slot</option');
+      
+                      $.each(data.date_options, function (index, value) {
+                          dateSelect.append($('<option>', {
+                              value: value,
+                              text: value
+                          }));
+                      });
+                  },
+                  error: function (data) {
+                      console.log(data.error_message);
+                  }
+              });
+          });
+      
+          $("#date").change(function () {
+              var ashaworker_id = $("#ashaworker").val();
+              var selected_date = $(this).val();
+      
+              // Send an AJAX request to get available time slots for the selected Ashaworker and date
+              $.ajax({
+                  url: "{% url 'get_timeslots_for_date' %}",
+                  data: { 'ashaworker_id': ashaworker_id, 'selected_date': selected_date },
+                  dataType: 'json',
+                  success: function (data) {
+                      timeSelect.empty().append('<option value="" selected>Select a Time Slot</option');
+      
+                      $.each(data.time_options, function (index, value) {
+                          // Check if the time is already selected by another patient
+                          if (!selectedDatesAndTimes[ashaworker_id] || !selectedDatesAndTimes[ashaworker_id][selected_date] || selectedDatesAndTimes[ashaworker_id][selected_date] !== value.id.toString()) {
+                              timeSelect.append($('<option>', {
+                                  value: value.id,
+                                  text: value.text
+                              }));
+                          }
+                      });
+                  },
+                  error: function (data) {
+                      console.log(data.error_message);
+                  }
+              });
+          });
+      });
+      
     </script>
+    {% comment %} {% if error_flag %}
+<script>
+    alert("{{ error_message }}");
+</script>
+{% endif %} {% endcomment %}
+
   <style>
     /* Add this CSS to your stylesheet */
     .quote_btn-container .dropdown-toggle {
@@ -591,7 +615,19 @@
   .dropdown-menu a.dropdown-item:hover {
       background-color: #f7f7f7;
   }
-  
+  .book_section h4::before {
+ 
+    position: absolute;
+    left: 100px;
+    bottom: 0;
+    width: 100px;
+    height: 2px;
+    background-color: #00c6a9;}
+    h5 {
+      font-weight: bold; /* Make it bold */
+      text-align: center; /* Center align the text */
+      font-size: 24px; /* Customize the font size to your preference */
+    }
   </style>
 </body>
 

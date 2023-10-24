@@ -102,9 +102,9 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <form id="search-form" method="GET" action="{% url 'search_patient' %}">
+                        <form id="search-form" method="GET" action="{% url 'asha_search_patient' %}">
                             <div class="input-group">
-                                <a href="{% url 'patient_users' %}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>&ensp;&ensp;&ensp;&ensp;
+                                <a href="{% url 'add_view_rec' %}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>&ensp;&ensp;&ensp;&ensp;
                                 <input type="text" class="form-control" name="patientname" placeholder="Search by patient Name">
                                 <div class="input-group-append">
                                     <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> </button>
@@ -122,7 +122,7 @@
                                 <option value="{{ ward_number }}">{{ ward_number }}</option>
                             {% endfor %}
                         </select>
-                        <button type="submit">Filter</button>
+                        <button type="submit">Apply</button>
                     </form>
                 </div>
                 
@@ -162,7 +162,7 @@
                                 <p>Patient ID: {{ patient.id}}</p>
                                 <p>Name: {{ patient.first_name }} {{ patient.last_name }}</p>
                                 {% comment %} <p>Last Name: {{ patient.last_name }}</p> {% endcomment %}
-                                <p>Email: {{ patient.email }}</p>
+                                <p><i class="fa fa-envelope"></i> : {{ patient.email }}</p>
                                 
                                 <p>ward: {{ patient.ward }}</p>
                                 

@@ -163,24 +163,34 @@
                             
                             
                             <div>
-                                <p>Name: {{ patient.id}}</p>
-                                <p>Name: {{ patient.first_name }} {{ patient.last_name }}</p>
-                                {% comment %} <p>Last Name: {{ patient.last_name }}</p> {% endcomment %}
-                                <p>Email: {{ patient.email }}</p>
-                                <div class="user-country">
-                                    <i class="fa fa-map-marker"></i> {{ patient.address }}
-                                </div><br>
-                                <p>Gender: {{ patient.gender }}</p>
-                                <p>Address: {{ patient.address }}</p>
-                                <p>ward: {{ patient.ward }}</p>
-                                <p>Phone: {{ patient.phone_number }}</p>
-                                <p>House Name: {{ patient.house_name }}</p>
-                                <p>House Number: {{ patient.house_no }}</p>
-                                <p>Medications Currently Taking: {{ patient.medication_names }}</p>
-                                <p>Current Diagnosis or Health Concern: {{ patient.current_diagnosis }}</p>
-                                <p>Past Medical Conditions: {{ patient.past_med_condition }}</p>
-                                <p>Surgical Historys:{{ patient.surgical_history }}</p>
-                                <p>Allergies (Medications, Food, Environmental): {{ patient.allergies }}</p>
+                                <p>ID: {{ patient.id}}</p>
+                                <div class="card shadow-sm">
+                                    <p>{{ patient.first_name }} {{ patient.last_name }}</p>
+                                    {% comment %} <p>Last Name: {{ patient.last_name }}</p> {% endcomment %}
+                                    <p> <i class="fa fa-envelope"> </i> : {{ patient.email }}</p>
+                                    
+                                    <p> <i class="fa fa-phone"> </i> : {{ patient.phone_number }}</p>
+                                    <p> <i class="fa fa-user"> </i> : {{ patient.gender }}</p>
+                                </div>
+                                <div class="card shadow-sm">
+                                    <div class="user-country">
+                                        <i class="fa fa-map-marker"></i> {{ patient.address }}
+                                    </div><br>
+                                   
+                                   
+                                    
+                                    
+                                    <p>House Name: {{ patient.house_name }}</p>
+                                    <p>House Number: {{ patient.house_no }}</p>
+                                    <p>ward:{{ patient.ward }}</p>
+                                </div>
+                                <div class="card shadow-sm">
+                                    <p>Medications Currently Taking: {{ patient.medication_names }}</p>
+                                    <p>Current Diagnosis or Health Concern: {{ patient.current_diagnosis }}</p>
+                                    <p>Past Medical Conditions: {{ patient.past_med_condition }}</p>
+                                    <p>Surgical Historys:{{ patient.surgical_history }}</p>
+                                    <p>Allergies (Medications, Food, Environmental): {{ patient.allergies }}</p>
+                                </div>
                                 
                                 {% comment %} <div class="card shadow-sm">
                                     <div class="card-header bg-transparent text-center">
@@ -292,6 +302,14 @@
     /* Hover effect for the filter button */
     .search-bar button:hover {
         background-color: #0056b3;
+    }
+    .card.shadow-sm {
+        
+        border: 10px solid white; 
+        
+        background-color: #f7f7f7; 
+        padding: 20px; 
+    
     }
 </style>
 <!-- doctors23:17-->

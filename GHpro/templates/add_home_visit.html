@@ -96,13 +96,13 @@
       <br><br><br>
       <div class="heading_container">
         <h2>
-          Medical Record
+          Add Home Visit Date
         </h2>
       </div>
       <div class="row">
         <div class="col-md-7">
           <div class="form_container">
-            <form method="POST" action="{% url 'medical_record' patient.id %}">
+            <form method="POST" action="{% url 'add_home_visit' patient.id %}">
 
               {% csrf_token %}
               <div>
@@ -117,18 +117,14 @@
               <div>
                   <input type="date" id="date" name="date" class="text-input" placeholder="Date" required>
               </div>
+
               <div>
-                  <textarea id="doctor_notes" name="doctor_notes" rows="4" class="text-input" placeholder="Doctor's Notes" required></textarea>
-              </div>
-              <div>
-                  <textarea id="medications_needed" class="text-input" name="medications_needed" rows="4" placeholder="Medications Needed" required></textarea>
-              </div>
-              <div>
-                  <textarea id="treatments" class="text-input" name="treatments" rows="4" placeholder="Treatments" required></textarea>
-              </div>
-              <div>
-                  <textarea id="current_conditions" class="text-input" name="current_conditions" rows="4" placeholder="Current Conditions" required></textarea>
-              </div>
+                <input type="time" id="start_time" name="start_time" required  class="text-input" placeholder="Start Time" required >
+            </div>
+            <div>
+                <input type="time" id="end_time"name="end_time" required class="text-input" placeholder="End Time" required>
+            </div>
+              
               <div class="btn_box">
                 <button type="submit">Save</button>
               </div>
