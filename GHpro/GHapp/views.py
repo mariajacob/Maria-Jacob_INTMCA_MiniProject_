@@ -537,6 +537,79 @@ def pro_ashaworker(request):
     asha = Ashaworker.objects.filter(user=request.user).first() 
     return render(request, 'asha_temp/pro_ashaworker.html', {'asha': [asha]})
 
+
+@login_required(login_url='login_page')
+def appointment_form(request, appointment_id=None):
+    patientprofile = request.user.patientprofile
+    ashaworkers = Ashaworker.objects.all()
+
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        gender = request.POST.get('gender')
+        address = request.POST.get('address')
+        ward_asha = request.POST.get('ward')
+        phone_number = request.POST.get('phone_number')
+        medical_conditions = request.POST.get('medical_conditions')
+        urgency = request.POST.get('urgency')
+        medication_names = request.POST.get('medication_names')
+        symptoms = request.POST.get('symptoms')
+        asha_id = request.POST.get('ashaworker')
+        date_id = request.POST.get('date')
+        selected_time_slot = request.POST.get('time')
+
+        try:
+            slot = Slots.objects.get(id=selected_time_slot)
+            ashaworker = Ashaworker.objects.get(id=asha_id)
+            user = CustomUser.objects.get(id=request.user.id)
+
+            appointment = Appointment(
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                gender=gender,
+                address=address,
+                ward_asha=ward_asha,
+                phone_number=phone_number,
+                medical_conditions=medical_conditions,
+                urgency=urgency,
+                medication_names=medication_names,
+                symptoms=symptoms,
+                ashaworker=ashaworker,
+                user=user,
+                slot=slot,
+                date=date_id,
+                
+            )
+            # one_week_ago = datetime.now() - timedelta(days=7)
+            # existing_appointments = Appointment.objects.filter(
+            #     user=request.user,
+            #     date__gte=one_week_ago
+            # )
+
+            # if existing_appointments.exists():
+            #     error_message = 'You already have an appointment within the last week.'
+            #     return render(request, 'appointment.html', {'error_message': error_message, 'error_flag': True})
+
+            appointment.save()
+            subject = 'Appointment is Successful'
+            message = f'Your appointment for home visit is successful. Wait for the appointment approval message. Once the appointments is approved the you will get an approval message. Your Scheduled date: {date_id}, Your Scheduled Time: {slot.start_time} {slot.end_time}'
+            from_email = settings.EMAIL_HOST_USER
+            recipient_list = [request.user.email]
+            send_mail(subject, message, from_email, recipient_list)
+            return redirect('appointment_view')
+
+        except Slots.DoesNotExist:
+            return render(request, 'appointment.html', {'error_message': 'Time slot not found'})
+        except ValueError:
+            return render(request, 'appointment.html', {'error_message': 'Invalid time format'})
+
+    return render(request, 'appointment.html', {'patientprofile': patientprofile, 'appointment_id': appointment_id,'ashaworkers': ashaworkers})
+
+
+
+
 from datetime import datetime
 
 from django.utils import timezone
@@ -621,7 +694,7 @@ def approve_appointment(request, appointment_id):
     appointment.is_approved = True
     appointment.save()
     subject = 'Appointment is Successful'
-    message = f'Your appointment for home visit is approved.Your Scheduled date: {appointment.date_id}, Your Scheduled Time: {appointment.slot.start_time} {appointment.slot.end_time}'
+    message = f'Your appointment for home visit is approved.Your Scheduled date: {appointment.date}, Your Scheduled Time: {appointment.slot.start_time} {appointment.slot.end_time}'
     from_email = settings.EMAIL_HOST_USER
     recipient_list = [request.user.email]
     send_mail(subject, message, from_email, recipient_list)
@@ -679,74 +752,7 @@ def search_patient(request):
     return render(request, 'asha_temp/patient_users.html', context)
 
 
-@login_required(login_url='login_page')
-def appointment_form(request, appointment_id=None):
-    patientprofile = request.user.patientprofile
-    ashaworkers = Ashaworker.objects.all()
 
-    if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
-        gender = request.POST.get('gender')
-        address = request.POST.get('address')
-        ward_asha = request.POST.get('ward')
-        phone_number = request.POST.get('phone_number')
-        medical_conditions = request.POST.get('medical_conditions')
-        urgency = request.POST.get('urgency')
-        medication_names = request.POST.get('medication_names')
-        symptoms = request.POST.get('symptoms')
-        asha_id = request.POST.get('ashaworker')
-        date_id = request.POST.get('date')
-        selected_time_slot = request.POST.get('time')
-
-        try:
-            slot = Slots.objects.get(id=selected_time_slot)
-            ashaworker = Ashaworker.objects.get(id=asha_id)
-            user = CustomUser.objects.get(id=request.user.id)
-
-            appointment = Appointment(
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-                gender=gender,
-                address=address,
-                ward_asha=ward_asha,
-                phone_number=phone_number,
-                medical_conditions=medical_conditions,
-                urgency=urgency,
-                medication_names=medication_names,
-                symptoms=symptoms,
-                ashaworker=ashaworker,
-                user=user,
-                slot=slot,
-                date=date_id,
-                
-            )
-            # one_week_ago = datetime.now() - timedelta(days=7)
-            # existing_appointments = Appointment.objects.filter(
-            #     user=request.user,
-            #     date__gte=one_week_ago
-            # )
-
-            # if existing_appointments.exists():
-            #     error_message = 'You already have an appointment within the last week.'
-            #     return render(request, 'appointment.html', {'error_message': error_message, 'error_flag': True})
-
-            appointment.save()
-            subject = 'Appointment is Successful'
-            message = f'Your appointment for home visit is successful. Wait for the appointment approval message. Once the appointments is approved the you will get an approval message. Your Scheduled date: {date_id}, Your Scheduled Time: {slot.start_time} {slot.end_time}'
-            from_email = settings.EMAIL_HOST_USER
-            recipient_list = [request.user.email]
-            send_mail(subject, message, from_email, recipient_list)
-            return redirect('appointment_view')
-
-        except Slots.DoesNotExist:
-            return render(request, 'appointment.html', {'error_message': 'Time slot not found'})
-        except ValueError:
-            return render(request, 'appointment.html', {'error_message': 'Invalid time format'})
-
-    return render(request, 'appointment.html', {'patientprofile': patientprofile, 'appointment_id': appointment_id,'ashaworkers': ashaworkers})
 
 
 # def get_dates_for_ashaworker(request):
@@ -1316,6 +1322,7 @@ def soft_delete_image(request, image_id):
     image.save()
 
     return redirect('dis_gallery')
+    
 
 from django.http import HttpResponse
 from django.shortcuts import render

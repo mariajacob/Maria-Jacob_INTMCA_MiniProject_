@@ -19,7 +19,7 @@
       padding: 10px;
      border-radius: 10px;
      position: absolute;
-     top: 10%;
+     top: 20%;
      left: 10%;
      transform: translate(-10%, -10%);
       
@@ -34,11 +34,7 @@
    }
  
    .form-container {
-     {% comment %} background-color: white;
-     padding: 20px;
-     border-radius: 5px;
-     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); {% endcomment %}
- 
+     
      background-color: rgba(231, 171, 171, 0.845);
        padding-right: 50px;
        padding-left: 50px;
@@ -108,7 +104,7 @@
    /* Add any other styling you want for the link inside <pre> */
  }
  
- .line{
+.line{
      position: relative;
      height: 1px;
      width: 100%;
@@ -125,9 +121,7 @@
      color: #8b8b8b;
      padding: 0 15px;
  }
- 
-
-  </style>
+ </style>
 </head>
 <body>
   <div class="container-fluid">
@@ -143,51 +137,27 @@
                 {% endfor %}
             <form action="#" method="post" id="registrationForm" autocomplete="off">
               {% csrf_token %}
-            {% comment %} <div class="form-group">
-              <label for="username">Username:</label>
-              <input type="text" class="form-control" id="username" name="username" required>
-              <small id="usernameError" class="form-text text-danger"></small>
-            </div> {% endcomment %}
-
             <div class="form-group">
               <label for="email">Email:</label>
               <input type="text" class="form-control" id="email" name="email" required>
               <small id="emailError" class="form-text text-danger"></small>
             </div>
-
-            {% comment %} <div class="form-group">
-              <label for="phoneNumber">Phone Number:</label>
-              <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" required>
-              <small id="phoneNumberError" class="form-text text-danger"></small>
-            </div> {% endcomment %}
-
-            <div class="form-group">
+           <div class="form-group">
               <label for="password">Password:</label>
               <input type="password" class="form-control" id="password" name="password" required>
               <small id="passwordError" class="form-text text-danger"></small>
             </div>
-
-            {% comment %} <div class="form-group">
-              <label for="confirmPassword">Confirm Password:</label>
-              <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-              <small id="confirmPasswordError" class="form-text text-danger"></small>
-            </div> {% endcomment %}
-
-            {% comment %} <button type="submit" class="btn btn-primary">Login</button>
-            <pre>Don't have an account? <a href="{% url 'register' %}" style="color: rgb(201, 7, 7); font-size: 14px;">Signup</a></pre> {% endcomment %}
             <br><button type="submit" id="login" class="btn btn-primary" id="submit">LOGIN</button>
             <pre>Don't have an account? <a href="{% url 'register' %}" >Signup</a></pre>
           </form>
-          
-            
-            <div>
+          {% comment %} <div>
             <form action="{% url 'password_reset' %}" method="post">
             {% csrf_token %}
             <div class="form-group">
                 <a href="{% url 'password_reset' %}" class="forgot-password">Forgot Password?</a>
             </div>
         </form>
-        <div class="line"></div>
+        <div class="line"></div> {% endcomment %}
 
         
       </button>
@@ -197,9 +167,6 @@
                     Sign in with Google
                   </span>
                 </button>
-
-
-      
         </div>
       </div>
     </div>
@@ -208,42 +175,12 @@
   <!-- Add Bootstrap JS and jQuery scripts -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
   <script>
-    const registrationForm = document.getElementById('registrationForm');
-    {% comment %} const usernameInput = document.getElementById('username'); {% endcomment %}
+    const registrationForm = document.getElementById('registrationForm'); 
     const emailInput = document.getElementById('email');
     {% comment %} const phoneNumberInput = document.getElementById('phoneNumber'); {% endcomment %}
     const passwordInput = document.getElementById('password');
-    {% comment %} const confirmPasswordInput = document.getElementById('confirmPassword'); {% endcomment %}
-
-    {% comment %} function validateUsername() {
-      const usernameValue = usernameInput.value;
-      const usernameError = document.getElementById('usernameError');
-      
-      if (!/^[a-zA-Z]+$/.test(usernameValue)) {
-        usernameError.textContent = 'Username should contain only alphabetical characters.';
-        return false;
-      } else {
-        usernameError.textContent = '';
-        return true;
-      }
-    } {% endcomment %}
-
-    {% comment %} function validateEmail() {
-      const emailValue = emailInput.value;
-      const emailError = document.getElementById('emailError');
-      
-      if (!/^\S+@\S+\.\S+$/.test(emailValue)) {
-        emailError.textContent = 'Enter a valid email address.';
-        return false;
-      } else {
-        emailError.textContent = '';
-        return true;
-      }
-    } {% endcomment %}
-
     function validateEmail() {
       const emailValue = emailInput.value;
       const emailError = document.getElementById('emailError');
@@ -256,8 +193,7 @@
         return true;
       }
     }
-    
-
+  
     function validatePassword() {
       const passwordValue = passwordInput.value;
       const passwordError = document.getElementById('passwordError');
@@ -269,29 +205,10 @@
         passwordError.textContent = '';
         return true;
       }
-    }
-
-    {% comment %} function validateConfirmPassword() {
-      const confirmPasswordValue = confirmPasswordInput.value;
-      const confirmPasswordError = document.getElementById('confirmPasswordError');
-      
-      if (confirmPasswordValue !== passwordInput.value) {
-        confirmPasswordError.textContent = 'Passwords do not match.';
-        return false;
-      } else {
-        confirmPasswordError.textContent = '';
-        return true;
-      }
-    } {% endcomment %}
-
-    // Validate on keyup for individual fields
-    //usernameInput.addEventListener('keyup', validateUsername);
+    }  
     emailInput.addEventListener('keyup', validateEmail);
-   // phoneNumberInput.addEventListener('keyup', validatePhoneNumber);
     passwordInput.addEventListener('keyup', validatePassword);
     confirmPasswordInput.addEventListener('keyup', validateConfirmPassword);
-
-    // Validate on form submit
     registrationForm.addEventListener('submit', function(event) {
      // const isUsernameValid = validateUsername();
       const isEmailValid = validateEmail();

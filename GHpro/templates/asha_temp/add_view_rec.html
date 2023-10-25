@@ -148,13 +148,13 @@
                                     <img alt="" src="{{ patient.profile_pic.url }}">
                                 </a>
                             </div> 
-                            <div class="dropdown profile-action">
+                           {% comment %} <div class="dropdown profile-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-                                 {% comment %} <div class="dropdown-menu dropdown-menu-right">
+                                  <div class="dropdown-menu dropdown-menu-right">
                                     <a class="dropdown-item" href=" {% url 'edit_asha' ashaworker.id  %}"><i class="fa fa-pencil m-r-5"></i> Edit</a>
                                     <a class="dropdown-item" href=" {% url 'delete_asha' ashaworker.id  %}"><i class="fa fa-pencil m-r-5"></i> Delete</a>
-                                </div>   {% endcomment %}
-                            </div>
+                                </div>   
+                            </div>{% endcomment %}
                             <h4 class="doctor-name text-ellipsis"><a href="profile.html"> {{ patient.Name }}</a></h4>
                             
                             
