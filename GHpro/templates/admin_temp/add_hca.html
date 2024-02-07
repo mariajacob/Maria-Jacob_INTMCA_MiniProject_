@@ -67,7 +67,7 @@
                     <ul>
                         <li class="menu-title">Main</li>
                         <li class="active">
-                            <a href="{% url 'index-2' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                            <a href="{% url 'admin_dashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li> 
                         <li >
 							<a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user"></i> <span>Asha Workers List </span></a>
@@ -232,25 +232,25 @@
                                         <span class="text-danger" id="phone-error"></span>
                                     </div>
                                 </div>
-                               <div class="col-sm-6">
+                               {% comment %} <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Profile Photo</label>
                                         <input type="file" class="form-control" name="profile_photo">
                                     </div>
-                                </div> 
-                                <div class="col-sm-6">
+                                </div>  {% endcomment %}
+                                {% comment %} <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>License Certificate</label>
                                         <input type="file" class="form-control" name="license_certificate">
                                     </div>
-                                </div> 
+                                </div>  {% endcomment %}
                                 
                                 
                             </div>
                             
                         <div>
                             <div class="m-t-20 text-center">
-                                <button  class="btn btn-primary submit-btn" id="createasha">Create Asha Worker</button>
+                                <button  class="btn btn-primary submit-btn" id="createhos">Create Asha Worker</button>
                             </div>
                         </div>
                         </form>

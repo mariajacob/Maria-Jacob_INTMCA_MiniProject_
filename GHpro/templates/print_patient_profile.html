@@ -46,6 +46,15 @@
   </head>
 <body>
 	<header class="header_section">
+    {% if messages %}
+                <div class="messages text-center"> <!-- Add "text-center" class -->
+                  {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                      {{ message }}
+                    </div>
+                  {% endfor %}
+                </div>
+                {% endif %}
     <div class="header_top">
       <div class="container">
         <div class="contact_nav">
@@ -226,22 +235,22 @@
               
 <!-- Student Profile -->
 <div class="student-profile py-4">
-  {% for pro in profile %}
+  {% comment %} {% for pro in profile %} {% endcomment %}
   <div class="container">
     <div class="row">
       <div class="col-lg-4">
         <div class="card shadow-sm">
           <div class="card-header bg-transparent text-center">
-          {% if pro.profile_pic %}
-              <img class="profile_img" src="{{ pro.profile_pic.url }}" alt="{{ pro.first_name }} {{ pro.last_name }}'s Profile Photo">
+          {% if profile.profile_pic %}
+              <img class="profile_img" src="{{ profile.profile_pic.url }}" alt="{{ profile.first_name }} {{ profile.last_name }}'s Profile Photo">
           {% else %}
               <img src="/path/to/default/profile_pic.jpg" alt="Default Profile Photo">
           {% endif %}
-          <h3>{{ pro.first_name }} {{ pro.last_name }}</h3> 
+          <h3>{{ profile.first_name }} {{ profile.last_name }}</h3> 
         </div>
          <div class="card-body">
             <p class="mb-0"><strong class="pr-1">Email: </strong>{{user.email}}</p>
-            <p class="mb-0"><strong class="pr-1">Phone Number: </strong>{{ pro.phone_number }}</p>
+            <p class="mb-0"><strong class="pr-1">Phone Number: </strong>{{ profile.phone_number }}</p>
          </div>
     </div>
     <div class="card shadow-sm">
@@ -265,27 +274,27 @@
               <tr>
                 <th width="30%">Address</th>
                 <td width="2%">:</td>
-                <td>{{ pro.address }}</td>
+                <td>{{ profile.address }}</td>
               </tr>
               <tr>
                 <th width="30%">Date Of Birth</th>
                 <td width="2%">:</td>
-                <td>{{ pro.birth_date }}</td>
+                <td>{{ profile.birth_date }}</td>
               </tr>
               <tr>
                 <th width="30%">Gender</th>
                 <td width="2%">:</td>
-                <td>{{ pro.get_gender_display }}</td>
+                <td>{{ profile.get_gender_display }}</td>
               </tr>
               <tr>
                 <th width="30%">House Name</th>
                 <td width="2%">:</td>
-                <td>{{ pro.house_name }}</td>
+                <td>{{ profile.house_name }}</td>
               </tr>
               <tr>
                 <th width="30%">House Number</th>
                 <td width="2%">:</td>
-                <td>{{ pro.house_no }}</td>
+                <td>{{ profile.house_no }}</td>
               </tr>
               <tr>
                 <th width="30%">Panchayat</th>
@@ -295,13 +304,19 @@
               <tr>
                 <th width="30%">Ward:</th>
                 <td width="2%">:</td>
-                <td> {{ pro.ward }}</td>
+                <td> {{ profile.ward }}</td>
               </tr>
               <tr>
                 <th width="30%">Pin Code</th>
                 <td width="2%">:</td>
-                <td>{{ pro.pin_code }}</td>
+                <td>{{ profile.pin_code }}</td>
               </tr>
+              <tr>
+                <th width="30%">Ashaworkers Name</th>
+                <td width="2%">:</td>
+                <td>{{ ashaworker.Name }}</td>
+              </tr>
+              
             </table>
             
           </div>
@@ -316,43 +331,43 @@
               <tr>
                 <th width="30%">Current Diagnosis or Health Concern</th>
                 <td width="2%">:</td>
-                <td>{{ pro.current_diagnosis }}</td>
+                <td>{{ profile.current_diagnosis }}</td>
               </tr>
               <tr>
                 <th width="30%">Past Medical Conditions</th>
                 <td width="2%">:</td>
-                <td> {{ pro.past_med_condition }}</td>
+                <td> {{ profile.past_med_condition }}</td>
               </tr>
               <tr>
                 <th width="30%">Surgical Historys</th>
                 <td width="2%">:</td>
-                <td> {{ pro.surgical_history }}</td>
+                <td> {{ profile.surgical_history }}</td>
               </tr>
               <tr>
                 <th width="30%">Allergies (Medications, Food, Environmental)</th>
                 <td width="2%">:</td>
-                <td>{{ pro.allergies }}</td>
+                <td>{{ profile.allergies }}</td>
               </tr>
               
               <tr>
                 <th width="30%">Height (in cm)</th>
                 <td width="2%">:</td>
-                <td>{{ pro.height }}</td>
+                <td>{{ profile.height }}</td>
               </tr>
               <tr>
                 <th width="30%">Weight (in kg)</th>
                 <td width="2%">:</td>
-                <td>{{ pro.weight }}</td>
+                <td>{{ profile.weight }}</td>
               </tr>
               <tr>
                 <th width="30%">Body Mass Index (BMI)</th>
                 <td width="2%">:</td>
-                <td>{{ pro.bmi }}</td>
+                <td>{{ profile.bmi }}</td>
               </tr>
               <tr>
                 <th width="30%">Current Medication</th>
                 <td width="2%">:</td>
-                <td>{{ pro.medication_names }}</td>
+                <td>{{ profile.medication_names }}</td>
               </tr>
             </table>
             
@@ -374,7 +389,7 @@
       </div>
     </div>
   </div>
-  {% endfor %}
+  {% comment %} {% endfor %} {% endcomment %}
 </div>
 <!-- partial -->
            

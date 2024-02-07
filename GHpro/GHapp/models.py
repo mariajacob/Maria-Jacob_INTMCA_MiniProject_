@@ -33,7 +33,7 @@ class UserManager(BaseUserManager):
         user.is_active = True
         user.is_staff = True
         user.is_superadmin = True
-        user.role=4
+        user.role=6
         user.save(using=self._db)
         return user
 
@@ -42,12 +42,16 @@ class CustomUser(AbstractUser):
     ASHAWORKER = 2
     HCA = 3
     ADMIN = 4
+    NURSE=5
+    MEMBER=6
 
     ROLE_CHOICE = (
         ( PATIENTS, ' PATIENTS'),
         (ASHAWORKER, 'ASHAWORKER'),
         (HCA, 'HCA'),
         (ADMIN,'ADMIN'),
+        (NURSE,'NURSE'),
+        (MEMBER,'MEMBER'),
     
     )
 
@@ -82,7 +86,7 @@ class CustomUser(AbstractUser):
 
 
 class Ashaworker(models.Model):
-     
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True, related_name='ashaworker')
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
     
     Name = models.CharField(max_length=100)
@@ -125,6 +129,50 @@ class Ashaworker(models.Model):
 
     def _str_(self):
         return self.Name
+
+
+
+class Member(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    
+    Name = models.CharField(max_length=100)
+    
+    email = models.EmailField(blank=True, null=True)
+    admin_set_password = models.CharField(max_length=128, blank=True, null=True)
+
+    def set_password(self, password):
+        # Hash and set the password
+        self.admin_set_password = make_password(password)
+    
+    
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
+    address = models.TextField()
+    taluk = models.CharField(max_length=100)
+    Panchayat = models.CharField(max_length=100)
+    wardmem = models.IntegerField(max_length=100,blank=True, null=True)
+    
+    
+    phone = models.IntegerField()
+    profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
+    
+    id_proof = models.FileField(upload_to='id_proofs/', blank=True, null=True)
+    
+    reset_password = models.CharField(max_length=128, null=True, blank=True)  # New field for reset password
+    is_active = models.BooleanField(default=True)
+    
+    class Meta:
+            unique_together = (("id", "wardmem"),)
+    # pin = models.IntegerField()
+    # bio=models.TextField()
+
+    def _str_(self):
+        return self.Name   
+
+
+
+
+
 
 class AshaworkerSchedule(models.Model):
     # Reference to the Ashaworker

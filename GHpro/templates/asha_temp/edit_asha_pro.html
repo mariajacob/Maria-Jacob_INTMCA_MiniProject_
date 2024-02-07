@@ -217,9 +217,9 @@
                                 <div class="form-group">
                                     <label>ID Proof<span class="text-danger"> * </span></label>
                                     <div class="profile-upload">
-                                        <div class="upload-img">
+                                        {% comment %} <div class="upload-img">
                                             <img alt="" src="{% if asha.id_proof %}{{ asha.id_proof.url }}{% else %}{% static 'assets/img/user.jpg' %}{% endif %}">
-                                        </div> 
+                                        </div>  {% endcomment %}
                                         <div class="upload-input">
                                             <input type="file" class="form-control" name="id_proof">
                                         </div>

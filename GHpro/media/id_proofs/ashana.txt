@@ -1,0 +1,176 @@
+## view - display certificate
+
+def pro_ashaworker(request):
+    asha = Ashaworker.objects.filter(user=request.user).first() 
+    return render(request, 'asha_temp/pro_ashaworker.html', {'asha': [asha]})
+
+## view - display upload certificate
+
+def edit_asha_pro(request):
+    
+    # user = request.user
+    # profile = PatientProfile.objects.get(user=user)
+    user = request.user
+    asha = get_object_or_404(Ashaworker, user=user)
+    asha = Ashaworker.objects.get(user=user)
+    
+    if request.method == "POST":
+        print ('POST')
+        # user.first_name=request.POST.get('first_name')
+        # user.last_name=request.POST.get('last_name')
+        # Process the form data and save/update the profile
+
+        asha.Name = request.POST.get('name')
+        
+        asha.email = request.POST.get('email')
+       
+        asha.gender = request.POST.get('gender')
+        
+
+        asha.date_of_birth = request.POST.get('dob')
+        
+
+        asha.date_of_join = request.POST.get('doj')
+        
+
+        asha.address = request.POST.get('address')
+       
+
+        asha.ward = request.POST.get('ward')
+        
+
+        asha.postal = request.POST.get('pin')
+        
+
+        asha.phone = request.POST.get('phone')
+       
+
+        asha.Panchayat = request.POST.get('panchayat')
+        
+
+        asha.phone = request.POST.get('phone')
+
+        asha.edu_level = request.POST.get('edu_level')
+        asha.edu_inst = request.POST.get('edu_inst')
+        asha.year_pass_edu = request.POST.get('year_pass_edu')
+        
+        asha.add_training = request.POST.get('add_training')
+        asha.add_training_inst = request.POST.get('add_training_inst')
+        asha.year_pass_add = request.POST.get('year_pass_add')
+
+        new_id_proof = request.FILES.get('id_proof')
+
+        reset_password = request.POST.get('reset_password')
+        old_password = request.POST.get('old_password')
+
+
+        if old_password and reset_password and request.POST.get('cpass') == reset_password:
+            if user.check_password(old_password):
+                # The old password is correct, set the new password
+                user.set_password(reset_password)
+                user.save()
+                update_session_auth_hash(request, request.user)  # Update the session to prevent logging out
+            else:
+                messages.error(request, "Incorrect old password. Password not updated.")
+        else:
+            print("Please fill all three password fields correctly.")
+        
+        asha.reset_password = reset_password
+         
+
+        if new_id_proof:
+            # Delete the old ID proof if it exists
+            if asha.id_proof:
+                fs = FileSystemStorage()
+                fs.delete(asha.id_proof.name)
+
+            # Save the new ID proof to the 'id_proofs/' directory
+            fs = FileSystemStorage()
+            filename = fs.save(f"id_proofs/{new_id_proof.name}", new_id_proof)
+            asha.id_proof = filename
+
+        new_edu_certificate = request.FILES.get('edu_certificate')
+        if new_edu_certificate:
+            # Delete the old educational certificate if it exists
+            if asha.edu_certificate:
+                fs = FileSystemStorage()
+                fs.delete(asha.edu_certificate.name)
+
+            # Save the new educational certificate to the 'edu_cert/' directory
+            fs = FileSystemStorage()
+            filename = fs.save(f"edu_cert/{new_edu_certificate.name}", new_edu_certificate)
+            asha.edu_certificate = filename
+
+        new_add_certificate = request.FILES.get('add_certificate')
+        if new_add_certificate:
+            # Delete the old additional training certificate if it exists
+            if asha.add_certificate:
+                fs = FileSystemStorage()
+                fs.delete(asha.add_certificate.name)
+
+            # Save the new additional training certificate to the 'add_cert/' directory
+            fs = FileSystemStorage()
+            filename = fs.save(f"add_cert/{new_add_certificate.name}", new_add_certificate)
+            asha.add_certificate = filename
+
+
+        new_profile_pic = request.FILES.get('profile_photo')
+        
+        if new_profile_pic:
+            # Delete the old profile photo if it exists
+            if asha.profile_photo:
+                fs = FileSystemStorage()
+                fs.delete(asha.profile_photo.name)
+            
+            # Save the new profile photo to a specific directory
+            fs = FileSystemStorage()
+            filename = fs.save(f"profile_photos/{new_profile_pic.name}", new_profile_pic)
+            asha.profile_photo = filename 
+        asha.save()
+        messages.success(request, 'Profile updated successfully.')
+        return redirect('pro_ashaworker')  # Redirect to the profile page
+    context = {
+        'user': user,
+        'asha': asha
+    }
+
+    return render(request, 'asha_temp/edit_asha_pro.html',context)
+
+
+
+
+
+
+
+
+
+
+<div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>ID Proof<span class="text-danger"> * </span></label>
+                                    <div class="profile-upload">
+                                        <div class="upload-img">
+                                            <img alt="" src="{% if asha.id_proof %}{{ asha.id_proof.url }}{% else %}{% static 'assets/img/user.jpg' %}{% endif %}">
+                                        </div> 
+                                        <div class="upload-input">
+                                            <input type="file" class="form-control" name="id_proof">
+                                        </div>
+                                    </div>     
+                                </div>
+                            </div>
+
+
+
+## display IDproof:html
+
+ <tr>
+                <th width="30%">Upload IDproof:</th>
+                <td width="2%">:</td>
+                <td>
+                    {% if asha.id_proof %}
+                        <a href="{{ asha.id_proof.url }}" download>Download ID Proof</a>
+                    {% else %}
+                        No ID Proof Uploaded
+                    {% endif %}
+                </td>
+            </tr>

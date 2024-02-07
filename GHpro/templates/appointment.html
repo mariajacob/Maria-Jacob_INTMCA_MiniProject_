@@ -34,6 +34,7 @@
   <link href="{% static 'css/style.css' %}" rel="stylesheet" />
   <!-- responsive style -->
   <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 </head>
 
@@ -252,12 +253,13 @@
                     </div>
                     <div class="form-group col-lg-4">
                         <label for="inputEmail">Gender</label>
-                        <input type="text" name="gender" value="{{ patientprofile.gender }}" class="form-control" id="inputEmail" placeholder="Email Address" readonly>
+                        <input type="text" name="gender" value="{{ patientprofile.gender }}" class="form-control" id="inputEmail" placeholder="Gender" readonly>
                     </div>
-                    {% comment %} <div class="form-group col-lg-4">
-                        <label for="inputAddress">Ward</label>
-                        <input type="number" class="form-control" value="{{ patientprofile.ward }}" name="ward" readonly>
-                    </div> {% endcomment %}
+                    <div class="form-group col-lg-4">
+                      <label for="inputEmail">Ward</label>
+                      <input type="text" name="ward" value="{{ patientprofile.ward }}" class="form-control" id="ward" placeholder="ward" readonly>
+                  </div>
+                    
                     <!-- Add more fields for general information here -->
                 </div>
             </div>
@@ -268,36 +270,43 @@
                 <br>
                 <div class="form-row">
                   <div class="form-group col-lg-4">
+                    
+                    
                     <label for="ashaworker" >Select Your Ashaworker:</label>
-                    <select class="form-control" id="ashaworker" name="ashaworker" required>
+
+                                <input type="text" name="ashaworker" value="{{ ashaworker.Name }}" class="form-control" readonly>
+                     {% comment %} <select class="form-control" id="ashaworker" name="ashaworker" required>
                         <option value="" disabled selected>-Select Your Ashaworker-</option>
                         {% for ashaworker in ashaworkers %}
                         <option value="{{ ashaworker.id }}">{{ ashaworker.Name }} : {{ ashaworker.ward }}</option>
    
-                        {% comment %} <option value="{{ ashaworker.id }}" {% if selected_asha == ashaworker.id %} selected {% endif %}>{{ ashaworker.Name }} : {{ ashaworker.ward }}</option> {% endcomment %}
+                        <option value="{{ ashaworker.id }}" {% if selected_asha == ashaworker.id %} selected {% endif %}>{{ ashaworker.Name }} : {{ ashaworker.ward }}</option> 
                         {% endfor %}
-                    </select>
+                    </select>  {% endcomment %}
                 </div>
 
                 <div class="form-group col-lg-4">
-                    <label for="date" >Select a Date:</label>
-                    <select class="form-control" id="date" name="date" required>
-                        <option value="">Select a Date</option>
-                        {% for date in date_options %}
-                            <option value="{{ date.date }}">{{ date.date }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="form-group col-lg-4">
-                    <label for="time" >Select a Time Slot:</label>
-                    <select class="form-control" id="time" name="time" required>
-                        <option value="" disabled selected>Select a Time Slot</option>
-                        {% for option in time_options %}
-                            <option value="{{ option.id }}">{{ option.text }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+                  <label for="date">Select a Date:</label>
+                  <select class="form-control" id="date" name="date" required>
+                      <option value="" disabled selected>Select a Date</option>
+                      {% for slot in slots %}
+                          <option value="{{ slot.date }}">{{ slot.date }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              
+              <div class="form-group col-lg-4">
+                <label for="date">Select a Time:</label>
+                <select class="form-control" id="time" name="time" required>
+                    <option value="" disabled selected>Select a Time</option>
+                    {% comment %} {% for slot in slots %}
+                    <option value="{{ slot.start_time }}">{{ slot.start_time }} - {{ slot.end_time }}</option>
+                    {% endfor %} {% endcomment %}
+                </select>
+            </div>
+            
+            
+            
                     <!-- Appointment Status/Urgency Selection -->
                     <div class="form-group col-lg-4">
                         <label for="urgency" >Appointment Status/Urgency</label>
@@ -511,69 +520,70 @@
       });
     </script> 
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-   
-    <script>
-      var selectedDatesAndTimes = {};
-
-      $(document).ready(function () {
-          var dateSelect = $("#date");
-          var timeSelect = $("#time");
-      
-          $("#ashaworker").change(function () {
-              var ashaworker_id = $(this).val();
-      
-              // Send an AJAX request to get available dates for the selected Ashaworker
-              $.ajax({
-                  url: "{% url 'get_dates_for_ashaworker' %}",
-                  data: { 'ashaworker_id': ashaworker_id },
-                  dataType: 'json',
-                  success: function (data) {
-                      dateSelect.empty().append('<option value="" selected>Select a Date</option');
-                      timeSelect.empty().append('<option value="" selected>Select a Time Slot</option');
-      
-                      $.each(data.date_options, function (index, value) {
-                          dateSelect.append($('<option>', {
-                              value: value,
-                              text: value
-                          }));
-                      });
-                  },
-                  error: function (data) {
-                      console.log(data.error_message);
-                  }
-              });
+    {% comment %} <script> {% endcomment %}
+      {% comment %} $(document).ready(function() {
+          var $dateDropdown = $('#date');
+          var $timeField = $('#time');
+          var $timeOptions = $('#time-options');
+  
+          // Set up an event listener for the date dropdown
+          $dateDropdown.on('change', function() {
+              var selectedDate = $(this).val();
+  
+              // Hide all time options
+              $timeOptions.children().hide();
+  
+              // Show time options for the selected date
+              $timeOptions.children('[data-date="' + selectedDate + '"]').show();
           });
-      
-          $("#date").change(function () {
-              var ashaworker_id = $("#ashaworker").val();
-              var selected_date = $(this).val();
-      
-              // Send an AJAX request to get available time slots for the selected Ashaworker and date
-              $.ajax({
-                  url: "{% url 'get_timeslots_for_date' %}",
-                  data: { 'ashaworker_id': ashaworker_id, 'selected_date': selected_date },
-                  dataType: 'json',
-                  success: function (data) {
-                      timeSelect.empty().append('<option value="" selected>Select a Time Slot</option');
-      
-                      $.each(data.time_options, function (index, value) {
-                          // Check if the time is already selected by another patient
-                          if (!selectedDatesAndTimes[ashaworker_id] || !selectedDatesAndTimes[ashaworker_id][selected_date] || selectedDatesAndTimes[ashaworker_id][selected_date] !== value.id.toString()) {
-                              timeSelect.append($('<option>', {
-                                  value: value.id,
-                                  text: value.text
-                              }));
-                          }
-                      });
-                  },
-                  error: function (data) {
-                      console.log(data.error_message);
-                  }
-              });
+  
+          // Set up an event listener for the time field
+          $timeField.on('click', function() {
+              // Toggle the visibility of time options
+              $timeOptions.toggle();
+          });
+  
+          // Set up an event listener for the time options
+          $timeOptions.on('click', 'li', function() {
+              // Update the value of the time field when an option is clicked
+              var selectedValue = $(this).attr('data-value');
+              $timeField.val(selectedValue);
+              $timeOptions.hide(); // Hide the options after selection
+          });
+  
+          // Set up an event listener to hide the options when clicking outside
+          $(document).on('click', function(event) {
+              if (!$(event.target).closest('.custom-select-wrapper').length) {
+                  $timeOptions.hide();
+              }
           });
       });
+  </script> {% endcomment %}
+  
+   
+    <script>
       
+      $(document).ready(function () {
+        // Listen for changes in the date dropdown
+        $('#date').on('change', function () {
+            var selectedDate = $(this).val();
+            // Make an AJAX request to fetch times based on the selected date
+            $.ajax({
+                url: '/get_times/',  // Replace with the actual URL to fetch times
+                data: { 'selected_date': selectedDate },
+                dataType: 'json',
+                success: function (data) {
+                    // Clear previous options
+                    $('#time').empty();
+                    // Populate time dropdown with new options
+                    $.each(data.times, function (index, time) {
+                        $('#time').append('<option value="' + time + '">' + time + '</option>');
+                    });
+                }
+            });
+        });
+    });
+    
     </script>
     {% comment %} {% if error_flag %}
 <script>

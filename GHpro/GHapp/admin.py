@@ -11,6 +11,7 @@ from . models import Slots
 from . models import Blog
 from . models import Hca
 from . models import home_visit
+from . models import Member
 
 
 
@@ -30,6 +31,7 @@ admin.site.register(Slots)
 admin.site.register(Blog)
 admin.site.register(Hca)
 admin.site.register(home_visit)
+admin.site.register(Member)
 
 
 

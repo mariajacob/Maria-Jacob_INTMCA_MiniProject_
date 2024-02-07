@@ -1,0 +1,340 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    {% comment %} <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}"> {% endcomment %}
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/select2.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap-datetimepicker.min.css' %}">
+    <!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.min.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+			<div class="header-left">
+				<a href="{% url 'admin_dashboard' %}" class="logo">
+					<img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+				</a>
+			</div>
+			 <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+					</div>
+                    {% else %}
+
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+					</div>
+                    
+                    {% endif %}
+                </li>
+            </ul>
+            
+        </div> 
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+                        <li class="active">
+                            <a href="{% url 'admin_dashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                        </li> 
+						
+                        
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span>Asha Workers </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'ad_ashaworker' %}">Asha Workers List</a></li>
+                                <li><a href="{% url 'ad_member' %}">Members List</a></li>
+								
+								
+							</ul>
+						</li>
+
+
+
+                         <li>
+                            <a href="{% url 'patients' %}"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
+                        </li>
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span>Appointments </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'appointments' %}">All Appointments</a></li>
+                                <li><a href="{% url 'current_appointment' %}">Current Appointments</a></li>
+                                <li><a href="{% url 'future_appointment' %}">Future Appointments</a></li>
+                                <li><a href="{% url 'past_appointment' %}">Past Appointments</a></li>
+								
+								
+							</ul>
+						</li>
+                        <li>
+                            <a href="{% url 'schedule' %}"><i class="fa fa-calendar-check-o"></i> <span>Asha Workers Schedule</span></a>
+                        </li> 
+                        
+                        {% comment %} <li>
+                            <a href="{% url 'adgallery' %}"><i class="fa fa-calendar-check-o"></i> <span>Gallery</span></a>
+                        </li>  {% endcomment %}
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span> Gallery </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'adgallery' %}">Add Image</a></li>
+								<li><a href="{% url 'dis_gallery' %}">Edit Image</a></li>
+								
+							</ul>
+						</li>
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a href="{% url 'blog' %}">Blog View</a></li>
+                                <li><a href="{% url 'add-blog' %}">Add Blog</a></li>
+                               
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="page-wrapper">
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2">
+                        <h4 class="page-title">Edit Member</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2">
+                        <form method="POST" action="" autocomplete="off" enctype="multipart/form-data" onsubmit="return validateWard()">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Name <span class="text-danger">*</span></label>
+                                        <input class="form-control" id="name" value="{{ member.Name }}" name="name" type="text">
+                                    </div>
+                                </div>
+                               
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Email <span class="text-danger">*</span></label>
+                                        <input class="form-control" id="email" value="{{ member.email }}" name="email" type="email">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input class="form-control" id="pass" name="pass"  type="password">
+                                    </div>
+                                </div>
+                               
+								 <div class="col-sm-6">
+									<div class="form-group">
+										<label>Gender:</label>
+										<input type="text" name="gender" id="gender" value="{{ member.gender }}" class="form-control ">
+										
+									</div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Phone </label>
+                                        <input class="form-control" type="text" value="{{ member.phone }}" name="phone" id="phone">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <input type="text" name="address" id="address" value="{{ member.address }}" class="form-control ">
+                                    </div>
+                                </div>
+								<div class="col-sm-12">
+									<div class="row">
+										
+										<div class="col-sm-6 col-md-6 col-lg-4">
+											<div class="form-group">
+												<label>Taluk</label>
+												
+                                                <input class="form-control"  id="taluk" value="{{ member.taluk }}" name="taluk" type="text" readonly>
+											</div>
+										</div>
+										<div class="col-sm-6 col-md-6 col-lg-4">
+											<div class="form-group">
+												<label>Panchayat</label>
+											
+                                                <input class="form-control"  id="panchayat" name="panchayat" value="{{ member.Panchayat }}" type="text" readonly>
+											</div>
+										</div>
+										 <div class="col-sm-6 col-md-6 col-lg-4">
+											<div class="form-group">
+												<label>Ward</label>
+                                                <input type="text" class="form-control" name="wardmem" value="{{ member.wardmem }}" id="wardmem" readonly>
+											</div>
+										</div> 
+                                        {% comment %} <div class="col-sm-6 col-md-6 col-lg-3">
+											<div class="form-group">
+												<label>Ward</label>
+                                                <select class="form-control select" name="ward" id="ward" size="100">
+													<option value="" disabled selected>-Select Ward-</option>
+                                                    <option value="Ward 1-VENGATHANAM" {% if ashaworker.ward == 'Ward 1-VENGATHANAM' %} selected {% endif %}>Ward 1-VENGATHANAM</option>
+                                                    <option value="Ward 1-VENGATHANAM" {% if ashaworker.ward == 'Ward 1-VENGATHANAM' %} selected {% endif %}>Ward 1-VENGATHANAM</option>
+                                                    <option value="Ward 2-PALAPRA" {% if ashaworker.ward == 'Ward 2-PALAPRA' %} selected {% endif %}>Ward 2-PALAPRA</option>
+                                                    <option value="Ward 3-VELICHIYANI" {% if ashaworker.ward == 'Ward 3-VELICHIYANI' %} selected {% endif %}>Ward 3-VELICHIYANI</option>
+                                                    <option value="Ward 4-CHOTTY" {% if ashaworker.ward == 'Ward 4-CHOTTY' %} selected {% endif %}>Ward 4-CHOTTY</option>
+                                                    <option value="Ward 5-MANGAPPARA" {% if ashaworker.ward == 'Ward 5-MANGAPPARA' %} selected {% endif %}>Ward 5-MANGAPPARA</option>
+                                                    <option value="Ward 6-VADAKKEMALA" {% if ashaworker.ward == 'Ward 6-VADAKKEMALA' %} selected {% endif %}>Ward 6-VADAKKEMALA</option>
+                                                    <option value="Ward 7-PARATHODU" {% if ashaworker.ward == 'Ward 7-PARATHODU' %} selected {% endif %}>Ward 7-PARATHODU</option>
+                                                    <option value="Ward 8-NADUKANI" {% if ashaworker.ward == 'Ward 8-NADUKANI' %} selected {% endif %}>Ward 8-NADUKANI</option>
+                                                    <option value="Ward 9-EDAKKUNNAM" {% if ashaworker.ward == 'Ward 9-EDAKKUNNAM' %} selected {% endif %}>Ward 9-EDAKKUNNAM</option>
+                                                    <option value="Ward 10-KOORAMTHOOKKU" {% if ashaworker.ward == 'Ward 10-KOORAMTHOOKKU' %} selected {% endif %}>Ward 10-KOORAMTHOOKKU</option>
+                                                    <option value="Ward 11-KOOVAPPALLY" {% if ashaworker.ward == 'Ward 11-KOOVAPPALLY' %} selected {% endif %}>Ward 11-KOOVAPPALLY</option>
+                                                    <option value="Ward 12-KULAPPURAM" {% if ashaworker.ward == 'Ward 12-KULAPPURAM' %} selected {% endif %}>Ward 12-KULAPPURAM</option>
+                                                    <option value="Ward 13-PALAMPRA" {% if ashaworker.ward == 'Ward 13-PALAMPRA' %} selected {% endif %}>Ward 13-PALAMPRA</option>
+                                                    <option value="Ward 14-MUKKALY" {% if ashaworker.ward == 'Ward 14-MUKKALY' %} selected {% endif %}>Ward 14-MUKKALY</option>
+                                                    <option value="Ward 15-PODIMATTAM" {% if ashaworker.ward == 'Ward 15-PODIMATTAM' %} selected {% endif %}>Ward 15-PODIMATTAM</option>
+                                                    <option value="Ward 16-ANAKKALLU" {% if ashaworker.ward == 'Ward 16-ANAKKALLU' %} selected {% endif %}>Ward 16-ANAKKALLU</option>
+                                                    <option value="Ward 17-PULKUNNU" {% if ashaworker.ward == 'Ward 17-PULKUNNU' %} selected {% endif %}>Ward 17-PULKUNNU</option>
+                                                    <option value="Ward 18-PAZHUMALA" {% if ashaworker.ward == 'Ward 18-PAZHUMALA' %} selected {% endif %}>Ward 18-PAZHUMALA</option>
+                                                    <option value="Ward 19-CHIRABHAGAM" {% if ashaworker.ward == 'Ward 19-CHIRABHAGAM' %} selected {% endif %}>Ward 19-CHIRABHAGAM</option>
+
+												</select>
+                                                <div id="ward-validation-message"></div>
+											</div>
+										</div> {% endcomment %}
+										
+                                        
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <img alt="" src="{{ member.profile_photo.url }}" height="70px" width="90px">
+                                                <label>Profile Photo</label>
+                                                
+                                                <input type="file" class="form-control" name="new_profile_photo">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <br> <br> <div class="form-group">
+                                                <label>ID Proof</label>
+                                                <div class="profile-upload">
+                                                    <div class="upload-img">
+                                                        <img alt="" src="{% static 'assets/img/user.jpg' %}" >
+                                                    </div> 
+                                                    <div class="upload-input">
+                                                       <input type="file" class="form-control">
+                                                    </div>
+                                                </div>     
+                                            </div>
+                                        </div>
+
+									</div>
+                                    
+								</div>
+                                
+                               
+                                
+                               
+                                
+                            </div>
+                           
+						
+                        <div>
+                            <div class="m-t-20 text-center">
+                                <button class="btn btn-primary submit-btn">Edit Member</button>
+                            </div>
+                        </div>
+                        </form>
+
+                        {% comment %} {% if messages %}
+                        <div class="messages">
+                        {% for message in messages %}
+                        <div class="message">{{ message }}</div>
+                        {% endfor %}
+                        </div>
+                        {% endif %} {% endcomment %}
+
+                    </div>
+                </div>
+            </div>
+		
+        </div>
+    </div>
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/select2.min.js' %}"></script>
+	<script src="{% static 'assets/js/moment.min.js' %}"></script>
+	<script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+    {% comment %} <script>
+        function validateWard() {
+            const wardSelect = document.getElementById("ward");
+            const selectedWard = wardSelect.value;
+            
+            // Make an AJAX request to check if the ward exists
+            fetch(`/check-ward-exists/?ward=${selectedWard}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        // Ward already assigned, show a popup alert
+                        alert("This ward is already assigned to another Ashaworker. Please select a different ward.");
+                    } else {
+                        // Ward is available, continue with form submission
+                        document.querySelector("form").submit();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking ward existence:", error);
+                });
+    
+            // Prevent the form from submitting immediately
+            return false;
+        }
+    </script> {% endcomment %}
+    <style>
+        .header {
+            background-color: #00c6a9;
+            left: 0;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 1039;
+            height: 50px;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</body>
+
+
+<!-- add-doctor24:06-->
+</html>

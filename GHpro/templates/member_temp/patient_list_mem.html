@@ -1,0 +1,222 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.min.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+			<div class="header-left">
+				<a href="{% url 'member_index' %}" class="logo">
+					<img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+				</a>
+			</div>
+			 <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+           
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu">
+						<a class="dropdown-item" href="{% url 'pro_ashaworker' %}">Profile</a>
+						<a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+					</div>
+                    {% else %}
+
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+					</div>
+                    
+                    {% endif %}
+                </li>
+           
+        </div> 
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+                        <li class="active">
+                            <a href="{% url 'member_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                           
+                        </li> 
+                        <li>
+                            <a href="{% url 'patient_list_mem' %}"><i class="fa fa-calendar"></i> <span>Patient List</span></a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="page-wrapper">
+            <div class="content">
+                <div class="row">
+                    <div class="col-sm-4 col-3">
+                        <h4 class="page-title">PATIENTS LIST</h4>
+                    </div>
+                    {% comment %} <div class="col-sm-8 col-9 text-right m-b-20">
+                        <a href="{% url 'add_asha' %}" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Add Asha Workers</a>
+                    </div> {% endcomment %}
+                </div>
+
+                {% comment %} <div class="row">
+                    <div class="col-md-12">
+                        <form id="search-form" method="GET" action="{% url 'search_patient' %}">
+                            <div class="input-group">
+                                <a href="{% url 'patient_users' %}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>&ensp;&ensp;&ensp;&ensp;
+                                <input type="text" class="form-control" name="patientname" placeholder="Search by patient Name">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div><br><br> {% endcomment %}
+                <div class="row doctor-grid">
+                
+                    {% for patient in patients %}
+                    
+                    <div class="col-md-4 col-sm-4  col-lg-3">
+                        <div class="profile-widget">
+                             
+                            <div class="doctor-img">
+                                <a class="avatar" href="profile.html">
+                                    <img alt="" src="{{ patient.profile_pic.url }}">
+                                </a>
+                            </div> 
+                           
+                            {% comment %} <div class="dropdown profile-action">
+                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                 <div class="dropdown-menu dropdown-menu-right">
+                                    <form method="GET" action="{% url 'medical_record' patient.id %}">
+                                        <button type="submit" class="btn-show-medical-record">Add Medical Records</button>
+                                    </form><br>
+                                    <form method="get" action="{% url 'ashaworker_view_medical_record' patient.id %}">
+                                        <button type="submit" class="btn-show-medical-record" >View Medical Record</button>
+                                      </form>
+                                </div>   
+                            </div> {% endcomment %}
+                            <h4 class="doctor-name text-ellipsis"><a href="profile.html"> {{ patient.Name }}</a></h4>
+                            
+                            
+                            <div>
+                                <p>ID: {{ patient.id}}</p>
+
+                            <div class="card shadow-sm">
+                                <p>{{ patient.first_name }} {{ patient.last_name }}</p>
+                                {% comment %} <p>Last Name: {{ patient.last_name }}</p> {% endcomment %}
+                                <p> <i class="fa fa-envelope"> </i> : {{ patient.email }}</p>
+                                
+                                <p> <i class="fa fa-phone"> </i> : {{ patient.phone_number }}</p>
+                                <p> <i class="fa fa-user"> </i> : {{ patient.gender }}</p>
+                            </div>
+                            <div class="card shadow-sm">
+                                <div class="user-country">
+                                    <i class="fa fa-map-marker"></i> {{ patient.address }}
+                                </div><br>
+                               
+                               
+                                
+                                
+                                <p>House Name: {{ patient.house_name }}</p>
+                                <p>House Number: {{ patient.house_no }}</p>
+                                <p>ward:{{ patient.ward }}</p>
+                            </div>
+                            <div class="card shadow-sm">
+                                <p>Medications Currently Taking: {{ patient.medication_names }}</p>
+                                <p>Current Diagnosis or Health Concern: {{ patient.current_diagnosis }}</p>
+                                <p>Past Medical Conditions: {{ patient.past_med_condition }}</p>
+                                <p>Surgical Historys:{{ patient.surgical_history }}</p>
+                                <p>Allergies (Medications, Food, Environmental): {{ patient.allergies }}</p>
+                            </div>
+                                {% comment %} <div class="card shadow-sm">
+                                    <div class="card-header bg-transparent text-center">
+                                        <h3>Medical Record</h3>
+                                        <br>
+                                        <a href="{% url 'medical_record' %}" class="btn-show-medical-record">Add Medical Records</a> <br>
+                                        <br><a href="{% url 'medical_record_display' %}" class="btn-show-medical-record">View Medical Records</a>
+                                    </div>
+                                </div> {% endcomment %}
+                            </div>
+                            
+                                                   
+                        </div>
+                    </div>
+                    {% endfor %} 
+                </div> 
+            </div>
+            
+        </div>
+		
+    </div>
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/select2.min.js' %}"></script>
+    <script src="{% static 'ssets/js/moment.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+</body>
+
+<style>
+    .btn-show-medical-record {
+        display: inline-block;
+        padding: 10px 20px; /* Adjust padding as needed */
+        background-color: #007BFF; /* Button background color */
+        color: #fff; /* Button text color */
+        border: none;
+        border-radius: 4px; /* Rounded corners */
+        text-decoration: none;
+        transition: background-color 0.3s ease; /* Smooth transition on hover */
+    }
+    
+    /* Hover effect */
+    .btn-show-medical-record:hover {
+        background-color: #0056b3; /* Change background color on hover */
+        /* You can also add other hover effects like changing text color, adding shadows, etc. */
+    }
+    
+    .header {
+        background-color: #00c6a9;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 1039;
+        height: 50px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    }
+    .card.shadow-sm {
+        
+        border: 10px solid white; 
+        
+        background-color: #f7f7f7; 
+        padding: 20px; 
+    
+    }
+</style>
+<!-- doctors23:17-->
+</html>

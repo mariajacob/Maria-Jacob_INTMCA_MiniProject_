@@ -17,7 +17,7 @@ Including another URLconf
 from GHapp import views
 from django.contrib import admin
 from django.urls import path, include
-from GHapp.views import login_page,edit_gallery_images, appointment_form,register,ad_gallery,loggout,add_asha,ResetPasswordView,ChangePasswordView
+from GHapp.views import login_page,edit_gallery_images, appointment_form,register,ad_gallery,loggout,add_asha,add_member,ResetPasswordView,ChangePasswordView
 from django.contrib.auth import views as auth_views
 
 from django.conf import settings
@@ -85,9 +85,20 @@ urlpatterns = [
     path('ad_ashaworker', views.ad_ashaworker, name="ad_ashaworker"),
    
 
-
+    path('get_times/', views.get_times, name='get_times'),
     path('check-ward-exists/', views.check_ward_exists, name='check_ward_exists'),
     path('add_asha', add_asha, name="add_asha"),  # Add this line for adding Asha Worker
+
+# Add this line for adding Member
+    path('ad_member', views.ad_member, name="ad_member"),
+    path('add_member', add_member, name="add_member"),
+    path('edit_member/<int:member_id>/', views.edit_member, name='edit_member'),
+    path('check-wardmem-exists/', views.check_wardmem_exists, name='check_wardmem_exists'),
+    path('patient_list_mem/', views.patient_list_mem, name='patient_list_mem'),
+
+    #index page of member
+    path('member_index', views.member_index, name="member_index"),
+
     path('patients', views.patients, name="patients"),
 
     path('delete_patients/<int:patient_id>/', views.delete_patients, name='delete_patients'),

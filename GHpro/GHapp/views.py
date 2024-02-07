@@ -37,6 +37,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Slots
 from .models import Donation
+from .models import Member
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 # Create your views here.
@@ -65,6 +66,11 @@ def contact(request):
 
 def index(request):
     return render(request,'index.html')
+
+
+
+
+
 
 def schedule(request):
     # Get all Ashaworkers
@@ -268,7 +274,7 @@ def donation(request):
 def patients(request):
     # Filter out only active patients
     patients = PatientProfile.objects.filter(is_active=True)
-    
+    ashaworkers = Ashaworker.objects.all()
     ward_filter = request.GET.get('ward')
     
     if ward_filter:
@@ -276,7 +282,7 @@ def patients(request):
     
     ward_numbers = PatientProfile.objects.values_list('ward', flat=True).distinct()
     
-    return render(request, 'admin_temp/patients.html', {'patients': patients, 'ward_numbers': ward_numbers})
+    return render(request, 'admin_temp/patients.html', {'patients': patients, 'ward_numbers': ward_numbers,'ashaworkers': ashaworkers})
 
 
 def delete_patients(request, patient_id):
@@ -396,8 +402,13 @@ def edit_patient_profile(request):
 
 @login_required(login_url='login_page')
 def print_patient_profile(request):
-    profile = PatientProfile.objects.filter(user=request.user).first() 
-    return render(request, 'print_patient_profile.html', {'profile': [profile]})
+    profile = PatientProfile.objects.get(user=request.user)
+    ward = profile.ward
+    print(ward)
+    ashaworker = Ashaworker.objects.get(ward=ward)
+    print(ashaworker)
+    return render(request, 'print_patient_profile.html', {'profile': profile, 'ashaworker':ashaworker})
+
 
 
 from django.contrib.auth import update_session_auth_hash
@@ -538,11 +549,19 @@ def pro_ashaworker(request):
     return render(request, 'asha_temp/pro_ashaworker.html', {'asha': [asha]})
 
 
+
+
+
+
 @login_required(login_url='login_page')
 def appointment_form(request, appointment_id=None):
     patientprofile = request.user.patientprofile
-    ashaworkers = Ashaworker.objects.all()
-
+    w = patientprofile.ward
+    ashaworker = Ashaworker.objects.get(ward=w)
+    print(w)
+    # print(n)
+    # n=ashaworker.Name
+    slots = Slots.objects.filter(ashaworker=ashaworker).distinct()
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
@@ -605,10 +624,24 @@ def appointment_form(request, appointment_id=None):
         except ValueError:
             return render(request, 'appointment.html', {'error_message': 'Invalid time format'})
 
-    return render(request, 'appointment.html', {'patientprofile': patientprofile, 'appointment_id': appointment_id,'ashaworkers': ashaworkers})
+    return render(request, 'appointment.html', {'patientprofile': patientprofile, 'appointment_id': appointment_id,'ashaworker': ashaworker, 'slots':slots})
 
-
-
+def get_times(request):
+    selected_date_str = request.GET.get('selected_date', None)
+    
+    if selected_date_str:
+        # Convert the string date to a datetime object
+        try:
+            selected_date = datetime.strptime(selected_date_str, '%b. %d, %Y').date()
+        except ValueError:
+            return JsonResponse({'times': []})
+        
+        # Query the database to get times for the selected date
+        slots = Slots.objects.filter(date=selected_date)
+        times = [f"{slot.start_time.strftime('%H:%M:%S')} - {slot.end_time.strftime('%H:%M:%S')}" for slot in slots]
+        return JsonResponse({'times': times})
+    else:
+        return JsonResponse({'times': []})
 
 from datetime import datetime
 
@@ -703,9 +736,9 @@ def approve_appointment(request, appointment_id):
 
 @ashaworker_required
 def patient_users(request):
-    # patients = CustomUser.objects.filter(role=CustomUser.PATIENTS)
-    # patients = PatientProfile.objects.filter()
-    patients = PatientProfile.objects.filter(is_active=True)
+    ashaworker = Ashaworker.objects.get(user=request.user)
+    ward = ashaworker.ward
+    patients = PatientProfile.objects.filter(ward=ward, is_active=True)
     return render(request, 'asha_temp/patient_users.html', {'patients': patients})
 
 def patients_by_ward(request):
@@ -850,6 +883,145 @@ def check_ward_exists(request):
     return JsonResponse(response_data)
 
 
+
+#index page of member
+def member_index(request):
+    current_date = timezone.now().date()
+
+    # Retrieve Asha Workers
+    ashaworkers = Ashaworker.objects.all()
+
+    # Retrieve Patients
+    patients = PatientProfile.objects.all()
+    appointments = Appointment.objects.all()
+    
+    approved_appointments = Appointment.objects.filter(is_approved=True)
+
+
+    # Query the database to count the number of appointments for each patient
+    appointments_count = Appointment.objects.values('user__email').annotate(appointment_count=Count('id'))
+
+    # Extract the patient usernames and appointment counts for the chart
+    patient_usernames = [appointment['user__email'] for appointment in appointments_count]
+    appointment_counts = [appointment['appointment_count'] for appointment in appointments_count]
+
+    ashaworkers = Ashaworker.objects.annotate(appointment_count=Count('appointments'))
+    ashaworker_count = ashaworkers.count()
+    patients_count = patients.count()
+    appointments_count = appointments.count()
+    approved_appointments=approved_appointments.count()
+    # Create a DataFrame to store the data
+    data = {
+        'Ashaworker': [worker.Name for worker in ashaworkers],
+        'Appointment Count': [worker.appointment_count for worker in ashaworkers],
+    }
+
+    # Convert the data to a DataFrame
+    import pandas as pd
+    df = pd.DataFrame(data)
+
+    # Create a line chart
+    plt.figure(figsize=(6, 4))
+    plt.plot(data['Ashaworker'], data['Appointment Count'], marker='o', linestyle='-', color='b')
+    plt.title('Ashaworker Appointment Count')
+    plt.xlabel('Ashaworker')
+    plt.ylabel('Appointment Count')
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+    plt.tight_layout()
+
+    # Save the plot to a BytesIO object
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+
+    # Convert the plot to base64 for embedding in the HTML template
+    plot_data = base64.b64encode(buffer.read()).decode('utf-8')
+
+    return render(request, 'member_temp/member_index.html', {
+        'ashaworkers': ashaworkers,
+        'patients': patients,
+        'patient_usernames': patient_usernames,
+        'appointment_counts': appointment_counts,
+        'current_date': current_date,
+        'plot_data': plot_data,
+        'ashaworker_count': ashaworker_count,
+        'patients_count': patients_count,
+        'appointments_count': appointments_count,
+        'approved_appointments': approved_appointments,
+        
+        
+    })
+
+#add member
+
+def add_member(request):
+    if request.method == 'POST':
+        # Retrieve data from the POST request
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        gender = request.POST.get('gender')
+        address = request.POST.get('address')
+        taluk = request.POST.get('taluk')
+        panchayat = request.POST.get('panchayat')
+        wardmem = request.POST.get('wardmem')
+        
+        phone = request.POST.get('phone')
+        profile_photo = request.FILES.get('profile_photo')
+        role = CustomUser.MEMBER
+        print(role)
+
+        # Check if a user with the same email and role exists
+        if CustomUser.objects.filter(email=email, role=CustomUser.MEMBER).exists():
+            messages.info(request, 'Email already exists')
+            return redirect('add_member')
+
+        # Check if a user with the same ward exists
+        if Member.objects.filter(wardmem=wardmem).exists():
+            messages.info(request, 'Ward already assigned to another Ashaworker')
+            return redirect('add_member')
+
+        # Create the user and Ashaworker records
+        user = CustomUser.objects.create_user(email=email, password=password)
+        user.role = CustomUser.MEMBER
+        user.save()
+        member = Member(user=user, Name=name, email=email, 
+                         gender=gender, address=address, taluk=taluk, Panchayat=panchayat, wardmem=wardmem,
+                         phone=phone, profile_photo=profile_photo)
+        member.save()
+
+        subject = 'Member Login Details'
+        message = f'Registered as an Member. Your username: {email}, Password: {password}'
+        from_email = settings.EMAIL_HOST_USER  # Your email address
+        recipient_list = [user.email]  # Employee's email address
+
+        send_mail(subject, message, from_email, recipient_list)
+
+        return redirect('ad_member')
+    else:
+        return render(request, 'admin_temp/add_member.html')
+
+@login_required(login_url='login_page')
+def ad_member(request):
+    members = Member.objects.all().order_by('wardmem')
+    print(members)
+    return render(request, 'admin_temp/ad_member.html', {'members': members})
+    
+
+def check_wardmem_exists(request):
+    wardmem = request.GET.get("wardmem", "")
+    ward_exists = Member.objects.filter(wardmem=wardmem).exists()
+    response_data = {"exists": ward_exists}
+    return JsonResponse(response_data)
+
+def patient_list_mem(request):
+    member = Member.objects.get(user=request.user)
+    wardmem = member.wardmem
+    patients = PatientProfile.objects.filter(ward=wardmem, is_active=True)
+    return render(request, 'member_temp/patient_list_mem.html', {'patients': patients})
+
+#add ashaworker
 def add_asha(request):
     if request.method == 'POST':
         # Retrieve data from the POST request
@@ -899,13 +1071,52 @@ def add_asha(request):
     else:
         return render(request, 'admin_temp/add_asha.html')
 
+#edit member
+    
+@login_required(login_url='login_page')
+def edit_member(request, member_id):
+    member = get_object_or_404(Member, id=member_id)
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password=request.POST.get('password')
+        
+        gender = request.POST.get('gender')
+        address = request.POST.get('address')
+        taluk = request.POST.get('taluk')
+        panchayat = request.POST.get('panchayat')
+        wardmem = request.POST.get('wardmem')
+        
+        phone = request.POST.get('phone')
+        new_profile_photo = request.FILES.get('new_profile_photo')
+        if new_profile_photo:
+            member.profile_photo = new_profile_photo
 
+        member.Name = name
+        member.email = email
+        member.set_password(password)
+        
+        member.gender = gender
+        member.address = address
+        member.taluk = taluk
+        member.Panchayat = panchayat
+        member.wardmem = wardmem
+        
+        member.phone = phone
+        member.save()
+        return redirect('ad_member')
+    return render(request, 'admin_temp/edit_member.html', {'member': member})
+
+
+# @login_required(login_url='login_page')
+# def ad_ashaworker(request):
+#     ashaworkers = Ashaworker.objects.all()
+#     return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers})
 
 @login_required(login_url='login_page')
 def ad_ashaworker(request):
-    ashaworkers = Ashaworker.objects.all()
+    ashaworkers = Ashaworker.objects.all().order_by('ward')
     return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers})
-
 
 @login_required(login_url='login_page')
 def edit_asha(request, asha_id):
@@ -991,7 +1202,7 @@ def admin_dashboard(request):
     appointments = Appointment.objects.all()
     
     approved_appointments = Appointment.objects.filter(is_approved=True)
-
+    future_appointments = Appointment.objects.filter(date__gt=current_date, status=True).order_by('date', 'slot__start_time')
 
     # Query the database to count the number of appointments for each patient
     appointments_count = Appointment.objects.values('user__email').annotate(appointment_count=Count('id'))
@@ -1043,6 +1254,8 @@ def admin_dashboard(request):
         'patients_count': patients_count,
         'appointments_count': appointments_count,
         'approved_appointments': approved_appointments,
+        'future_appointments': future_appointments,
+        
         
         
     })
@@ -1148,6 +1361,9 @@ def login_page(request):
             elif user.role == CustomUser.ADMIN:
                 login(request, user)
                 return redirect('admin_dashboard')
+            elif user.role == CustomUser.MEMBER:
+                login(request, user)
+                return redirect('member_index')
             else:
                 messages.info(request, "Invalid Role for Login")
         else:

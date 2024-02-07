@@ -66,9 +66,13 @@
 							<a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user" id="ashaind"></i> <span>Asha Workers List </span> </a>
 							
 						</li>
+                        <li>
+							<a href="{% url 'ad_member' %}"><i class="fa fa-user" id="memind"></i> <span>Members List </span> </a>
+							
+						</li>
                         
                         <li>
-							<a href="{% url 'ad_hca' %}"><i class="fa fa-user" ></i> <span>Primary Health Center </span> </a>
+							<a href="{% url 'ad_hca' %}"><i class="fa fa-user" id="hosind" ></i> <span>Primary Health Center </span> </a>
 							
 						</li>
 
@@ -243,7 +247,7 @@
 											</tr>
 										</thead>
 										<tbody>
-                                        {% for appointment in future_appointments %}
+                                            {% for appointment in future_appointments %}
 											<tr>
 												<td style="min-width: 200px;">
 													

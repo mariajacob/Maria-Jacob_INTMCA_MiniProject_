@@ -446,13 +446,43 @@
                                     <input type="text" class="form-control floating" value=" Parathodu" name="state" readonly>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            {% comment %} <div class="col-md-6">
                                 <label>Ward</label>
                                 <div class="form-group form-focus"> 
                                     <input type="number" class="form-control floating" value="{{ profile.ward }}" name="ward">
-                                    {% comment %} <input type="text" class="form-control floating" value="" name="ward"> {% endcomment %}
+                                   
                                 </div>
-                            </div>
+                            </div> {% endcomment %}
+                          
+                            <div class="col-md-6">
+                                <label>Ward</label>
+                                <div class="form-group form-focus">
+                                    
+                                    <select class="form-control select" name="ward" id="ward" size="100">
+                                        <option value="Ward 1-VENGATHANAM" {% if profile.ward == 'Ward 1-VENGATHANAM' %} selected {% endif %}>Ward 1-VENGATHANAM</option>
+                                        <option>Ward 2-PALAPRA</option>
+                                        <option>Ward 3-VELICHIYANI</option>
+                                        <option>Ward 4-CHOTTY</option>
+                                        <option>Ward 5-MANGAPPARA</option>
+                                        <option>Ward 6-VADAKKEMALA</option>
+                                        <option>Ward 7-PARATHODU</option>
+                                        <option>Ward 8-NADUKANI</option>
+                                        <option>Ward 9-EDAKKUNNAM</option>
+                                        <option>Ward 10-KOORAMTHOOKKU</option>
+                                        {% comment %} <option>Ward 11-KOOVAPPALLY</option>
+                                        <option>Ward 12-KULAPPURAM</option>
+                                        <option>Ward 13-PALAMPRA</option>
+                                        <option>Ward 14-MUKKALY</option>
+                                        <option>Ward 15-PODIMATTAM</option>
+                                        <option>Ward 16-ANAKKALLU</option>
+                                        <option>Ward 17-PULKUNNU</option>
+                                        <option>Ward 18-PAZHUMALA</option>
+                                        <option>Ward 19-CHIRABHAGAM</option> {% endcomment %}
+
+                                    </select>
+                                    {% comment %} <div id="ward-validation-message"></div> {% endcomment %}
+                                </div>
+                            </div> 
                             <div class="col-md-6">
                                 <label>Pin Code</label>
                                 <div class="form-group form-focus">
@@ -460,6 +490,8 @@
                                     <span id="pin_code_error" class="text-danger"></span>
                                 </div>
                             </div>
+
+                            
                             
                             <div class="col-md-6">
                                 <label>Phone Number</label>
