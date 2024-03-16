@@ -1,0 +1,277 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.min.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="header">
+        <div class="header-left">
+            <a href="{% url 'admin_dashboard' %}" class="logo">
+                <img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+            </a>
+        </div>
+         <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+        <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+        <ul class="nav user-menu float-right">
+            <li class="nav-item dropdown has-arrow">
+                <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                    <span>{{ user.email }}</span>
+                </a>
+                {% if user.is_authenticated %}
+                <div class="dropdown-menu">
+                    
+                    <a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+                </div>
+                {% else %}
+    
+                <div class="dropdown-menu">
+                    
+                    <a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+                </div>
+                
+                {% endif %}
+            </li>
+       
+    </div> 
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-inner slimscroll">
+            <div id="sidebar-menu" class="sidebar-menu">
+                <ul>
+                    <li class="menu-title">Main</li>
+                    <li class="active">
+                        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                    </li> 
+                    
+
+                   
+
+                   
+
+                    
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-medkit"></i>
+                            <span>Medicines </span> <span class="menu-arrow"></span></a>
+                        <ul style="display: none;">
+                            <li>
+                            <a href="{% url 'add_medicine_category' %}"><i class="fa fa-plus"></i> <span>Add Category</span></a>
+                            </li>
+                            <li>
+                                <a href="{% url 'view_medicine_category' %}"><i class="fa fa-list"></i> <span>view Category</span></a>
+                            </li>
+                            <li>
+                                <a href="{% url 'add_medicine' %}"><i class="fa fa-plus"></i> <span>Add Medicine</span></a>
+                            </li>
+                            <li>
+                                <a href="{% url 'view_medicine' %}"><i class="fa fa-list"></i> <span>View Medicine</span></a>
+                            </li>
+                            
+                            
+                        </ul>
+                    </li>
+
+
+                    
+                    <li>
+                        <a href="{% url 'ad_panward' %}"><i class="fa fa-user" ></i> <span>Ward List </span> </a>
+                        
+                    </li>
+
+                    
+                    <li>
+                        <a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user" id="ashaind"></i> <span>Asha Workers List </span> </a>
+                        
+                    </li>
+                    <li>
+                        <a href="{% url 'ad_member' %}"><i class="fa fa-user" id="memind"></i> <span>Members List </span> </a>
+                        
+                    </li>
+                    
+                   
+                    
+                    <li>
+                        <a href="{% url 'ad_nurse' %}"><i class="fa fa-user" id="ashaind"></i> <span>Nurses List </span> </a>
+                        
+                    </li>
+                    
+                    <li>
+                        <a href="{% url 'ad_hca' %}"><i class="fa fa-user" id="hosind" ></i> <span>Primary Health Center </span> </a>
+                        
+                    </li>
+
+
+                     <li>
+                        <a href="{% url 'patients' %}"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'ad_home_visit' %}"><i class="fa fa-wheelchair"></i> <span>Home Visits</span></a>
+                    </li>
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-user"></i> <span>Appointments </span> <span class="menu-arrow"></span></a>
+                        <ul style="display: none;">
+                            
+                            <li><a href="{% url 'appointments' %}">All Appointments</a></li>
+                            <li><a href="{% url 'current_appointment' %}">Current Appointments</a></li>
+                            <li><a href="{% url 'future_appointment' %}">Future Appointments</a></li>
+                            <li><a href="{% url 'past_appointment' %}">Past Appointments</a></li>
+                            
+                            
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="{% url 'schedule' %}"><i class="fa fa-calendar-check-o"></i> <span>Asha Workers Schedule</span></a>
+                    </li> 
+                    
+                    {% comment %} <li>
+                        <a href="{% url 'adgallery' %}"><i class="fa fa-calendar-check-o"></i> <span>Gallery</span></a>
+                    </li>  {% endcomment %}
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-user"></i> <span> Gallery </span> <span class="menu-arrow"></span></a>
+                        <ul style="display: none;">
+                            
+                            <li><a href="{% url 'adgallery' %}">Add Image</a></li>
+                            <li><a href="{% url 'dis_gallery' %}">Edit Image</a></li>
+                            
+                        </ul>
+                    </li>
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
+                        <ul style="display: none;">
+                            <li><a href="{% url 'blog' %}">Blog View</a></li>
+                            <li><a href="{% url 'add-blog' %}">Add Blog</a></li>
+                           
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="{% url 'appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart</span></a>
+                    </li> 
+                    <li>
+                        <a href="{% url 'ashaworker_appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart1</span></a>
+                    </li> 
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br> <br> <br>
+<div class="container mt-5">
+    <h2 class="text-center">Add Medicine Stock</h2>
+    <form id="medicineForm" method="post" action="{% url 'add_medicine' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="medicineName" class="form-label">Medicine Name</label>
+            <input type="text" class="form-control" id="medicineName" name="medicineName" required>
+            <span id="medicineNameError" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label for="details" class="form-label">Details</label>
+            <textarea class="form-control" id="details" name="details"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="companyName" class="form-label">Company Name</label>
+            <input type="text" class="form-control" id="companyName" name="companyName">
+        </div>
+        <div class="mb-3">
+            <label for="expiryDate" class="form-label">Expiry Date</label>
+            <input type="date" class="form-control" id="expiryDate" name="expiryDate" required>
+            <span id="expiryDateError" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label for="contains" class="form-label">Contains</label>
+            <input type="text" class="form-control" id="contains" name="contains">
+        </div>
+        <div class="mb-3">
+            <label for="dosage" class="form-label">Dosage</label>
+            <input type="text" class="form-control" id="dosage" name="dosage">
+            <span id="dosageError" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input type="text" class="form-control" id="price" name="price" required>
+            <span id="priceError" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select class="form-select" id="category" name="category" required>
+                {% for i in medcat %}
+                    <option value="{{i.MedCatId}}">{{i.category_name}}</option>
+                {% endfor %}
+            </select>
+            <span id="categoryError" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Stock</button>
+    </form>
+</div>
+</div>
+<!-- Include Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Include jQuery Validation plugin -->
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+
+<div class="sidebar-overlay" data-reff=""></div>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/Chart.bundle.js' %}"></script>
+    <script src="{% static 'assets/js/chart.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+
+
+<script>
+    // Add form validation with keyup event
+    $(document).ready(function () {
+        $('#medicineForm').validate({
+            rules: {
+                medicineName: 'required',
+                expiryDate: 'required',
+                category: 'required',
+                companyName: 'required',
+                dosage: 'required',
+                price: {
+                    required: true,
+                    number: true,
+                },
+            },
+            messages: {
+                medicineName: 'Please enter medicine name',
+                expiryDate: 'Please select expiry date',
+                category: 'Please select a category',
+                companyName: 'Please enter company name',
+                dosage: 'Please enter dosage',
+                price: {
+                    required: 'Please enter the price',
+                    number: 'Please enter a valid number',
+                },
+            },
+            errorPlacement: function (error, element) {
+                // Display errors below the input fields
+                error.appendTo($('#' + element.attr('id') + 'Error'));
+            },
+        });
+    });
+</script>
+</body>
+</html>

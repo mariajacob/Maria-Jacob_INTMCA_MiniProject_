@@ -85,6 +85,26 @@ class CustomUser(AbstractUser):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Panchayath_Ward(models.Model):
+    panchayath= models.CharField(max_length=100)
+    ward = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.panchayath
+
 class Ashaworker(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True, related_name='ashaworker')
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
@@ -150,7 +170,7 @@ class Member(models.Model):
     address = models.TextField()
     taluk = models.CharField(max_length=100)
     Panchayat = models.CharField(max_length=100)
-    wardmem = models.IntegerField(max_length=100,blank=True, null=True)
+    wardmem = models.CharField(max_length=100,blank=True, null=True)
     
     
     phone = models.IntegerField()
@@ -201,6 +221,97 @@ class AshaworkerSchedule(models.Model):
 
 
 
+# class Member(models.Model):
+#     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+#     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    
+#     Name = models.CharField(max_length=100)
+    
+#     email = models.EmailField(blank=True, null=True)
+#     admin_set_password = models.CharField(max_length=128, blank=True, null=True)
+
+#     def set_password(self, password):
+#         # Hash and set the password
+#         self.admin_set_password = make_password(password)
+    
+    
+#     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
+#     address = models.TextField()
+#     taluk = models.CharField(max_length=100)
+#     Panchayat = models.CharField(max_length=100)
+#     wardmem = models.CharField(max_length=100,blank=True, null=True)
+    
+    
+#     phone = models.IntegerField()
+#     profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
+    
+#     id_proof = models.FileField(upload_to='id_proofs/', blank=True, null=True)
+    
+#     reset_password = models.CharField(max_length=128, null=True, blank=True)  # New field for reset password
+#     is_active = models.BooleanField(default=True)
+    
+#     class Meta:
+#             unique_together = (("id", "wardmem"),)
+#     # pin = models.IntegerField()
+#     # bio=models.TextField()
+
+#     def _str_(self):
+#         return self.Name   
+
+
+# Nurse Model
+class Nurse(models.Model):
+     
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    
+    Name = models.CharField(max_length=100)
+    
+    email = models.EmailField(blank=True, null=True)
+    admin_set_password = models.CharField(max_length=128, blank=True, null=True)
+
+    def set_password(self, password):
+        # Hash and set the password
+        self.admin_set_password = make_password(password)
+    date_of_birth = models.CharField(max_length=100)
+    date_of_join = models.CharField(max_length=100)
+    
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
+    address = models.TextField()
+    taluk = models.CharField(max_length=100)
+    Panchayat = models.CharField(max_length=100)
+    wardnurse = models.CharField(max_length=100,blank=True, null=True)
+    
+    
+    phone = models.IntegerField()
+    profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
+    
+    id_proof = models.FileField(upload_to='id_proofs/', blank=True, null=True)
+    edu_level=models.CharField(max_length=100,choices=[('High School', 'High School'), ('Bachelors Degree', 'Bachelors Degree'), ('Masters Degree', 'Masters Degree')],blank=True, null=True)
+    edu_inst=models.CharField(max_length=100,blank=True, null=True)
+    year_pass_edu=models.IntegerField(blank=True, null=True)
+    edu_certificate=models.FileField(upload_to='edu_cert/', blank=True, null=True)
+    add_training=models.CharField(max_length=100,blank=True, null=True)
+    add_training_inst=models.CharField(max_length=100,blank=True, null=True)
+    year_pass_add=models.IntegerField(blank=True, null=True)
+    add_certificate=models.FileField(upload_to='add_cert/', blank=True, null=True)
+    reset_password = models.CharField(max_length=128, null=True, blank=True)  # New field for reset password
+    is_active = models.BooleanField(default=True)
+    
+    class Meta:
+            unique_together = (("id", "wardnurse"),)
+    # pin = models.IntegerField()
+    # bio=models.TextField()
+
+    def _str_(self):
+        return self.Name
+
+
+
+
+
+
+
+
     
 class Image(models.Model):
     title = models.CharField(max_length=100)
@@ -213,7 +324,9 @@ class Image(models.Model):
 
 
 class PatientProfile(models.Model):
+    nurses = models.ForeignKey(Nurse, on_delete=models.CASCADE, null=True, blank=True, related_name='patients')
     
+    panchayath = models.CharField(max_length=100, null=True,blank=True)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(max_length=100, null=True,blank=True)
     last_name = models.CharField(max_length=100,null=True,blank=True)
@@ -225,25 +338,7 @@ class PatientProfile(models.Model):
     house_no = models.IntegerField(null=True,blank=True)
     address = models.CharField(max_length=255,null=True,blank=True)
     # ward = models.CharField(max_length=100)
-    ward = models.CharField(max_length=50, choices=[('ward1', 'Ward 1-VENGATHANAM'),
-    ('ward2', 'Ward 2-PALAPRA'),
-    ('ward3', 'Ward 3-VELICHIYANI'),
-    ('ward4', 'Ward 4-CHOTTY'),
-    ('ward5', 'Ward 5-MANGAPPARA'),
-    ('ward6', 'Ward 6-VADAKKEMALA'),
-    ('ward7', 'Ward 7-PARATHODU'),
-    ('ward8', 'Ward 8-NADUKANI'),
-    ('ward9', 'Ward 9-EDAKKUNNAM'),
-    ('ward10', 'Ward 10-KOORAMTHOOKKU'),
-    ('ward11', 'Ward 11-KOOVAPPALLY'),
-    ('ward12', 'Ward 12-KULAPPURAM'),
-    ('ward13', 'Ward 13-PALAMPRA'),
-    ('ward14', 'Ward 14-MUKKALY'),
-    ('ward15', 'Ward 15-PODIMATTAM'),
-    ('ward16', 'Ward 16-ANAKKALLU'),
-    ('ward17', 'Ward 17-PULKUNNU'),
-    ('ward18', 'Ward 18-PAZHUMALA'),
-    ('ward19', 'Ward 19-CHIRABHAGAM'),],null=True,blank=True)
+    ward = models.CharField(max_length=50,null=True,blank=True)
     pin_code = models.IntegerField(null=True,blank=True)
     phone_number = models.IntegerField(null=True,blank=True)
     
@@ -276,35 +371,7 @@ class Slots(models.Model):
     def __str__(self):
         return f"Slot for Ashaworker {self.ashaworker.Name} on {self.date} at {self.start_time}-{self.end_time}"
 
-class Appointment(models.Model):
-   
-    is_approved=models.BooleanField(default=False)
-    # user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
-    first_name = models.CharField(max_length=255,null=True,blank=True)
-    last_name = models.CharField(max_length=255,null=True,blank=True)
-    email = models.EmailField(null=True,blank=True)
-    # date_of_birth = models.DateField(null=True,blank=True)
-    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')],null=True,blank=True)
-    address = models.TextField(null=True,blank=True)
-    ward_asha = models.CharField(max_length=255,null=True,blank=True)
-    phone_number = models.CharField(max_length=15,null=True,blank=True)
-    # id_proof = models.FileField(upload_to='id_proofs/',null=True,blank=True)
-    medical_conditions = models.TextField(null=True,blank=True)
-    urgency = models.CharField(max_length=50, choices=[('Routine check-up', 'Routine check-up'), ('Non-urgent medical check-up', 'Non-urgent medical check-up'), ('Urgent medical check-up', 'Urgent medical check-up')],null=True,blank=True)
-    medication_names = models.TextField(null=True,blank=True)
-    symptoms = models.TextField(null=True,blank=True)
-    # preferred_date = models.DateField(null=True,blank=True)
-    # preferred_time = models.CharField(max_length=20, choices=[('09:00 AM', '09:00 AM'), ('10:00 AM', '10:00 AM'), ('11:00 AM', '11:00 AM'), ('12:00 PM', '12:00 PM'), ('01:00 PM', '01:00 PM')],null=True,blank=True)
 
-    ashaworker = models.ForeignKey(Ashaworker, on_delete=models.CASCADE, related_name='appointments',blank=True, null=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
-    slot = models.ForeignKey(Slots,on_delete=models.CASCADE,null=True,blank=True)
-    
-    date = models.DateField(blank=True, null=True)
-    status=models.BooleanField(default=True,blank=True, null=True)
-
-    def __str__(self):
-        return self.email
 
 #     def __str__(self):
 #         return self.email
@@ -412,3 +479,118 @@ class Hca(models.Model):
 
     def _str_(self):
         return self.hcaname
+
+class Appointment(models.Model):
+   
+    is_approved=models.BooleanField(default=False)
+    # user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    first_name = models.CharField(max_length=255,null=True,blank=True)
+    last_name = models.CharField(max_length=255,null=True,blank=True)
+    email = models.EmailField(null=True,blank=True)
+    # date_of_birth = models.DateField(null=True,blank=True)
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')],null=True,blank=True)
+    address = models.TextField(null=True,blank=True)
+    ward_asha = models.CharField(max_length=255,null=True,blank=True)
+    phone_number = models.CharField(max_length=15,null=True,blank=True)
+    # id_proof = models.FileField(upload_to='id_proofs/',null=True,blank=True)
+    medical_conditions = models.TextField(null=True,blank=True)
+    urgency = models.CharField(max_length=50, choices=[('Routine check-up', 'Routine check-up'), ('Non-urgent medical check-up', 'Non-urgent medical check-up'), ('Urgent medical check-up', 'Urgent medical check-up')],null=True,blank=True)
+    medication_names = models.TextField(null=True,blank=True)
+    symptoms = models.TextField(null=True,blank=True)
+    # preferred_date = models.DateField(null=True,blank=True)
+    # preferred_time = models.CharField(max_length=20, choices=[('09:00 AM', '09:00 AM'), ('10:00 AM', '10:00 AM'), ('11:00 AM', '11:00 AM'), ('12:00 PM', '12:00 PM'), ('01:00 PM', '01:00 PM')],null=True,blank=True)
+
+    ashaworker = models.ForeignKey(Ashaworker, on_delete=models.CASCADE, related_name='appointments',blank=True, null=True)
+    nurses = models.ForeignKey(Nurse, on_delete=models.CASCADE, related_name='appointments',blank=True, null=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    slot = models.ForeignKey(Slots,on_delete=models.CASCADE,null=True,blank=True)
+    
+    date = models.DateField(blank=True, null=True)
+    status=models.BooleanField(default=True,blank=True, null=True)
+
+    def __str__(self):
+        return self.email
+
+class MedicineCategory(models.Model):
+    MedCatId = models.AutoField(primary_key=True)
+    category_name = models.CharField(max_length=100)
+    description = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+ 
+    def _str_(self):
+        return self.category_name
+ 
+from django.db import models
+
+class Medicine(models.Model):
+    medicineName = models.CharField(max_length=100)
+    details = models.TextField(null=True, blank=True)
+    companyName = models.CharField(max_length=100)
+    expiryDate = models.DateField(null=True, blank=True)
+    contains = models.CharField(max_length=100)
+    dosage = models.CharField(max_length=100)
+    MedCatId = models.ForeignKey(MedicineCategory, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)  # New field for price
+    is_active = models.BooleanField(default=True)
+
+    def _str_(self):
+        return self.medicineName
+    
+# prescription model    
+    
+# class Prescription(models.Model):
+#     nurses = models.ForeignKey(Nurse, on_delete=models.CASCADE)
+#     patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE)
+   
+#     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
+#     morning = models.BooleanField(default=False,null=True, blank=True)
+#     noon = models.BooleanField(default=False,null=True, blank=True)
+#     # evening = models.BooleanField(default=False,null=True, blank=True)
+#     evening = models.BooleanField(default=False, null=True, blank=True)
+
+#     date_of_prescription = models.DateField()
+#     quantity = models.PositiveIntegerField()
+#     duration = models.CharField(max_length=100)
+#     dosages = models.CharField(max_length=100, null=True, blank=True)
+
+#     def __str__(self):
+#         return f"Prescription for {self.patient.first_name} by {self.nurses.Name}"
+
+# # class Prescription(models.Model):# class Prescription(models.Model):
+
+
+# # class Prescription(models.Model):
+#     nurses = models.ForeignKey(Nurse, on_delete=models.CASCADE)
+#     patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE)
+#     appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)
+#     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
+#     morning = models.BooleanField(default=False)
+#     noon = models.BooleanField(default=False)
+#     evening = models.BooleanField(default=False)
+#     date_of_prescription = models.DateField()
+#     quantity = models.PositiveIntegerField()
+#     duration = models.CharField(max_length=100)
+#     dosages = models.CharField(max_length=100,null=True, blank=True)
+#     # dosage = models.ForeignKey(Medicine, on_delete=models.CASCADE, related_name='prescriptions')
+
+#     def _str_(self):
+#         return f"Prescription for {self.patient.id} by {self.nurses.Name}"
+    
+class Prescription_model(models.Model):
+    nurses = models.ForeignKey(Nurse, on_delete=models.CASCADE)
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE)
+    
+    medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
+    morning = models.BooleanField(default=False,null=True, blank=True)
+    noon = models.BooleanField(default=False,null=True, blank=True)
+    evening = models.BooleanField(default=False,null=True, blank=True)
+    date_of_prescription = models.DateField()
+    quantity = models.PositiveIntegerField()
+    duration = models.CharField(max_length=100)
+    dosages = models.CharField(max_length=100,null=True, blank=True)
+    # dosage = models.ForeignKey(Medicine, on_delete=models.CASCADE, related_name='prescriptions')
+
+    def _str_(self):
+        return f"Prescription for {self.patient.id} by {self.nurses.Name}"
+    
+    

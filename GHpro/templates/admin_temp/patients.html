@@ -58,28 +58,85 @@
                         <li class="active">
                             <a href="{% url 'admin_dashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li> 
-						{% comment %} <li>
-                            <a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user-md"></i> <span>Asha Workers</span></a>
-                        </li> {% endcomment %}
+						
+
+                       
+
+                       
+
                         
+
                         <li class="submenu">
-							<a href="#"><i class="fa fa-user"></i> <span>Asha Workers </span> <span class="menu-arrow"></span></a>
+							<a href="#"><i class="fa fa-medkit"></i>
+                                <span>Medicines </span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
-								
-								<li><a href="{% url 'ad_ashaworker' %}">Asha Workers List</a></li>
+                                <li>
+								<a href="{% url 'add_medicine_category' %}"><i class="fa fa-plus"></i> <span>Add Category</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'view_medicine_category' %}"><i class="fa fa-list"></i> <span>view Category</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'add_medicine' %}"><i class="fa fa-plus"></i> <span>Add Medicine</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'view_medicine' %}"><i class="fa fa-list"></i> <span>View Medicine</span></a>
+                                </li>
 								
 								
 							</ul>
 						</li>
 
 
+                        
+                        <li>
+							<a href="{% url 'ad_panward' %}"><i class="fa fa-user" ></i> <span>Ward List </span> </a>
+							
+						</li>
+
+                        
+                        <li>
+							<a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user" id="ashaind"></i> <span>Asha Workers List </span> </a>
+							
+						</li>
+                        <li>
+							<a href="{% url 'ad_member' %}"><i class="fa fa-user" id="memind"></i> <span>Members List </span> </a>
+							
+						</li>
+                        
+                       
+                        
+                        <li>
+							<a href="{% url 'ad_nurse' %}"><i class="fa fa-user" id="ashaind"></i> <span>Nurses List </span> </a>
+							
+						</li>
+                        
+                        <li>
+							<a href="{% url 'ad_hca' %}"><i class="fa fa-user" id="hosind" ></i> <span>Primary Health Center </span> </a>
+							
+						</li>
+
 
                          <li>
                             <a href="{% url 'patients' %}"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                         </li>
+
                         <li>
-                            <a href="{% url 'appointments' %}"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                            <a href="{% url 'ad_home_visit' %}"><i class="fa fa-wheelchair"></i> <span>Home Visits</span></a>
                         </li>
+
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span>Appointments </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'appointments' %}">All Appointments</a></li>
+                                <li><a href="{% url 'current_appointment' %}">Current Appointments</a></li>
+                                <li><a href="{% url 'future_appointment' %}">Future Appointments</a></li>
+                                <li><a href="{% url 'past_appointment' %}">Past Appointments</a></li>
+								
+								
+							</ul>
+						</li>
                         <li>
                             <a href="{% url 'schedule' %}"><i class="fa fa-calendar-check-o"></i> <span>Asha Workers Schedule</span></a>
                         </li> 
@@ -96,6 +153,7 @@
 								
 							</ul>
 						</li>
+
                         <li class="submenu">
                             <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
@@ -104,6 +162,12 @@
                                
                             </ul>
                         </li>
+                        <li>
+                            <a href="{% url 'appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart</span></a>
+                        </li> 
+                        <li>
+                            <a href="{% url 'ashaworker_appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart1</span></a>
+                        </li> 
                     </ul>
                 </div>
             </div>
@@ -163,6 +227,7 @@
                                 </div><br>
                                 <p>Gender: {{ patient.gender }}</p>
                                 <p>Address: {{ patient.address }}</p>
+                                <p>Panchayat: {{ patient.panchayath }}</p>
                                 <p>ward: {{ patient.ward }}</p>
                                 <p>Phone: {{ patient.phone_number }}</p>
                                 <p>House Name: {{ patient.house_name }}</p>

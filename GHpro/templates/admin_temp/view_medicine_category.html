@@ -1,0 +1,331 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+        <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+        <title>GentleHaloes Admin Dashboard</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-WA4tFPvW5MoyTTVkldf7u49tGbGVutHf9x6SKMYELR6Dqb5YkQZk8lpJCZH4qkOzmHYjGLteMSeZqXnRJcHOiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <!--[if lt IE 9]>
+            <script src="assets/js/html5shiv.min.js"></script>
+            <script src="assets/js/respond.min.js"></script>
+        <![endif]-->
+
+
+
+        <style>
+            body {
+                {% comment %} background-image: url('https://i.pinimg.com/736x/92/70/c1/9270c19eb7d37366c20da05e28844248.jpg'); /* Replace with your image path */ {% endcomment %}
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+            }
+    
+            .container {
+                background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background for the form */
+                padding: 20px;
+                border-radius: 10px;
+                margin-top: 20px;
+            }
+            
+            /* Style the navbar background color */
+            .navbar {
+                background-color: black;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+    
+            th, td {
+                border: 1px solid black;
+                padding: 8px;
+                text-align: left;
+            }
+    
+            th {
+                background-color: #f2f2f2;
+            }
+        </style>
+    </head>
+
+<body>
+{% comment %} <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Medicine Categories</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'phar_staff_page' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'add_medicine_category' %}">Add Category</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'view_medicine_category' %}">View Categories</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav> {% endcomment %}
+<div class="main-wrapper">
+    <div class="header">
+        <div class="header-left">
+            <a href="{% url 'admin_dashboard' %}" class="logo">
+                <img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+            </a>
+        </div>
+         <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+        <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+        <ul class="nav user-menu float-right">
+            <li class="nav-item dropdown has-arrow">
+                <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                    <span>{{ user.email }}</span>
+                </a>
+                {% if user.is_authenticated %}
+                <div class="dropdown-menu">
+                    
+                    <a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+                </div>
+                {% else %}
+    
+                <div class="dropdown-menu">
+                    
+                    <a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+                </div>
+                
+                {% endif %}
+            </li>
+       
+    </div> 
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-inner slimscroll">
+            <div id="sidebar-menu" class="sidebar-menu">
+                <ul>
+                    <li class="menu-title">Main</li>
+                    <li class="active">
+                        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                    </li> 
+                    
+
+                   
+
+                   
+
+                    
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-medkit"></i>
+                            <span>Medicines </span> <span class="menu-arrow"></span></a>
+                        <ul style="display: none;">
+                            <li>
+                            <a href="{% url 'add_medicine_category' %}"><i class="fa fa-plus"></i> <span>Add Category</span></a>
+                            </li>
+                            <li>
+                                <a href="{% url 'view_medicine_category' %}"><i class="fa fa-list"></i> <span>view Category</span></a>
+                            </li>
+                            <li>
+                                <a href="{% url 'add_medicine' %}"><i class="fa fa-plus"></i> <span>Add Medicine</span></a>
+                            </li>
+                            <li>
+                                <a href="{% url 'view_medicine' %}"><i class="fa fa-list"></i> <span>View Medicine</span></a>
+                            </li>
+                            
+                            
+                        </ul>
+                    </li>
+
+
+                    
+                    <li>
+                        <a href="{% url 'ad_panward' %}"><i class="fa fa-user" ></i> <span>Ward List </span> </a>
+                        
+                    </li>
+
+                    
+                    <li>
+                        <a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user" id="ashaind"></i> <span>Asha Workers List </span> </a>
+                        
+                    </li>
+                    <li>
+                        <a href="{% url 'ad_member' %}"><i class="fa fa-user" id="memind"></i> <span>Members List </span> </a>
+                        
+                    </li>
+                    
+                   
+                    
+                    <li>
+                        <a href="{% url 'ad_nurse' %}"><i class="fa fa-user" id="ashaind"></i> <span>Nurses List </span> </a>
+                        
+                    </li>
+                    
+                    <li>
+                        <a href="{% url 'ad_hca' %}"><i class="fa fa-user" id="hosind" ></i> <span>Primary Health Center </span> </a>
+                        
+                    </li>
+
+
+                     <li>
+                        <a href="{% url 'patients' %}"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'ad_home_visit' %}"><i class="fa fa-wheelchair"></i> <span>Home Visits</span></a>
+                    </li>
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-user"></i> <span>Appointments </span> <span class="menu-arrow"></span></a>
+                        <ul style="display: none;">
+                            
+                            <li><a href="{% url 'appointments' %}">All Appointments</a></li>
+                            <li><a href="{% url 'current_appointment' %}">Current Appointments</a></li>
+                            <li><a href="{% url 'future_appointment' %}">Future Appointments</a></li>
+                            <li><a href="{% url 'past_appointment' %}">Past Appointments</a></li>
+                            
+                            
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="{% url 'schedule' %}"><i class="fa fa-calendar-check-o"></i> <span>Asha Workers Schedule</span></a>
+                    </li> 
+                    
+                    {% comment %} <li>
+                        <a href="{% url 'adgallery' %}"><i class="fa fa-calendar-check-o"></i> <span>Gallery</span></a>
+                    </li>  {% endcomment %}
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-user"></i> <span> Gallery </span> <span class="menu-arrow"></span></a>
+                        <ul style="display: none;">
+                            
+                            <li><a href="{% url 'adgallery' %}">Add Image</a></li>
+                            <li><a href="{% url 'dis_gallery' %}">Edit Image</a></li>
+                            
+                        </ul>
+                    </li>
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
+                        <ul style="display: none;">
+                            <li><a href="{% url 'blog' %}">Blog View</a></li>
+                            <li><a href="{% url 'add-blog' %}">Add Blog</a></li>
+                           
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="{% url 'appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart</span></a>
+                    </li> 
+                    <li>
+                        <a href="{% url 'ashaworker_appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart1</span></a>
+                    </li> 
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br><br> <br><br> <br><br>
+<div class="container">
+    <div class="row">
+
+       
+        <div class="col-sm-12 col-9 text-right m-b-20">
+            <a href="{% url 'add_medicine_category' %}"  class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus" id="addasha"></i> Add Medicine Category</a>
+        </div>
+    </div>
+    <h2 class="text-center" id="list">Medicine Categories</h2>
+    {% comment %} <form id="search-form" method="GET" action="{% url 'search_medicine_category' %}">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="category_name" placeholder="Search by medicine category name">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> Search</button>
+            </div>
+        </div>
+    </form> {% endcomment %}
+    <table class="table">
+        <thead>
+            <tr>
+                {% comment %} <th scope="col">Category ID</th> {% endcomment %}
+                <th scope="col">Category Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in categories %}
+            <tr>
+            {% comment %} <td>{{ i.MedCatId }}</td> {% endcomment %}
+            <td>{{ i.category_name }}</td>
+            <td>{{ i.description }}</td>
+            <td>
+                 
+        {% comment %} <button class="btn btn-primary">EDIT <i class="fas fa-pencil-alt"></i></button> {% endcomment %}
+        <a class="dropdown-item"><i class="fa fa-pencil m-r-5"></i> Edit</a> 
+        <a class="dropdown-item"  href="{% url 'delete_medicine_category' i.MedCatId %}"><i class="fa fa-pencil m-r-5"></i> Delete</a> 
+        {% comment %} <a class="dropdown-item" href="{% url 'delete_medicine_category' i.MedCatId %}"><i class="fa fa-trash-alt m-r-5"></i>
+            Delete</a> 
+                 
+            </td> {% endcomment %}
+    </tr>
+    {% empty %}
+            <tr>
+                <td colspan="5">No medicine category found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% comment %} <button class="btn btn-primary" onclick="generatePDF()">Generate PDF</button> {% endcomment %}
+</div>
+</div>
+
+<div class="sidebar-overlay" data-reff=""></div>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/Chart.bundle.js' %}"></script>
+    <script src="{% static 'assets/js/chart.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+
+<!-- Include Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.min.js"></script>
+{% comment %} <script>
+    function generatePDF() {
+        // Send an AJAX request to your Django view for PDF generation
+        fetch('{% url 'generate_pdf' %}', {
+            method: 'GET',
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.blob();
+            } else {
+                throw new Error('PDF generation failed');
+            }
+        })
+        .then(blob => {
+            // Create a link element to download the PDF
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'category_report.pdf';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script> {% endcomment %}
+
+</body>
+</html>

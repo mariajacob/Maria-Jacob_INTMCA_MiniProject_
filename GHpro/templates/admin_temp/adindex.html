@@ -14,6 +14,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-WA4tFPvW5MoyTTVkldf7u49tGbGVutHf9x6SKMYELR6Dqb5YkQZk8lpJCZH4qkOzmHYjGLteMSeZqXnRJcHOiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <!--[if lt IE 9]>
 		<script src="assets/js/html5shiv.min.js"></script>
 		<script src="assets/js/respond.min.js"></script>
@@ -61,6 +63,41 @@
                             <a href="{% url 'admin_dashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li> 
 						
+
+                       
+
+                       
+
+                        
+
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-medkit"></i>
+                                <span>Medicines </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+                                <li>
+								<a href="{% url 'add_medicine_category' %}"><i class="fa fa-plus"></i> <span>Add Category</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'view_medicine_category' %}"><i class="fa fa-list"></i> <span>view Category</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'add_medicine' %}"><i class="fa fa-plus"></i> <span>Add Medicine</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'view_medicine' %}"><i class="fa fa-list"></i> <span>View Medicine</span></a>
+                                </li>
+								
+								
+							</ul>
+						</li>
+
+
+                        
+                        <li>
+							<a href="{% url 'ad_panward' %}"><i class="fa fa-user" ></i> <span>Ward List </span> </a>
+							
+						</li>
+
                         
                         <li>
 							<a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user" id="ashaind"></i> <span>Asha Workers List </span> </a>
@@ -68,6 +105,13 @@
 						</li>
                         <li>
 							<a href="{% url 'ad_member' %}"><i class="fa fa-user" id="memind"></i> <span>Members List </span> </a>
+							
+						</li>
+                        
+                       
+                        
+                        <li>
+							<a href="{% url 'ad_nurse' %}"><i class="fa fa-user" id="ashaind"></i> <span>Nurses List </span> </a>
 							
 						</li>
                         

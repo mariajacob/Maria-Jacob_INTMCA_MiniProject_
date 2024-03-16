@@ -14,9 +14,18 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/select2.min.css'%}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap-datetimepicker.min.css'%}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css'%}">
-   
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 		<script src="{% static 'assets/js/html5shiv.min.js' %}"></script>
 		<script src="{% static 'assets/js/respond.min.js' %}"></script>
+
+        <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+        <script src="{% static 'assets/js/popper.min.js' %}"></script>
+        <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+        <script src="{% static 'assets/js/select2.min.js' %}"></script>
+        <script src="{% static 'assets/js/moment.min.js' %}"></script>
+        <script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+        <script src="{% static 'assets/js/app.js' %}"></script>
 	
 </head>
 
@@ -69,20 +78,73 @@
                         <li class="active">
                             <a href="{% url 'admin_dashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li> 
-                        <li >
-							<a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user"></i> <span>Asha Workers List </span></a>
-							
+						
+
+                       
+
+                       
+
+                        
+
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-medkit"></i>
+                                <span>Medicines </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+                                <li>
+								<a href="{% url 'add_medicine_category' %}"><i class="fa fa-plus"></i> <span>Add Category</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'view_medicine_category' %}"><i class="fa fa-list"></i> <span>view Category</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'add_medicine' %}"><i class="fa fa-plus"></i> <span>Add Medicine</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'view_medicine' %}"><i class="fa fa-list"></i> <span>View Medicine</span></a>
+                                </li>
+								
+								
+							</ul>
 						</li>
-                        <li >
-							<a href="{% url 'ad_member' %}"><i class="fa fa-user"></i> <span>Members List </span></a>
+
+
+                        
+                        <li>
+							<a href="{% url 'ad_panward' %}"><i class="fa fa-user" ></i> <span>Ward List </span> </a>
 							
 						</li>
 
+                        
+                        <li>
+							<a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user" id="ashaind"></i> <span>Asha Workers List </span> </a>
+							
+						</li>
+                        <li>
+							<a href="{% url 'ad_member' %}"><i class="fa fa-user" id="memind"></i> <span>Members List </span> </a>
+							
+						</li>
+                        
+                       
+                        
+                        <li>
+							<a href="{% url 'ad_nurse' %}"><i class="fa fa-user" id="ashaind"></i> <span>Nurses List </span> </a>
+							
+						</li>
+                        
+                        <li>
+							<a href="{% url 'ad_hca' %}"><i class="fa fa-user" id="hosind" ></i> <span>Primary Health Center </span> </a>
+							
+						</li>
 
 
                          <li>
                             <a href="{% url 'patients' %}"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                         </li>
+
+                        <li>
+                            <a href="{% url 'ad_home_visit' %}"><i class="fa fa-wheelchair"></i> <span>Home Visits</span></a>
+                        </li>
+
                         <li class="submenu">
 							<a href="#"><i class="fa fa-user"></i> <span>Appointments </span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
@@ -111,6 +173,7 @@
 								
 							</ul>
 						</li>
+
                         <li class="submenu">
                             <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
@@ -119,6 +182,12 @@
                                
                             </ul>
                         </li>
+                        <li>
+                            <a href="{% url 'appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart</span></a>
+                        </li> 
+                        <li>
+                            <a href="{% url 'ashaworker_appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart1</span></a>
+                        </li> 
                     </ul>
                 </div>
             </div>
@@ -198,45 +267,27 @@
 											</div>
 										</div>
 										<div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>Panchayat</label>
-											{% comment %} <select class="form-control select" name="panchayat" id="panchayat">
-                                                    <option></option>
-													<option>Parathodu</option> 
-													
-												</select> {% endcomment %}
-                                                <input class="form-control" value="Parathodu" id="panchayat" name="panchayat" type="text" readonly>
-											</div>
-										</div>
-										 <div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>Ward</label>
-                                                <select class="form-control select" name="wardmem" id="wardmem" size="100">
-													<option>Ward 1-VENGATHANAM</option>
-													<option>Ward 2-PALAPRA</option>
-                                                    <option>Ward 3-VELICHIYANI</option>
-                                                    <option>Ward 4-CHOTTY</option>
-                                                    <option>Ward 5-MANGAPPARA</option>
-                                                    <option>Ward 6-VADAKKEMALA</option>
-                                                    <option>Ward 7-PARATHODU</option>
-                                                    <option>Ward 8-NADUKANI</option>
-                                                    <option>Ward 9-EDAKKUNNAM</option>
-                                                    {% comment %} <option>Ward 10-KOORAMTHOOKKU</option>
-                                                    <option>Ward 11-KOOVAPPALLY</option>
-                                                    <option>Ward 12-KULAPPURAM</option>
-                                                    <option>Ward 13-PALAMPRA</option>
-                                                    <option>Ward 14-MUKKALY</option>
-                                                    <option>Ward 15-PODIMATTAM</option>
-                                                    <option>Ward 16-ANAKKALLU</option>
-                                                    <option>Ward 17-PULKUNNU</option>
-                                                    <option>Ward 18-PAZHUMALA</option>
-                                                    <option>Ward 19-CHIRABHAGAM</option>  {% endcomment %}
-
-												</select>
+                                            <div class="form-group">
+                                                <label>Panchayat</label>
+                                                <select class="form-control select" id="panchayat" name="panchayat">
+                                                    <option value="Erumely">Erumely</option>
+                                                    <option value="Mundakkayam">Mundakkayam</option>
+                                                    <option value="Kanjirappally">Kanjirappally</option>
+                                                    <option value="Parathodu">Parathodu</option>
+                                                    <option value="Manimala">Manimala</option>
+                                                    <!-- Add other panchayat options here -->
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 col-md-6 col-lg-3">
+                                            <div class="form-group">
+                                                <label>Ward</label>
+                                                <select class="form-control select" name="wardmem" id="ward" size="100">
+                                                    <!-- Ward options will be dynamically populated here -->
+                                                </select>
                                                 <div id="ward-validation-message"></div>
-											</div>
-										</div> 
-										
+                                            </div>
+                                        </div>
                                         
 									</div>
 								</div>
@@ -270,14 +321,7 @@
         </div>
     </div>
     <div class="sidebar-overlay" data-reff=""></div>
-    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
-	<script src="{% static 'assets/js/popper.min.js' %}"></script>
-    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
-    <script src="{% static 'assets/js/select2.min.js' %}"></script>
-	<script src="{% static 'assets/js/moment.min.js' %}"></script>
-	<script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
-    <script src="{% static 'assets/js/app.js' %}"></script>
+    
     <style>
         .header {
             background-color: #00c6a9;
@@ -290,6 +334,24 @@
             box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
         }
     </style>
+    <script>
+        $(document).ready(function() {
+            $('#panchayat').change(function() {
+                var selectedPanchayat = $(this).val();
+                $.ajax({
+                    url: '/get_wards/', // Replace this with your Django URL to fetch wards
+                    method: 'GET',
+                    data: {'panchayat': selectedPanchayat},
+                    success: function(data) {
+                        $('#ward').empty(); // Clear previous options
+                        $.each(data.wards, function(index, ward) {
+                            $('#ward').append('<option value="' + ward + '">' + ward + '</option>');
+                        });
+                    }
+                });
+            });
+        });
+        </script>
     <script>
         $(document).ready(function () {
             // Add keyup event listeners to input fields

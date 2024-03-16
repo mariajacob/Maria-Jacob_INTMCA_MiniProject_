@@ -55,13 +55,74 @@
 		<script src="assets/js/html5shiv.min.js"></script>
 		<script src="assets/js/respond.min.js"></script>
 	<![endif]-->
-  
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js'%}"></script>
+	<script src="{% static 'assets/js/popper.min.js'%}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js'%}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js'%}"></script>
+    <script src="{% static 'assets/js/app.js'%}"></script>
+    <script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+
+    <div class="sidebar-overlay" data-reff=""></div>
+
+    <script src="{% static 'assets/js/select2.min.js' %}"></script>
+	<script src="{% static 'assets/js/moment.min.js' %}"></script>
   </head>
 
 
 
 <body>
     <style>
+
+
+
+        #google_translate_element .skiptranslate{
+            display: inline !important;
+    
+        }
+        .goog-te-gadget{
+            color: transparent !important;
+        }
+        /* White Theme for the select dropdown */
+    .goog-te-combo {
+        padding: 8px; /* Add padding for spacing */
+        font-size: 14px; /* Set font size */
+        border: 1px solid #ccc; /* Light border */
+        border-radius: 4px; /* Add rounded corners */
+        background-color: #fff; /* White background color */
+        color: #333; /* Dark text color */
+    }
+    
+        /* Style the select dropdown when it's hovered */
+        .goog-te-combo:hover {
+            border-color: #999; /* Darker border color on hover */
+        }
+    
+        /* Style the select dropdown when it's focused (clicked) */
+        .goog-te-combo:focus {
+            outline: none; /* Remove the default focus outline */
+            border-color: #007bff; /* Change border color on focus */
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a shadow on focus */
+        }
+    
+        /* Style the dropdown arrow */
+        .goog-te-combo-arrow {
+            font-size: 12px; /* Adjust arrow size */
+            color: #fff; /* Light arrow color */
+        }
+    
+        /* Style the dropdown options */
+        .goog-te-menu-value {
+            font-size: 14px; /* Set font size for options */
+            color: #fff; /* Light text color for options */
+            background-color: #333; /* Dark background color for options */
+        }
+    
+        /* Style the dropdown options on hover */
+        .goog-te-menu-value:hover {
+            background-color: #007bff; /* Change background color on hover */
+            color: #fff; /* Light text color on hover */
+        }
         body {
             background: #f2e6dc;  /* fallback for old browsers */
             background: -webkit-linear-gradient(to right, #4ca2cd, #67B26F);  /* Chrome 10-25, Safari 5.1-6 */
@@ -210,6 +271,11 @@
                             <a class="nav-link" href="{% url 'contact' %}">Contact</a>
                         </li>
                     </ul>
+                    <div ><span>Select Language: </span>
+
+                        <div id="google_translate_element"></div></div>
+        
+        
                 </div>
                 <div class="quote_btn-container">
                   <div class="quote_btn-container">
@@ -441,20 +507,33 @@
                             
                             <div class="col-md-6">
                                 <label>Panchayat</label>
-                                <div class="form-group form-focus"> 
-                                     
-                                    <input type="text" class="form-control floating" value=" Parathodu" name="state" readonly>
-                                </div>
+                                                <select class="form-control select" id="panchayat" name="panchayat">
+                                                    <option value="Erumely">Erumely</option>
+                                                    <option value="Mundakkayam">Mundakkayam</option>
+                                                    <option value="Kanjirappally">Kanjirappally</option>
+                                                    <option value="Parathodu">Parathodu</option>
+                                                    <option value="Manimala">Manimala</option>
+                                                    <!-- Add other panchayat options here -->
+                                                </select>
                             </div>
                             {% comment %} <div class="col-md-6">
                                 <label>Ward</label>
                                 <div class="form-group form-focus"> 
                                     <input type="number" class="form-control floating" value="{{ profile.ward }}" name="ward">
-                                   
+                                    
                                 </div>
                             </div> {% endcomment %}
+                            <div class="col-sm-6 col-md-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Ward</label>
+                                    <select class="form-control select" name="ward" id="ward" size="100">
+                                        <!-- Ward options will be dynamically populated here -->
+                                    </select>
+                                    <div id="ward-validation-message"></div>
+                                </div>
+                            </div>
                           
-                            <div class="col-md-6">
+                            {% comment %} <div class="col-md-6">
                                 <label>Ward</label>
                                 <div class="form-group form-focus">
                                     
@@ -477,12 +556,12 @@
                                         <option>Ward 16-ANAKKALLU</option>
                                         <option>Ward 17-PULKUNNU</option>
                                         <option>Ward 18-PAZHUMALA</option>
-                                        <option>Ward 19-CHIRABHAGAM</option> {% endcomment %}
+                                        <option>Ward 19-CHIRABHAGAM</option> 
 
                                     </select>
-                                    {% comment %} <div id="ward-validation-message"></div> {% endcomment %}
+                                   
                                 </div>
-                            </div> 
+                            </div>  {% endcomment %}
                             <div class="col-md-6">
                                 <label>Pin Code</label>
                                 <div class="form-group form-focus">
@@ -586,18 +665,34 @@
         </div>
     </div>
     <div class="sidebar-overlay" data-reff=""></div>
-    <script src="{% static 'assets/js/jquery-3.2.1.min.js'%}"></script>
-	<script src="{% static 'assets/js/popper.min.js'%}"></script>
-    <script src="{% static 'assets/js/bootstrap.min.js'%}"></script>
-    <script src="{% static 'assets/js/jquery.slimscroll.js'%}"></script>
-    <script src="{% static 'assets/js/app.js'%}"></script>
-    <script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript"> 
+        function googleTranslateElementInit() {
+    new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+    }
+    </script>
 
-    <div class="sidebar-overlay" data-reff=""></div>
 
-    <script src="{% static 'assets/js/select2.min.js' %}"></script>
-	<script src="{% static 'assets/js/moment.min.js' %}"></script>
-	
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#panchayat').change(function() {
+            var selectedPanchayat = $(this).val();
+            $.ajax({
+                url: '/get_wards/', // Replace this with your Django URL to fetch wards
+                method: 'GET',
+                data: {'panchayat': selectedPanchayat},
+                success: function(data) {
+                    $('#ward').empty(); // Clear previous options
+                    $.each(data.wards, function(index, ward) {
+                        $('#ward').append('<option value="' + ward + '">' + ward + '</option>');
+                    });
+                }
+            });
+        });
+    });
+    </script>
     
     <script>
         // Function to perform validation on the "First Name" input

@@ -1,0 +1,193 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Prescription</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+</head>
+<body> {% endcomment %}
+    {% load static %}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+        <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+        <title>Create Prescription - GentleHaloes Admin Dashboard</title>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    </head>
+    <body>
+    <div class="main-wrapper">
+        <div class="header">
+            <div class="header-left">
+                <a href="{% url 'nurse_index' %}" class="logo">
+                    <img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+                </a>
+            </div>
+             <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{% url 'pro_ashaworker' %}">Profile</a>
+                        <a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+                    </div>
+                    {% else %}
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+                    </div>
+                    {% endif %}
+                </li>
+            </ul>
+        </div> 
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+                        <li class="active">
+                            <a href="{% url 'nurse_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                           
+                        </li> 
+                       
+                         <li>
+                            <a href="{% url 'patient_list_nurse' %}"><i class="fa fa-user"></i> <span>Patient List</span></a>
+                        </li>
+                       <li>
+                            <a href="{% url 'add_prescription' %}"><i class="fa fa-user"></i> <span>Prescription</span></a>
+
+                        </li> 
+                        <li>
+                            <a href="{% url 'view_prescription_nurse' %}"><i class="fa fa-user"></i> <span> View Prescription</span></a>
+
+                        </li> 
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="page-wrapper">
+            <div class="container mt-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="text-center">Create Prescription</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {% comment %} <div class="form-group row">
+                                <label for="nurse_id" class="col-sm-3 col-form-label">Nurse:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="nurse_name" id="nurse_name" class="form-control" value="{{ nurse.Name }}" readonly>
+                                    
+                                </div> 
+                                
+                            </div> {% endcomment %}
+
+                            <div class="form-group row">
+                                <label for="nurse_id" class="col-sm-3 col-form-label">Nurse:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="nurse_name" id="nurse_name" class="form-control" value="{{ nurse_name }}" readonly>
+                                </div> 
+                            </div>
+                            
+                            
+                            <div class="form-group row">
+                                <label for="patient_id" class="col-sm-3 col-form-label">Patient:</label>
+                                <div class="col-sm-9">
+                                    <select name="patient_id" id="patient_id" class="form-control">
+                                        {% for patient in patients %}
+                                            <option value="{{ patient.id }}">{{ patient.first_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="medicine" class="col-sm-3 col-form-label">Medicine:</label>
+                                <div class="col-sm-9">
+                                    <select name="medicine" id="medicine" class="form-control">
+                                        <option value="Choose Medicine">Choose Medicine</option>
+                                        {% for medicine in medicines %}
+                                            <option value="{{ medicine.id }}">{{ medicine.medicineName }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            
+                           
+
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Frequency:</label>
+                                <div class="col-sm-9">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" name="morning" id="morning" value="True"> Morning
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" name="noon" id="noon" value="True"> Noon
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" name="evening" id="evening" value="True"> Evening
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        
+
+
+                            <div class="form-group row">
+                                <label for="date_of_prescription" class="col-sm-3 col-form-label">Date of Prescription:</label>
+                                <div class="col-sm-9">
+                                    <input type="date" name="date_of_prescription" id="date_of_prescription" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="quantity" class="col-sm-3 col-form-label">Quantity:</label>
+                                <div class="col-sm-9">
+                                    <input type="number" name="quantity" id="quantity" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="duration" class="col-sm-3 col-form-label">Duration:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="duration" id="duration" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="dosages" class="col-sm-3 col-form-label">Dosages:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="dosages" id="dosages" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-12">
+                                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    </body>
+    </html>
+    

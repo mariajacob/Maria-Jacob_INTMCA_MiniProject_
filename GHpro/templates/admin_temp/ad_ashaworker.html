@@ -10,9 +10,13 @@
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
     <title>GentleHaloes Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+
+    
     <!--[if lt IE 9]>
 		<script src="assets/js/html5shiv.min.js"></script>
 		<script src="assets/js/respond.min.js"></script>
@@ -61,20 +65,73 @@
                         <li class="active">
                             <a href="{% url 'admin_dashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li> 
-						{% comment %} <li>
-                            <a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user-md"></i> <span>Asha Workers</span></a>
-                        </li> {% endcomment %}
+						
+
+                       
+
+                       
+
                         
-                        <li >
-							<a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user"></i> <span>Asha Workers List </span></a>
+
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-medkit"></i>
+                                <span>Medicines </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+                                <li>
+								<a href="{% url 'add_medicine_category' %}"><i class="fa fa-plus"></i> <span>Add Category</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'view_medicine_category' %}"><i class="fa fa-list"></i> <span>view Category</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'add_medicine' %}"><i class="fa fa-plus"></i> <span>Add Medicine</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'view_medicine' %}"><i class="fa fa-list"></i> <span>View Medicine</span></a>
+                                </li>
+								
+								
+							</ul>
+						</li>
+
+
+                        
+                        <li>
+							<a href="{% url 'ad_panward' %}"><i class="fa fa-user" ></i> <span>Ward List </span> </a>
 							
 						</li>
 
+                        
+                        <li>
+							<a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user" id="ashaind"></i> <span>Asha Workers List </span> </a>
+							
+						</li>
+                        <li>
+							<a href="{% url 'ad_member' %}"><i class="fa fa-user" id="memind"></i> <span>Members List </span> </a>
+							
+						</li>
+                        
+                       
+                        
+                        <li>
+							<a href="{% url 'ad_nurse' %}"><i class="fa fa-user" id="ashaind"></i> <span>Nurses List </span> </a>
+							
+						</li>
+                        
+                        <li>
+							<a href="{% url 'ad_hca' %}"><i class="fa fa-user" id="hosind" ></i> <span>Primary Health Center </span> </a>
+							
+						</li>
 
 
                          <li>
                             <a href="{% url 'patients' %}"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                         </li>
+
+                        <li>
+                            <a href="{% url 'ad_home_visit' %}"><i class="fa fa-wheelchair"></i> <span>Home Visits</span></a>
+                        </li>
+
                         <li class="submenu">
 							<a href="#"><i class="fa fa-user"></i> <span>Appointments </span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
@@ -103,6 +160,7 @@
 								
 							</ul>
 						</li>
+
                         <li class="submenu">
                             <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
@@ -111,6 +169,12 @@
                                
                             </ul>
                         </li>
+                        <li>
+                            <a href="{% url 'appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart</span></a>
+                        </li> 
+                        <li>
+                            <a href="{% url 'ashaworker_appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart1</span></a>
+                        </li> 
                     </ul>
                 </div>
             </div>
@@ -126,20 +190,35 @@
                         <a href="{% url 'add_asha' %}"  class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus" id="addasha"></i> Add Asha Workers</a>
                     </div>
                 </div>
+               
                 <div class="row">
-                    <div class="col-md-12">
-                        <form id="search-form" method="GET" action="{% url 'search_ashaworker' %}">
-                            <div class="input-group">
+                    <div class="col-md-6">
+                        <form class="form-inline" method="GET" action="{% url 'ad_ashaworker' %}">
+                            <div class="form-group mr-2">
+                                <label class="mr-2" for="panchayath">Search by Panchayath:</label>
+                                <select class="form-control" id="panchayath" name="panchayath">
+                                    <option value="">Select Panchayath</option>
+                                    <!-- Populate the dropdown options with unique Panchayath values -->
+                                    {% for panchayath in unique_panchayaths %}
+                                        <option value="{{ panchayath }}">{{ panchayath }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> Search</button>
+                        </form>
+                    </div>
+                
+                    <div class="col-md-6">
+                        <form class="form-inline" method="GET" action="{% url 'search_ashaworker' %}">
+                            <div class="form-group mr-2">
                                 <a href="{% url 'ad_ashaworker' %}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>&ensp;&ensp;&ensp;&ensp;
-                                <input type="text" class="form-control" name="ashaname" placeholder="Search by Ashaworker Name">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> </button>
-                                </div>
+                                <input type="text" class="form-control mr-2" name="ashaname" placeholder="Search by Ashaworker Name">
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> Search</button>
                             </div>
                         </form>
                     </div>
                 </div><br><br>
-             
+                
 
                 <div class="row doctor-grid">
                     {% if ashaworkers %}
@@ -151,10 +230,13 @@
                                         <a class="avatar" href="profile.html"><img alt="" src="{{ ashaworker.profile_photo.url }}"></a>
                                     </div>  {% endcomment %}
                                      <div class="doctor-img">
-                                        <a class="avatar" href="profile.html">
+                                        <a class="avatar" href="#">
                                             <img alt="" src="{{ ashaworker.profile_photo.url }}">
+                                           
                                         </a>
+                                        <p>ID: {{ ashaworker.id }}</p>
                                     </div>
+                                    <br>
                                     <div class="dropdown profile-action">
                                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                                         <div class="dropdown-menu dropdown-menu-right">
@@ -162,22 +244,41 @@
                                             <a class="dropdown-item" href="{% url 'delete_asha' ashaworker.id %}"><i class="fa fa-pencil m-r-5"></i> Delete</a>
                                         </div>
                                     </div>
-                                    <h4 class="doctor-name text-ellipsis"><a href="profile.html">{{ ashaworker.Name }}</a></h4>
+                                    <h4 class="doctor-name text-ellipsis"><a href="#">{{ ashaworker.Name }}</a></h4>
+                                    <br>
                                     <div class="user-country">
-                                        <i class="fa fa-map-marker"></i> {{ ashaworker.address }}
+                                        <i class="fa fa-map-marker"></i> :  {{ ashaworker.address }}
                                     </div>
                                     <div>
-                                        <p>Ashaworker ID: {{ ashaworker.id }}</p>
-                                        <p class="card-text">Email: {{ ashaworker.email }}</p>
-                                       <p class="card-text">Password: {{ ashaworker.password }}</p> 
-                                        <p class="card-text">Date of Birth: {{ ashaworker.date_of_birth }}</p>
-                                        <p class="card-text">Date of Join: {{ ashaworker.date_of_join }}</p>
-                                        <p class="card-text">Gender: {{ ashaworker.get_gender_display }}</p>
-                                        <p class="card-text">Taluk: {{ ashaworker.taluk }}</p>
-                                        <p class="card-text">Panchayat: {{ ashaworker.Panchayat }}</p>
-                                     <p class="card-text">Ward: {{ ashaworker.ward }}</p> 
-                                        <p class="card-text">Postal: {{ ashaworker.postal }}</p>
-                                        <p class="card-text">Phone: {{ ashaworker.phone }}</p>
+                                        
+                                        {% comment %} <p class="card-text">Email: {{ ashaworker.email }}</p> {% endcomment %}
+                                        <p class="card-text">
+                                            <i class="fas fa-envelope"></i> :  {{ ashaworker.email }}
+                                        </p>
+                                        
+                                       
+                                        {% comment %} <p class="card-text">Date of Birth: {{ ashaworker.date_of_birth }}</p>
+                                        <p class="card-text">Date of Join: {{ ashaworker.date_of_join }}</p> {% endcomment %}
+                                        {% comment %} <p class="card-text">
+                                            <i class="far fa-calendar-alt"></i> Date of Birth: {{ ashaworker.date_of_birth }}
+                                        </p> {% endcomment %}
+                                        <p class="card-text">
+                                             Date of Join: {{ ashaworker.date_of_join }}
+                                        </p>
+                                        
+                                        {% comment %} <p class="card-text">Gender: {{ ashaworker.get_gender_display }}</p> {% endcomment %}
+                                        {% comment %} <p class="card-text">Taluk: {{ ashaworker.taluk }}</p>{% endcomment %}
+                                        
+                                        <p class="card-text">Panchayat: {{ ashaworker.Panchayat }}</p> 
+                                        
+                                        
+                                     <p class="card-text"><i class="fas fa-building"></i> : {{ ashaworker.ward }}</p> 
+                                        {% comment %} <p class="card-text">Postal: {{ ashaworker.postal }}</p> {% endcomment %}
+                                        <p class="card-text"> <i class="fas fa-phone"></i> :  {{ ashaworker.phone }}</p>
+                                        <p class="card-text">
+                                           
+                                            <i class="fas fa-user"></i> : {{ ashaworker.get_gender_display }}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -218,6 +319,11 @@
         z-index: 1039;
         height: 50px;
         box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    }
+    .p{
+        color:red;
+        font-size: 20px;
+        font-weight: 600;
     }
 </style>
 <!-- doctors23:17-->

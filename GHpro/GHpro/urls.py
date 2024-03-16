@@ -17,7 +17,8 @@ Including another URLconf
 from GHapp import views
 from django.contrib import admin
 from django.urls import path, include
-from GHapp.views import login_page,edit_gallery_images, appointment_form,register,ad_gallery,loggout,add_asha,add_member,ResetPasswordView,ChangePasswordView
+from GHapp.views import login_page,edit_gallery_images, patient_prescriptions,appointment_form,register,ad_gallery,loggout,add_asha,add_member,ResetPasswordView,ChangePasswordView
+from GHapp.views import login_page,edit_gallery_images, add_nurse,add_member,appointment_form,register,ad_gallery,loggout,add_asha,ResetPasswordView,ChangePasswordView
 from django.contrib.auth import views as auth_views
 
 from django.conf import settings
@@ -80,7 +81,11 @@ urlpatterns = [
      path('edit_asha_pro', views.edit_asha_pro, name='edit_asha_pro'),
      path('pro_ashaworker', views.pro_ashaworker, name="pro_ashaworker"),
 
-
+#add panchayath and ward
+    path('ad_panward', views.ad_panward, name="ad_panward"),
+    path('add_panward', views.add_panward, name="add_panward"),
+    path('get_wards/', views.get_wards, name='get_wards'),
+    # path('get_wards_mem/', views.get_wards_mem, name='get_wards_mem'),
 
     path('ad_ashaworker', views.ad_ashaworker, name="ad_ashaworker"),
    
@@ -99,6 +104,40 @@ urlpatterns = [
     #index page of member
     path('member_index', views.member_index, name="member_index"),
 
+
+    # Nurse Section
+    path('nurse_index', views.nurse_index, name="nurse_index"),
+    path('ad_nurse', views.ad_nurse, name="ad_nurse"),
+    path('add_nurse', add_nurse, name="add_nurse"),
+    # path('add_prescription', views.add_prescription, name="add_prescription"),
+    path('add_prescription/', views.add_prescription, name='add_prescription'),
+    # view prescrption nurse
+    path('view_prescription_nurse/', views.view_prescription_nurse, name='view_prescription_nurse'),
+    path('patient_list_nurse', views.patient_list_nurse, name="patient_list_nurse"),
+
+
+ # view prescrption paatients
+    path('patient_prescriptions/<int:patient_id>/', views.patient_prescriptions, name='patient_prescriptions'),
+
+
+
+
+    
+
+    # Add this line for adding Member
+    path('ad_member', views.ad_member, name="ad_member"),
+    path('add_member', add_member, name="add_member"),
+    path('edit_member/<int:member_id>/', views.edit_member, name='edit_member'),
+    path('check-wardmem-exists/', views.check_wardmem_exists, name='check_wardmem_exists'),
+    path('patient_list_mem/', views.patient_list_mem, name='patient_list_mem'),
+    path('asha_list_mem/', views.asha_list_mem, name='asha_list_mem'),
+    
+
+    # search member
+    path('search-member/', views.search_member, name='search_member'),
+    #index page of member
+    path('member_index', views.member_index, name="member_index"),
+
     path('patients', views.patients, name="patients"),
 
     path('delete_patients/<int:patient_id>/', views.delete_patients, name='delete_patients'),
@@ -106,6 +145,8 @@ urlpatterns = [
     # path('schedule', views.schedule, name="schedule"),
     path('schedule/', views.schedule, name='schedule'),
     
+
+    # path('get_times/', views.get_times, name='get_times'),
 
      path('get_dates_for_ashaworker/', views.get_dates_for_ashaworker, name='get_dates_for_ashaworker'),
 
@@ -225,6 +266,13 @@ path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
     path('cancel_appointment/<int:appointment_id>/', views.cancel_appointment, name='cancel_appointment'),
     path('check_approval_status/<int:appointment_id>/', views.check_approval_status, name='check_approval_status'),
 
+# Medicine Section
+    path('add_medicine_category', views.add_medicine_category, name="add_medicine_category"),
+    path('view_medicine_category', views.view_medicine_category, name="view_medicine_category"),
+    path('delete_medicine_category/<int:medcatid>/',views.delete_medicine_category,name='delete_medicine_category'),
+    path('add_medicine', views.add_medicine, name="add_medicine"),
+    path('view_medicine', views.view_medicine, name="view_medicine"),
+    path('delete_medicine', views.delete_medicine, name="delete_medicine"),
 ]
 
 if settings.DEBUG:

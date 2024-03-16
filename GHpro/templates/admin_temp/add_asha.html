@@ -14,9 +14,18 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/select2.min.css'%}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap-datetimepicker.min.css'%}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css'%}">
-   
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 		<script src="{% static 'assets/js/html5shiv.min.js' %}"></script>
 		<script src="{% static 'assets/js/respond.min.js' %}"></script>
+
+        <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/select2.min.js' %}"></script>
+	<script src="{% static 'assets/js/moment.min.js' %}"></script>
+	<script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
 	
 </head>
 
@@ -208,45 +217,29 @@
                                                 <input class="form-control" value="Kanjirappally" id="taluk" name="taluk" type="text" readonly >
 											</div>
 										</div>
-										<div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>Panchayat</label>
-											{% comment %} <select class="form-control select" name="panchayat" id="panchayat">
-                                                    <option></option>
-													<option>Parathodu</option> 
-													
-												</select> {% endcomment %}
-                                                <input class="form-control" value="Parathodu" id="panchayat" name="panchayat" type="text" readonly>
-											</div>
-										</div>
-										 <div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>Ward</label>
+										
+                                        <div class="col-sm-6 col-md-6 col-lg-3">
+                                            <div class="form-group">
+                                                <label>Panchayat</label>
+                                                <select class="form-control select" id="panchayat" name="panchayat">
+                                                    <option value="Erumely">Erumely</option>
+                                                    <option value="Mundakkayam">Mundakkayam</option>
+                                                    <option value="Kanjirappally">Kanjirappally</option>
+                                                    <option value="Parathodu">Parathodu</option>
+                                                    <option value="Manimala">Manimala</option>
+                                                    <!-- Add other panchayat options here -->
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 col-md-6 col-lg-3">
+                                            <div class="form-group">
+                                                <label>Ward</label>
                                                 <select class="form-control select" name="ward" id="ward" size="100">
-													<option>Ward 1-VENGATHANAM</option>
-													<option>Ward 2-PALAPRA</option>
-                                                    <option>Ward 3-VELICHIYANI</option>
-                                                    <option>Ward 4-CHOTTY</option>
-                                                    <option>Ward 5-MANGAPPARA</option>
-                                                    <option>Ward 6-VADAKKEMALA</option>
-                                                    <option>Ward 7-PARATHODU</option>
-                                                    <option>Ward 8-NADUKANI</option>
-                                                    <option>Ward 9-EDAKKUNNAM</option>
-                                                    <option>Ward 10-KOORAMTHOOKKU</option>
-                                                    {% comment %} <option>Ward 11-KOOVAPPALLY</option>
-                                                    <option>Ward 12-KULAPPURAM</option>
-                                                    <option>Ward 13-PALAMPRA</option>
-                                                    <option>Ward 14-MUKKALY</option>
-                                                    <option>Ward 15-PODIMATTAM</option>
-                                                    <option>Ward 16-ANAKKALLU</option>
-                                                    <option>Ward 17-PULKUNNU</option>
-                                                    <option>Ward 18-PAZHUMALA</option>
-                                                    <option>Ward 19-CHIRABHAGAM</option> {% endcomment %}
-
-												</select>
+                                                    <!-- Ward options will be dynamically populated here -->
+                                                </select>
                                                 <div id="ward-validation-message"></div>
-											</div>
-										</div> 
+                                            </div>
+                                        </div>
 										<div class="col-sm-6 col-md-6 col-lg-3">
                                             <div class="form-group">
                                                 <label>Postal Code</label>
@@ -287,14 +280,7 @@
         </div>
     </div>
     <div class="sidebar-overlay" data-reff=""></div>
-    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
-	<script src="{% static 'assets/js/popper.min.js' %}"></script>
-    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
-    <script src="{% static 'assets/js/select2.min.js' %}"></script>
-	<script src="{% static 'assets/js/moment.min.js' %}"></script>
-	<script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
-    <script src="{% static 'assets/js/app.js' %}"></script>
+    
     <style>
         .header {
             background-color: #00c6a9;
@@ -307,6 +293,24 @@
             box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
         }
     </style>
+    <script>
+        $(document).ready(function() {
+            $('#panchayat').change(function() {
+                var selectedPanchayat = $(this).val();
+                $.ajax({
+                    url: '/get_wards/', // Replace this with your Django URL to fetch wards
+                    method: 'GET',
+                    data: {'panchayat': selectedPanchayat},
+                    success: function(data) {
+                        $('#ward').empty(); // Clear previous options
+                        $.each(data.wards, function(index, ward) {
+                            $('#ward').append('<option value="' + ward + '">' + ward + '</option>');
+                        });
+                    }
+                });
+            });
+        });
+        </script>
     <script>
         $(document).ready(function () {
             // Add keyup event listeners to input fields

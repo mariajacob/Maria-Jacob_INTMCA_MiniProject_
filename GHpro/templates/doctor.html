@@ -110,6 +110,9 @@
                       <a class="nav-link" href="{% url 'contact' %}">Contact</a>
                   </li>
               </ul>
+              <div ><span>Select Language: </span>
+
+                <div id="google_translate_element"></div></div>
               </div>
               <div class="quote_btn-container">
                 <div class="quote_btn-container">
@@ -349,7 +352,69 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
   <!-- custom js -->
   <script src="{% static 'js/custom.js' %}"></script>
+  <script type="text/javascript"> 
+    function googleTranslateElementInit() {
+new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
+</script>
+
+
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
   <style>
+
+
+    #google_translate_element .skiptranslate{
+      display: inline !important;
+
+  }
+  .goog-te-gadget{
+      color: transparent !important;
+  }
+  /* White Theme for the select dropdown */
+.goog-te-combo {
+  padding: 8px; /* Add padding for spacing */
+  font-size: 14px; /* Set font size */
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 4px; /* Add rounded corners */
+  background-color: #fff; /* White background color */
+  color: #333; /* Dark text color */
+}
+
+  /* Style the select dropdown when it's hovered */
+  .goog-te-combo:hover {
+      border-color: #999; /* Darker border color on hover */
+  }
+
+  /* Style the select dropdown when it's focused (clicked) */
+  .goog-te-combo:focus {
+      outline: none; /* Remove the default focus outline */
+      border-color: #007bff; /* Change border color on focus */
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a shadow on focus */
+  }
+
+  /* Style the dropdown arrow */
+  .goog-te-combo-arrow {
+      font-size: 12px; /* Adjust arrow size */
+      color: #fff; /* Light arrow color */
+  }
+
+  /* Style the dropdown options */
+  .goog-te-menu-value {
+      font-size: 14px; /* Set font size for options */
+      color: #fff; /* Light text color for options */
+      background-color: #333; /* Dark background color for options */
+  }
+
+  /* Style the dropdown options on hover */
+  .goog-te-menu-value:hover {
+      background-color: #007bff; /* Change background color on hover */
+      color: #fff; /* Light text color on hover */
+  }
+
+
+
     /* Add this CSS to your stylesheet */
     .quote_btn-container .dropdown-toggle {
         background-color: white;

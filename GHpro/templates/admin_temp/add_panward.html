@@ -1,0 +1,438 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- add-doctor24:06-->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico'%}">
+    <title>GentleHaloes Admin Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css'%}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css'%}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/select2.min.css'%}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap-datetimepicker.min.css'%}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css'%}">
+   
+		<script src="{% static 'assets/js/html5shiv.min.js' %}"></script>
+		<script src="{% static 'assets/js/respond.min.js' %}"></script>
+	
+</head>
+
+<body>
+    <div class="main-wrapper">
+    <div class="header">
+			<div class="header-left">
+				<a href="{% url 'admin_dashboard' %}" class="logo">
+					<img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+				</a>
+			</div>
+			<a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+					</div>
+                    {% else %}
+
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+					</div>
+                    
+                    {% endif %}
+                </li>
+            </ul>
+            <div class="dropdown mobile-user-menu float-right">
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="profile.html">My Profile</a>
+                    <a class="dropdown-item" href="edit-profile.html">Edit Profile</a>
+                    <a class="dropdown-item" href="settings.html">Settings</a>
+                    <a class="dropdown-item" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+                        <li class="active">
+                            <a href="{% url 'admin_dashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                        </li> 
+						
+
+                       
+
+                       
+
+                        
+
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-medkit"></i>
+                                <span>Medicines </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+                                <li>
+								<a href="{% url 'add_medicine_category' %}"><i class="fa fa-plus"></i> <span>Add Category</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'view_medicine_category' %}"><i class="fa fa-list"></i> <span>view Category</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'add_medicine' %}"><i class="fa fa-plus"></i> <span>Add Medicine</span></a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'view_medicine' %}"><i class="fa fa-list"></i> <span>View Medicine</span></a>
+                                </li>
+								
+								
+							</ul>
+						</li>
+
+
+                        
+                        <li>
+							<a href="{% url 'ad_panward' %}"><i class="fa fa-user" ></i> <span>Ward List </span> </a>
+							
+						</li>
+
+                        
+                        <li>
+							<a href="{% url 'ad_ashaworker' %}"><i class="fa fa-user" id="ashaind"></i> <span>Asha Workers List </span> </a>
+							
+						</li>
+                        <li>
+							<a href="{% url 'ad_member' %}"><i class="fa fa-user" id="memind"></i> <span>Members List </span> </a>
+							
+						</li>
+                        
+                       
+                        
+                        <li>
+							<a href="{% url 'ad_nurse' %}"><i class="fa fa-user" id="ashaind"></i> <span>Nurses List </span> </a>
+							
+						</li>
+                        
+                        <li>
+							<a href="{% url 'ad_hca' %}"><i class="fa fa-user" id="hosind" ></i> <span>Primary Health Center </span> </a>
+							
+						</li>
+
+
+                         <li>
+                            <a href="{% url 'patients' %}"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'ad_home_visit' %}"><i class="fa fa-wheelchair"></i> <span>Home Visits</span></a>
+                        </li>
+
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span>Appointments </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'appointments' %}">All Appointments</a></li>
+                                <li><a href="{% url 'current_appointment' %}">Current Appointments</a></li>
+                                <li><a href="{% url 'future_appointment' %}">Future Appointments</a></li>
+                                <li><a href="{% url 'past_appointment' %}">Past Appointments</a></li>
+								
+								
+							</ul>
+						</li>
+                        <li>
+                            <a href="{% url 'schedule' %}"><i class="fa fa-calendar-check-o"></i> <span>Asha Workers Schedule</span></a>
+                        </li> 
+                        
+                        {% comment %} <li>
+                            <a href="{% url 'adgallery' %}"><i class="fa fa-calendar-check-o"></i> <span>Gallery</span></a>
+                        </li>  {% endcomment %}
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-user"></i> <span> Gallery </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								
+								<li><a href="{% url 'adgallery' %}">Add Image</a></li>
+								<li><a href="{% url 'dis_gallery' %}">Edit Image</a></li>
+								
+							</ul>
+						</li>
+
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a href="{% url 'blog' %}">Blog View</a></li>
+                                <li><a href="{% url 'add-blog' %}">Add Blog</a></li>
+                               
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{% url 'appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart</span></a>
+                        </li> 
+                        <li>
+                            <a href="{% url 'ashaworker_appointment_chart' %}"><i class="fa fa-calendar-check-o"></i> <span>Chart1</span></a>
+                        </li> 
+                    </ul>
+                </div>
+            </div>
+        </div> 
+        <div class="page-wrapper">
+            <div class="content">
+                <br> <br>
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2">
+                        <h4 class="page-title">ADD WARDS</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2">
+                        <div class="card" > <!-- Linear gradient background -->
+                            <div class="card-body">
+                                <form method="POST" action="" autocomplete="off" enctype="multipart/form-data" onsubmit="return validateWard()">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                       <div class="col-sm-6">
+                                              
+                                        <div class="form-group">
+                                            <label>Panchayat</label>
+                                            <select class="form-control select" name="panchayath" id="panchayath" size="100">
+                                                <option>Erumely</option>
+                                                <option>Mundakkayam</option>
+                                                <option>Kanjirappally</option>
+                                                <option>Parathodu</option>
+                                                <option>Manimala</option>
+                                                
+        
+                                            </select>
+                                            
+                                        </div> </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label>Enter Ward <span class="text-danger">*</span></label>
+                                                <input class="form-control" id="ward" name="ward" type="text">
+                                                <span class="error" id="name-error"></span> <!-- Display validation error message here -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button  class="btn btn-primary submit-btn" id="createward">Create Ward</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/select2.min.js' %}"></script>
+	<script src="{% static 'assets/js/moment.min.js' %}"></script>
+	<script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+    <style>
+        .header {
+            background-color: #00c6a9;
+            left: 0;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 1039;
+            height: 50px;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+        .submit-btn{
+             padding: 10px 20px;
+            font-size: 15px;
+            background-color: #0a8ff5;
+            margin-left:400px;
+        }
+        .card{
+            background-color:#2fe0c7;
+        }
+        .page-title{
+            color:black;
+            font-size:30px;
+            text-align:center;
+            font-weight:bold;
+        }
+        .form-group{
+            color:black;
+            font-size:25px;
+            
+            font-weight:bold;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            // Add keyup event listeners to input fields
+            $("#name").keyup(function () {
+                validateName();
+            });
+    
+            // Other input fields' keyup event listeners here
+    
+            // Function to validate Name
+            function validateName() {
+                var name = $("#name").val();
+                var nameError = $("#name-error");
+    
+                // Regular expression to allow only alphabetic characters
+                var alphabeticRegex = /^[A-Za-z ]+$/;
+    
+                if (name.length === 0) {
+                    nameError.text("Name is required.");
+                } else if (!alphabeticRegex.test(name)) {
+                    nameError.text("Name should contain only alphabetic characters.");
+                } else {
+                    nameError.text(""); // Clear the error message
+                }
+            }
+    
+            // Other validation functions for input fields here
+        });
+
+        $(document).ready(function () {
+            // Add keyup event listener to the email input field
+            $("#email").keyup(function () {
+                validateEmail();
+            });
+    
+            // Function to validate Email
+            function validateEmail() {
+                var email = $("#email").val();
+                var emailError = $("#email-error");
+    
+                // Regular expression for basic email validation
+                var emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    
+                if (email.length === 0) {
+                    emailError.text("Email is required.");
+                } else if (!emailRegex.test(email)) {
+                    emailError.text("Invalid email address.");
+                } else {
+                    emailError.text(""); // Clear the error message
+                }
+            }
+        });
+
+        $(document).ready(function () {
+            // Add keyup event listener to the password input field
+            $("#pass").keyup(function () {
+                validatePassword();
+            });
+    
+            // Function to validate Password
+            function validatePassword() {
+                var password = $("#pass").val();
+                var passwordError = $("#password-error");
+    
+                // Regular expressions for password validation
+                var capitalRegex = /[A-Z]/;
+                var specialCharRegex = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]/;
+                var numberRegex = /[0-9]/;
+    
+                // Check minimum and maximum length
+                if (password.length < 6 || password.length > 20) {
+                    passwordError.text("Password must be between 6 and 10 characters.");
+                } else if (!capitalRegex.test(password)) {
+                    passwordError.text("Password must contain at least one capital letter.");
+                } else if (!specialCharRegex.test(password)) {
+                    passwordError.text("Password must contain at least one special character.");
+                } else if (!numberRegex.test(password)) {
+                    passwordError.text("Password must contain at least one number.");
+                } else {
+                    passwordError.text(""); // Clear the error message
+                }
+            }
+        });
+
+        $(document).ready(function () {
+            // Add keyup event listener to the postal code input field
+            $("#pin").keyup(function () {
+                validatePostalCode();
+            });
+    
+            // Function to validate Postal Code
+            function validatePostalCode() {
+                var postalCode = $("#pin").val();
+                var pinError = $("#pin-error");
+    
+                // Regular expression to match exactly 6 digits
+                var regex = /^\d{6}$/;
+    
+                if (!regex.test(postalCode)) {
+                    pinError.text("Postal code must contain exactly 6 digits.");
+                } else {
+                    pinError.text(""); // Clear the error message
+                }
+            }
+        });
+        $(document).ready(function () {
+            // Add keyup event listener to the phone number input field
+            $("#phone").keyup(function () {
+                validatePhoneNumber();
+            });
+    
+            // Function to validate Phone Number
+            function validatePhoneNumber() {
+                var phoneNumber = $("#phone").val();
+                var phoneError = $("#phone-error");
+    
+                // Regular expression to match exactly 10 digits
+                var regex = /^\d{10}$/;
+    
+                if (!regex.test(phoneNumber)) {
+                    phoneError.text("Phone number must contain exactly 10 digits.");
+                } else {
+                    phoneError.text(""); // Clear the error message
+                }
+            }
+        });
+    </script>
+   
+    <script>
+        function validateWard() {
+            const wardSelect = document.getElementById("ward");
+            const selectedWard = wardSelect.value;
+            
+            // Make an AJAX request to check if the ward exists
+            fetch(`/check-ward-exists/?ward=${selectedWard}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        // Ward already assigned, show a popup alert
+                        alert("This ward is already assigned to another Ashaworker. Please select a different ward.");
+                    } else {
+                        // Ward is available, continue with form submission
+                        document.querySelector("form").submit();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking ward existence:", error);
+                });
+    
+            // Prevent the form from submitting immediately
+            return false;
+        }
+    </script>
+    
+        
+    
+</body>
+
+
+<!-- add-doctor24:06-->
+</html>

@@ -11,7 +11,12 @@ from . models import Slots
 from . models import Blog
 from . models import Hca
 from . models import home_visit
+from . models import Panchayath_Ward
 from . models import Member
+from . models import MedicineCategory
+from . models import Medicine
+from . models import Nurse
+from . models import Prescription_model
 
 
 
@@ -31,7 +36,13 @@ admin.site.register(Slots)
 admin.site.register(Blog)
 admin.site.register(Hca)
 admin.site.register(home_visit)
+admin.site.register(Panchayath_Ward)
 admin.site.register(Member)
+admin.site.register(MedicineCategory)
+admin.site.register(Medicine)
+admin.site.register(Nurse)
+admin.site.register(Prescription_model)
+
 
 
 

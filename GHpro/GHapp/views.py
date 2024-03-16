@@ -2,10 +2,10 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
-from .models import Ashaworker,Blog,AshaworkerSchedule,Hca
+from .models import Ashaworker,Nurse,Prescription_model,Member,Panchayath_Ward,Blog,AshaworkerSchedule,Hca,Medicine,MedicineCategory
 from .models import Appointment,Slots
 from .models import PatientProfile,home_visit
-from .models import MedicalRecord
+from .models import MedicalRecord,Ashaworker
 from .models import Image 
 from datetime import datetime, timedelta
 from django.urls import reverse_lazy
@@ -45,8 +45,18 @@ from django.contrib.auth.decorators import login_required
 User=get_user_model()
 
 patient_required
+from django.core.exceptions import ObjectDoesNotExist
+
 def index(request):
-    return render(request,'index.html')
+    
+    patients = PatientProfile.objects.all()  # Fetch all patients
+    images = Image.objects.all()
+    context = {
+        'images': images,
+        
+    }
+    return render(request, 'index.html', {'patients': patients},context)
+
 
 patient_required
 def about(request):
@@ -64,8 +74,6 @@ patient_required
 def contact(request):
     return render(request,'contact.html')
 
-def index(request):
-    return render(request,'index.html')
 
 
 
@@ -313,7 +321,14 @@ def edit_patient_profile(request):
     # profile = PatientProfile.objects.get(user=user)
     user = request.user
     profile = get_object_or_404(PatientProfile, user=user)
+    # panchyath_names = Panchayath_Ward.objects.values_list('panchayath', flat=True).distinct()
+    # for name in panchyath_names:
+    #     print(name)
     
+    
+
+
+
     if request.method == "POST":
         print ('POST')
         user.first_name=request.POST.get('first_name')
@@ -340,10 +355,13 @@ def edit_patient_profile(request):
         print("house no :",profile.house_no)
 
         profile.address = request.POST.get('address')
-        print("adsress :",profile.address)
+        print("address :",profile.address)
 
         profile.birth_date = request.POST.get('birth_date')
         print("dob :",profile.birth_date)
+
+        profile.panchayath= request.POST.get('panchayat')
+
 
         profile.ward = request.POST.get('ward')
         print("ward :",profile.ward)
@@ -395,7 +413,8 @@ def edit_patient_profile(request):
         return redirect('print_patient_profile')  # Redirect to the profile page
     context = {
         'user': user,
-        'profile': profile
+        'profile': profile,
+        # 'panchyath_names': panchyath_names,
     }
 
     return render(request, 'edit_patient_profile.html',context) 
@@ -405,10 +424,9 @@ def print_patient_profile(request):
     profile = PatientProfile.objects.get(user=request.user)
     ward = profile.ward
     print(ward)
-    ashaworker = Ashaworker.objects.get(ward=ward)
-    print(ashaworker)
-    return render(request, 'print_patient_profile.html', {'profile': profile, 'ashaworker':ashaworker})
-
+    # ashaworker = Ashaworker.objects.get(ward=ward)
+    # print(ashaworker)
+    return render(request, 'print_patient_profile.html', {'profile': profile})
 
 
 from django.contrib.auth import update_session_auth_hash
@@ -550,18 +568,11 @@ def pro_ashaworker(request):
 
 
 
-
-
-
 @login_required(login_url='login_page')
 def appointment_form(request, appointment_id=None):
     patientprofile = request.user.patientprofile
-    w = patientprofile.ward
-    ashaworker = Ashaworker.objects.get(ward=w)
-    print(w)
-    # print(n)
-    # n=ashaworker.Name
-    slots = Slots.objects.filter(ashaworker=ashaworker).distinct()
+    ashaworkers = Ashaworker.objects.all()
+
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
@@ -624,7 +635,7 @@ def appointment_form(request, appointment_id=None):
         except ValueError:
             return render(request, 'appointment.html', {'error_message': 'Invalid time format'})
 
-    return render(request, 'appointment.html', {'patientprofile': patientprofile, 'appointment_id': appointment_id,'ashaworker': ashaworker, 'slots':slots})
+    return render(request, 'appointment.html', {'patientprofile': patientprofile, 'appointment_id': appointment_id,'ashaworkers': ashaworkers})
 
 def get_times(request):
     selected_date_str = request.GET.get('selected_date', None)
@@ -642,6 +653,126 @@ def get_times(request):
         return JsonResponse({'times': times})
     else:
         return JsonResponse({'times': []})
+
+
+
+
+
+
+
+
+
+
+
+# @login_required(login_url='login_page')
+# def appointment_form(request, appointment_id=None):
+    # patientprofile = request.user.patientprofile
+    # w = patientprofile.ward
+    # ashaworker = Ashaworker.objects.get(ward=w)
+    # print(ashaworker)
+
+    # slots = Slots.objects.filter(ashaworker=ashaworker).distinct()
+    # if request.method == 'POST':
+    #     first_name = request.POST.get('first_name')
+    #     print(first_name)      
+    #     last_name = request.POST.get('last_name')
+    #     print(last_name)
+    #     email = request.POST.get('email')
+    #     print(email)
+    #     gender = request.POST.get('gender')
+    #     print(gender)
+    #     address = request.POST.get('address')
+    #     print(address)
+    #     ward_asha = request.POST.get('ward')
+    #     print(ward_asha)
+    #     panchayath = request.POST.get('panchayath')
+    #     print(panchayath)
+    #     phone_number = request.POST.get('phone_number')
+    #     print(phone_number)
+    #     medical_conditions = request.POST.get('medical_conditions')
+    #     print(medical_conditions)
+    #     urgency = request.POST.get('urgency')
+    #     print(urgency)
+    #     medication_names = request.POST.get('medication_names')
+    #     print(medication_names)
+    #     symptoms = request.POST.get('symptoms')
+    #     print(symptoms)
+    #     asha_id = request.POST.get('ashaworker')
+    #     print(asha_id)
+    #     date_id = request.POST.get('date')
+    #     print(date_id)
+    #     selected_time_slot = request.POST.get('time')
+    #     print(selected_time_slot)
+
+    #     try:
+    #         slot = Slots.objects.get(id=selected_time_slot)
+    #         # ashaworker = Ashaworker.objects.get(id=asha_id)
+    #         user = CustomUser.objects.get(id=request.user.id)
+
+    #         appointment = Appointment(
+    #             first_name=first_name,
+    #             last_name=last_name,
+    #             email=email,
+    #             gender=gender,
+    #             address=address,
+    #             ward_asha=ward_asha,
+    #             asha_id=asha_id,
+    #             panchayath=panchayath,
+    #             phone_number=phone_number,
+    #             medical_conditions=medical_conditions,
+    #             urgency=urgency,
+    #             medication_names=medication_names,
+    #             symptoms=symptoms,
+    #             ashaworker=ashaworker,
+    #             user=user,
+    #             slot=slot,
+    #             date=date_id,
+                
+    #         )
+            # one_week_ago = datetime.now() - timedelta(days=7)
+            # existing_appointments = Appointment.objects.filter(
+            #     user=request.user,
+            #     date__gte=one_week_ago
+            # )
+
+            # if existing_appointments.exists():
+            #     error_message = 'You already have an appointment within the last week.'
+            #     return render(request, 'appointment.html', {'error_message': error_message, 'error_flag': True})
+
+#             appointment.save()
+#             # print(ap)
+#             subject = 'Appointment is Successful'
+#             message = f'Your appointment for home visit is successful. Wait for the appointment approval message. Once the appointments is approved the you will get an approval message. Your Scheduled date: {date_id}, Your Scheduled Time: {slot.start_time} {slot.end_time}'
+#             from_email = settings.EMAIL_HOST_USER
+#             recipient_list = [request.user.email]
+#             send_mail(subject, message, from_email, recipient_list)
+#             return redirect('appointment_view')
+
+#         except Slots.DoesNotExist:
+#             return render(request, 'appointment.html', {'error_message': 'Time slot not found'})
+#         except ValueError:
+#             return render(request, 'appointment.html', {'error_message': 'Invalid time format'})
+
+#     return render(request, 'appointment.html', {'patientprofile': patientprofile, 'appointment_id': appointment_id,'ashaworker': ashaworker,'slots':slots})
+
+# # def get_times(request):
+#     selected_date_str = request.GET.get('selected_date', None)
+    
+#     if selected_date_str:
+#         # Convert the string date to a datetime object
+#         try:
+#             selected_date = datetime.strptime(selected_date_str, '%b. %d, %Y').date()
+#         except ValueError:
+#             return JsonResponse({'times': []})
+        
+#         # Query the database to get times for the selected date
+#         slots = Slots.objects.filter(date=selected_date)
+#         times = [f"{slot.start_time.strftime('%H:%M:%S')} - {slot.end_time.strftime('%H:%M:%S')}" for slot in slots]
+#         return JsonResponse({'times': times})
+#     else:
+#         return JsonResponse({'times': []})
+
+
 
 from datetime import datetime
 
@@ -883,145 +1014,50 @@ def check_ward_exists(request):
     return JsonResponse(response_data)
 
 
-
-#index page of member
-def member_index(request):
-    current_date = timezone.now().date()
-
-    # Retrieve Asha Workers
-    ashaworkers = Ashaworker.objects.all()
-
-    # Retrieve Patients
-    patients = PatientProfile.objects.all()
-    appointments = Appointment.objects.all()
-    
-    approved_appointments = Appointment.objects.filter(is_approved=True)
-
-
-    # Query the database to count the number of appointments for each patient
-    appointments_count = Appointment.objects.values('user__email').annotate(appointment_count=Count('id'))
-
-    # Extract the patient usernames and appointment counts for the chart
-    patient_usernames = [appointment['user__email'] for appointment in appointments_count]
-    appointment_counts = [appointment['appointment_count'] for appointment in appointments_count]
-
-    ashaworkers = Ashaworker.objects.annotate(appointment_count=Count('appointments'))
-    ashaworker_count = ashaworkers.count()
-    patients_count = patients.count()
-    appointments_count = appointments.count()
-    approved_appointments=approved_appointments.count()
-    # Create a DataFrame to store the data
-    data = {
-        'Ashaworker': [worker.Name for worker in ashaworkers],
-        'Appointment Count': [worker.appointment_count for worker in ashaworkers],
-    }
-
-    # Convert the data to a DataFrame
-    import pandas as pd
-    df = pd.DataFrame(data)
-
-    # Create a line chart
-    plt.figure(figsize=(6, 4))
-    plt.plot(data['Ashaworker'], data['Appointment Count'], marker='o', linestyle='-', color='b')
-    plt.title('Ashaworker Appointment Count')
-    plt.xlabel('Ashaworker')
-    plt.ylabel('Appointment Count')
-    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
-    plt.tight_layout()
-
-    # Save the plot to a BytesIO object
-    buffer = BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-
-    # Convert the plot to base64 for embedding in the HTML template
-    plot_data = base64.b64encode(buffer.read()).decode('utf-8')
-
-    return render(request, 'member_temp/member_index.html', {
-        'ashaworkers': ashaworkers,
-        'patients': patients,
-        'patient_usernames': patient_usernames,
-        'appointment_counts': appointment_counts,
-        'current_date': current_date,
-        'plot_data': plot_data,
-        'ashaworker_count': ashaworker_count,
-        'patients_count': patients_count,
-        'appointments_count': appointments_count,
-        'approved_appointments': approved_appointments,
-        
-        
-    })
-
-#add member
-
-def add_member(request):
+#add panchayath and ward
+def add_panward(request):
     if request.method == 'POST':
         # Retrieve data from the POST request
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        
-        gender = request.POST.get('gender')
-        address = request.POST.get('address')
-        taluk = request.POST.get('taluk')
-        panchayat = request.POST.get('panchayat')
-        wardmem = request.POST.get('wardmem')
-        
-        phone = request.POST.get('phone')
-        profile_photo = request.FILES.get('profile_photo')
-        role = CustomUser.MEMBER
-        print(role)
+        panchayath = request.POST.get('panchayath')
+        ward = request.POST.get('ward')
+        pan = Panchayath_Ward(panchayath=panchayath,ward=ward)
+        pan.save()
 
-        # Check if a user with the same email and role exists
-        if CustomUser.objects.filter(email=email, role=CustomUser.MEMBER).exists():
-            messages.info(request, 'Email already exists')
-            return redirect('add_member')
 
-        # Check if a user with the same ward exists
-        if Member.objects.filter(wardmem=wardmem).exists():
-            messages.info(request, 'Ward already assigned to another Ashaworker')
-            return redirect('add_member')
-
-        # Create the user and Ashaworker records
-        user = CustomUser.objects.create_user(email=email, password=password)
-        user.role = CustomUser.MEMBER
-        user.save()
-        member = Member(user=user, Name=name, email=email, 
-                         gender=gender, address=address, taluk=taluk, Panchayat=panchayat, wardmem=wardmem,
-                         phone=phone, profile_photo=profile_photo)
-        member.save()
-
-        subject = 'Member Login Details'
-        message = f'Registered as an Member. Your username: {email}, Password: {password}'
-        from_email = settings.EMAIL_HOST_USER  # Your email address
-        recipient_list = [user.email]  # Employee's email address
-
-        send_mail(subject, message, from_email, recipient_list)
-
-        return redirect('ad_member')
+        return redirect('ad_panward')
     else:
-        return render(request, 'admin_temp/add_member.html')
+        return render(request, 'admin_temp/add_panward.html')
+
+from django.http import JsonResponse
+
+def get_wards(request):
+    selected_panchayat = request.GET.get('panchayat')
+    wards = Panchayath_Ward.objects.filter(panchayath=selected_panchayat).values_list('ward', flat=True)
+    return JsonResponse({'wards': list(wards)})
+
+# def get_wards_mem(request):
+    selected_panchayat = request.GET.get('panchayat')
+    wards = Panchayath_Ward.objects.filter(panchayath=selected_panchayat).values_list('wardmem', flat=True)
+    return JsonResponse({'wards': list(wards)})
 
 @login_required(login_url='login_page')
-def ad_member(request):
-    members = Member.objects.all().order_by('wardmem')
-    print(members)
-    return render(request, 'admin_temp/ad_member.html', {'members': members})
+def ad_panward(request):
+    panchayaths = Panchayath_Ward.objects.values_list('panchayath', flat=True).distinct()
     
+    if request.method == 'GET' and 'panchayath_search' in request.GET:
+        panchayath_search = request.GET.get('panchayath_search')
+        pan = Panchayath_Ward.objects.filter(panchayath__icontains=panchayath_search)
+    else:
+        pan = Panchayath_Ward.objects.all()
 
-def check_wardmem_exists(request):
-    wardmem = request.GET.get("wardmem", "")
-    ward_exists = Member.objects.filter(wardmem=wardmem).exists()
-    response_data = {"exists": ward_exists}
-    return JsonResponse(response_data)
+    return render(request, 'admin_temp/ad_panward.html', {'pan': pan, 'panchayaths': panchayaths})
 
-def patient_list_mem(request):
-    member = Member.objects.get(user=request.user)
-    wardmem = member.wardmem
-    patients = PatientProfile.objects.filter(ward=wardmem, is_active=True)
-    return render(request, 'member_temp/patient_list_mem.html', {'patients': patients})
 
-#add ashaworker
+
+
+
+
+
 def add_asha(request):
     if request.method == 'POST':
         # Retrieve data from the POST request
@@ -1091,7 +1127,6 @@ def edit_member(request, member_id):
         new_profile_photo = request.FILES.get('new_profile_photo')
         if new_profile_photo:
             member.profile_photo = new_profile_photo
-
         member.Name = name
         member.email = email
         member.set_password(password)
@@ -1107,16 +1142,76 @@ def edit_member(request, member_id):
         return redirect('ad_member')
     return render(request, 'admin_temp/edit_member.html', {'member': member})
 
+from django.db.models import Count
+
+@login_required(login_url='login_page')
+def ad_ashaworker(request):
+    # Retrieve the unique Panchayath values from the Ashaworker model
+    unique_panchayaths = Ashaworker.objects.values_list('Panchayat', flat=True).distinct()
+
+    # Retrieve the search parameter from the request
+    search_query = request.GET.get('panchayath')
+
+    # Retrieve all Ashaworkers if no search parameter is provided
+    if not search_query:
+        ashaworkers = Ashaworker.objects.all()
+    else:
+        # Filter Ashaworkers based on the search parameter (panchayath)
+        ashaworkers = Ashaworker.objects.filter(Panchayat__icontains=search_query)
+
+    return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers, 'unique_panchayaths': unique_panchayaths})
+    
+    
+    # member.Name = name
+    #     member.email = email
+    #     member.set_password(password)
+        
+    #     member.gender = gender
+    #     member.address = address
+    #     member.taluk = taluk
+    #     member.Panchayat = panchayat
+    #     member.wardmem = wardmem
+
+    # member.Name = name
+    #     member.email = email
+    #     member.set_password(password)
+        
+    #     member.gender = gender
+    #     member.address = address
+    #     member.taluk = taluk
+    #     member.Panchayat = panchayat
+    #     member.wardmem = wardmem
+        
+
 
 # @login_required(login_url='login_page')
 # def ad_ashaworker(request):
 #     ashaworkers = Ashaworker.objects.all()
 #     return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers})
 
-@login_required(login_url='login_page')
+# @login_required(login_url='login_page')
+# def ad_ashaworker(request):
+#     ashaworkers = Ashaworker.objects.all().order_by('ward')
+#     return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers})
+
+
 def ad_ashaworker(request):
-    ashaworkers = Ashaworker.objects.all().order_by('ward')
-    return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers})
+    # Retrieve the unique Panchayath values from the Ashaworker model
+    unique_panchayaths = Ashaworker.objects.values_list('Panchayat', flat=True).distinct()
+
+    # Retrieve the search parameter from the request
+    search_query = request.GET.get('panchayath')
+
+    # Retrieve all Ashaworkers if no search parameter is provided
+    if not search_query:
+        ashaworkers = Ashaworker.objects.all()
+    else:
+        # Filter Ashaworkers based on the search parameter (panchayath)
+        ashaworkers = Ashaworker.objects.filter(Panchayat__icontains=search_query)
+
+    return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers, 'unique_panchayaths': unique_panchayaths})
+
+
 
 @login_required(login_url='login_page')
 def edit_asha(request, asha_id):
@@ -1187,6 +1282,590 @@ def delete_asha(request, asha_id):
         return redirect('ad_ashaworker')
 
     return render(request, 'admin_temp/delete_asha.html', {'ashaworker': ashaworker})
+
+
+# add Nurse
+
+def add_nurse(request):
+    if request.method == 'POST':
+        # Retrieve data from the POST request
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        dob = request.POST.get('dob')
+        doj = request.POST.get('doj')
+        gender = request.POST.get('gender')
+        address = request.POST.get('address')
+        taluk = request.POST.get('taluk')
+        panchayat = request.POST.get('panchayat')
+        wardnurse = request.POST.get('wardnurse')
+        
+        phone = request.POST.get('phone')
+        profile_photo = request.FILES.get('profile_photo')
+        role = CustomUser.NURSE
+        print(role)
+
+        # Check if a user with the same email and role exists
+        if CustomUser.objects.filter(email=email, role=CustomUser.NURSE).exists():
+            messages.info(request, 'Email already exists')
+            return redirect('add_nurse')
+
+        # Check if a user with the same ward exists
+        if Nurse.objects.filter(wardnurse=wardnurse).exists():
+            messages.info(request, 'Ward already assigned to another Nurse')
+            return redirect('add_nurse')
+
+        # Create the user and Ashaworker records
+        user = CustomUser.objects.create_user(email=email, password=password)
+        user.role = CustomUser.NURSE
+        user.save()
+        nurses = Nurse(user=user, Name=name, email=email, date_of_birth=dob, date_of_join=doj,
+                         gender=gender, address=address, taluk=taluk, Panchayat=panchayat, wardnurse=wardnurse,
+                         phone=phone, profile_photo=profile_photo)
+        nurses.save()
+
+        subject = 'Nurse Login Details'
+        message = f'Registered as an Nurse. Your username: {email}, Password: {password}'
+        from_email = settings.EMAIL_HOST_USER  # Your email address
+        recipient_list = [user.email]  # Employee's email address
+
+        send_mail(subject, message, from_email, recipient_list)
+
+        return redirect('ad_nurse')
+    else:
+        return render(request, 'admin_temp/add_nurse.html')
+
+# print Nurse
+@login_required(login_url='login_page')
+def ad_nurse(request):
+    # Retrieve the unique Panchayath values from the Ashaworker model
+    unique_panchayaths = Nurse.objects.values_list('Panchayat', flat=True).distinct()
+
+    # Retrieve the search parameter from the request
+    search_query = request.GET.get('panchayath')
+
+    # Retrieve all Ashaworkers if no search parameter is provided
+    if not search_query:
+        nurses = Nurse.objects.all()
+    else:
+        # Filter Ashaworkers based on the search parameter (panchayath)
+        nurses = Nurse.objects.filter(Panchayat__icontains=search_query)
+
+    return render(request, 'admin_temp/ad_nurse.html', {'nurses': nurses, 'unique_panchayaths': unique_panchayaths})
+
+# nurse index
+#index page of member
+def nurse_index(request):
+    current_date = timezone.now().date()
+
+    # Retrieve Asha Workers
+    ashaworkers = Ashaworker.objects.all()
+
+    # Retrieve Patients
+    patients = PatientProfile.objects.all()
+    appointments = Appointment.objects.all()
+    
+    approved_appointments = Appointment.objects.filter(is_approved=True)
+    future_appointments = Appointment.objects.filter(date__gt=current_date, status=True).order_by('date', 'slot__start_time')
+
+    # Query the database to count the number of appointments for each patient
+    appointments_count = Appointment.objects.values('user__email').annotate(appointment_count=Count('id'))
+
+    # Extract the patient usernames and appointment counts for the chart
+    patient_usernames = [appointment['user__email'] for appointment in appointments_count]
+    appointment_counts = [appointment['appointment_count'] for appointment in appointments_count]
+
+    ashaworkers = Ashaworker.objects.annotate(appointment_count=Count('appointments'))
+    ashaworker_count = ashaworkers.count()
+    patients_count = patients.count()
+    appointments_count = appointments.count()
+    approved_appointments=approved_appointments.count()
+    # Create a DataFrame to store the data
+    data = {
+        'Ashaworker': [worker.Name for worker in ashaworkers],
+        'Appointment Count': [worker.appointment_count for worker in ashaworkers],
+    }
+
+    # Convert the data to a DataFrame
+    import pandas as pd
+    df = pd.DataFrame(data)
+
+    # Create a line chart
+    plt.figure(figsize=(6, 4))
+    plt.plot(data['Ashaworker'], data['Appointment Count'], marker='o', linestyle='-', color='b')
+    plt.title('Ashaworker Appointment Count')
+    plt.xlabel('Ashaworker')
+    plt.ylabel('Appointment Count')
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+    plt.tight_layout()
+
+    # Save the plot to a BytesIO object
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+
+    # Convert the plot to base64 for embedding in the HTML template
+    plot_data = base64.b64encode(buffer.read()).decode('utf-8')
+
+    return render(request, 'nurse_temp/nurse_index.html', {
+        'ashaworkers': ashaworkers,
+        'patients': patients,
+        'patient_usernames': patient_usernames,
+        'appointment_counts': appointment_counts,
+        'current_date': current_date,
+        'plot_data': plot_data,
+        'ashaworker_count': ashaworker_count,
+        'patients_count': patients_count,
+        'appointments_count': appointments_count,
+        'approved_appointments': approved_appointments,
+        
+        
+    })
+
+# patient list in nurs index
+@login_required
+def patient_list_nurse(request):
+    # Retrieve the member associated with the logged-in user
+    nurse = Nurse.objects.get(user=request.user)
+    
+    ward_filter = nurse.wardnurse  # Assuming wardmem is the field containing the member's ward
+    
+    if ward_filter:
+        patients = PatientProfile.objects.filter(ward=ward_filter)
+    else:
+        patients = PatientProfile.objects.none()  # Return an empty queryset
+    
+    # Assuming you want to display all available ward numbers for the member
+    ward_numbers = PatientProfile.objects.filter(ward=ward_filter).values_list('ward', flat=True).distinct()
+    
+    return render(request, 'nurse_temp/patient_list_nurse.html', {'patients': patients, 'ward_numbers': ward_numbers})
+
+
+
+# @login_required
+# def add_prescription(request):
+#     nurse = Nurse.objects.get(user=request.user)
+#     nurse_name = nurse.Name  # Fetch the nurse's name
+
+#     if request.method == 'POST':
+#         patient_id = request.POST.get('patient_id')
+#         print(patient_id)
+#         medicine_id = request.POST.get('medicine')
+#         morning = request.POST.get('morning')
+#         noon = request.POST.get('noon')
+#         evening = request.POST.get('evening')
+#         date_of_prescription = request.POST.get('date_of_prescription')
+#         quantity = request.POST.get('quantity')
+#         duration = request.POST.get('duration')
+#         dosages = request.POST.get('dosages')
+
+#         patient = PatientProfile.objects.get(id=patient_id)
+
+#         prescription = Prescription_model.objects.create(
+#             nurses=nurse,
+#             patient=patient,
+#             medicine_id=medicine_id,
+#             morning=morning,
+#             noon=noon,
+#             evening=evening,
+#             date_of_prescription=date_of_prescription,
+#             quantity=quantity,
+#             duration=duration,
+#             dosages=dosages
+#         )
+
+#         return redirect('add_prescription')
+
+#     patients = PatientProfile.objects.filter(ward=nurse.wardnurse)
+#     medicines = Medicine.objects.all()
+
+#     return render(request, 'nurse_temp/add_prescription.html', {'nurse_name': nurse_name, 'patients': patients, 'medicines': medicines, 'patient_id': patient_id})
+
+
+
+@login_required
+def add_prescription(request):
+    nurse = Nurse.objects.get(user=request.user)
+    nurse_name = nurse.Name  # Fetch the nurse's name
+    patient_id = None  # Initialize patient_id
+
+    if request.method == 'POST':
+        patient_id = request.POST.get('patient_id')
+        print(patient_id)
+        medicine_id = request.POST.get('medicine')
+        morning = request.POST.get('morning')
+        noon = request.POST.get('noon')
+        evening = request.POST.get('evening')
+        date_of_prescription = request.POST.get('date_of_prescription')
+        quantity = request.POST.get('quantity')
+        duration = request.POST.get('duration')
+        dosages = request.POST.get('dosages')
+
+        patient = PatientProfile.objects.get(id=patient_id)
+
+        prescription = Prescription_model.objects.create(
+            nurses=nurse,
+            patient=patient,
+            medicine_id=medicine_id,
+            morning=morning,
+            noon=noon,
+            evening=evening,
+            date_of_prescription=date_of_prescription,
+            quantity=quantity,
+            duration=duration,
+            dosages=dosages
+        )
+
+        return redirect('add_prescription')
+
+    patients = PatientProfile.objects.filter(ward=nurse.wardnurse)
+    medicines = Medicine.objects.all()
+
+    return render(request, 'nurse_temp/add_prescription.html', {'nurse_name': nurse_name, 'patients': patients, 'medicines': medicines, 'patient_id': patient_id})
+
+
+
+
+
+
+
+
+# from django.shortcuts import render, redirect
+# from .models import Nurse, PatientProfile, Prescription_model
+# from django.contrib.auth.decorators import login_required
+
+# @login_required
+# def add_prescription(request):
+#     nurse = Nurse.objects.get(user=request.user)
+    
+
+#     if request.method == 'POST':
+#         nurse_id = request.POST.get('nurse_id')
+#         patient_id = request.POST.get('patient_id')
+        
+#         medicine_id = request.POST.get('medicine')
+#         morning = request.POST.get('morning')
+#         noon = request.POST.get('noon')
+#         evening = request.POST.get('evening')
+#         date_of_prescription = request.POST.get('date_of_prescription')
+#         quantity = request.POST.get('quantity')
+#         duration = request.POST.get('duration')
+#         dosages = request.POST.get('dosages')
+
+#         nurse = Nurse.objects.get(id=nurse_id)
+#         patient = PatientProfile.objects.get(id=patient_id)
+
+#         prescription = Prescription_model.objects.create(
+#             nurse=nurse,
+#             patient=patient,
+            
+#             medicine_id=medicine_id,
+#             morning=morning,
+#             noon=noon,
+#             evening=evening,
+#             date_of_prescription=date_of_prescription,
+#             quantity=quantity,
+#             duration=duration,
+#             dosages=dosages
+#         )
+
+#         return redirect('add_prescription')  # Assuming you have a URL named 'prescription_list'
+
+#     # nurses = Nurse.objects.all()
+#     # patients = PatientProfile.objects.all()
+#     ward_filter = nurse.wardnurse  # Assuming wardmem is the field containing the member's ward
+#     # patients = PatientProfile.objects.filter(ward__wardnurse=nurse)
+#     patients = PatientProfile.objects.filter(ward=ward_filter)
+#     medicines = Medicine.objects.all()
+#     appointments = Appointment.objects.all()
+    
+#     return render(request, 'nurse_temp/add_prescription.html', {'nurse': nurse, 'patients': patients, 'medicines': medicines, 'appointments': appointments})
+
+
+# views.py for view_prescription_nurse
+
+from django.shortcuts import render
+from .models import Prescription_model
+
+def view_prescription_nurse(request):
+    nurse = Nurse.objects.get(user=request.user)
+    prescriptions = Prescription_model.objects.filter(nurses=nurse)
+    return render(request, 'nurse_temp/view_prescription_nurse.html', {'prescriptions': prescriptions})
+
+
+# views.py for view_prescription_patient
+
+from django.shortcuts import render, redirect
+from .models import Nurse, PatientProfile, Prescription_model, Medicine
+from django.contrib.auth.decorators import login_required
+
+def patient_prescriptions(request, patient_id):
+    patient = get_object_or_404(PatientProfile, pk=patient_id)
+    prescriptions = Prescription_model.objects.filter(patient=patient)
+    return render(request, 'patient_prescriptions.html', {'patient': patient, 'patient_id':patient_id,'prescriptions': prescriptions})
+
+
+
+
+
+
+
+
+
+#add member
+
+def add_member(request):
+    if request.method == 'POST':
+        # Retrieve data from the POST request
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        gender = request.POST.get('gender')
+        address = request.POST.get('address')
+        taluk = request.POST.get('taluk')
+        panchayat = request.POST.get('panchayat')
+        wardmem = request.POST.get('wardmem')
+        
+        phone = request.POST.get('phone')
+        profile_photo = request.FILES.get('profile_photo')
+        role = CustomUser.MEMBER
+        print(role)
+
+        # Check if a user with the same email and role exists
+        if CustomUser.objects.filter(email=email, role=CustomUser.MEMBER).exists():
+            messages.info(request, 'Email already exists')
+            return redirect('add_member')
+
+        # Check if a user with the same ward exists
+        if Member.objects.filter(wardmem=wardmem).exists():
+            messages.info(request, 'Ward already assigned to another Ashaworker')
+            return redirect('add_member')
+
+        # Create the user and Ashaworker records
+        user = CustomUser.objects.create_user(email=email, password=password)
+        user.role = CustomUser.MEMBER
+        user.save()
+        member = Member(user=user, Name=name, email=email, 
+                         gender=gender, address=address, taluk=taluk, Panchayat=panchayat, wardmem=wardmem,
+                         phone=phone, profile_photo=profile_photo)
+        member.save()
+
+        subject = 'Member Login Details'
+        message = f'Registered as an Member. Your username: {email}, Password: {password}'
+        from_email = settings.EMAIL_HOST_USER  # Your email address
+        recipient_list = [user.email]  # Employee's email address
+
+        send_mail(subject, message, from_email, recipient_list)
+
+        return redirect('ad_member')
+    else:
+        return render(request, 'admin_temp/add_member.html')
+
+
+#edit member
+    
+@login_required(login_url='login_page')
+def edit_member(request, member_id):
+    member = get_object_or_404(Member, id=member_id)
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password=request.POST.get('password')
+        
+        gender = request.POST.get('gender')
+        address = request.POST.get('address')
+        taluk = request.POST.get('taluk')
+        panchayat = request.POST.get('panchayat')
+        wardmem = request.POST.get('wardmem')
+        
+        phone = request.POST.get('phone')
+        new_profile_photo = request.FILES.get('new_profile_photo')
+        if new_profile_photo:
+            member.profile_photo = new_profile_photo
+
+        member.Name = name
+        member.email = email
+        member.set_password(password)
+        
+        member.gender = gender
+        member.address = address
+        member.taluk = taluk
+        member.Panchayat = panchayat
+        member.wardmem = wardmem
+        
+        member.phone = phone
+        member.save()
+        return redirect('ad_member')
+    return render(request, 'admin_temp/edit_member.html', {'member': member})
+
+
+# search members
+@login_required(login_url='login_page')
+def search_member(request):
+    # Get the search query from the GET request
+    search_query = request.GET.get('memname', '')
+
+    # Filter Ashaworkers whose name contains the search query
+    members = Member.objects.filter(Name__icontains=search_query, is_active=True)
+
+    context = {
+        'members': members,
+        'search_query': search_query,
+    }
+
+    return render(request, 'admin_temp/ad_member.html', context)
+
+
+# print member
+@login_required(login_url='login_page')
+def ad_member(request):
+    # Retrieve the unique Panchayath values from the Ashaworker model
+    unique_panchayaths = Member.objects.values_list('Panchayat', flat=True).distinct()
+
+    # Retrieve the search parameter from the request
+    search_query = request.GET.get('panchayath')
+
+    # Retrieve all Ashaworkers if no search parameter is provided
+    if not search_query:
+        members = Member.objects.all()
+    else:
+        # Filter Ashaworkers based on the search parameter (panchayath)
+        members = Member.objects.filter(Panchayat__icontains=search_query)
+
+    return render(request, 'admin_temp/ad_member.html', {'members': members, 'unique_panchayaths': unique_panchayaths})
+
+
+
+
+
+    
+
+def check_wardmem_exists(request):
+    wardmem = request.GET.get("wardmem", "")
+    ward_exists = Member.objects.filter(wardmem=wardmem).exists()
+    response_data = {"exists": ward_exists}
+    return JsonResponse(response_data)
+
+
+
+from django.contrib.auth.decorators import login_required
+from .models import Member
+
+@login_required
+def patient_list_mem(request):
+    # Retrieve the member associated with the logged-in user
+    member = Member.objects.get(user=request.user)
+    
+    ward_filter = member.wardmem  # Assuming wardmem is the field containing the member's ward
+    
+    if ward_filter:
+        patients = PatientProfile.objects.filter(ward=ward_filter)
+    else:
+        patients = PatientProfile.objects.none()  # Return an empty queryset
+    
+    # Assuming you want to display all available ward numbers for the member
+    ward_numbers = PatientProfile.objects.filter(ward=ward_filter).values_list('ward', flat=True).distinct()
+    
+    return render(request, 'member_temp/patient_list_mem.html', {'patients': patients, 'ward_numbers': ward_numbers})
+
+# ashaworkers list in member page
+def asha_list_mem(request):
+    # Retrieve the member associated with the logged-in user
+    member_asha = Member.objects.get(user=request.user)
+    
+    ward_filter = member_asha.wardmem  # Assuming wardmem is the field containing the member's ward
+    
+    if ward_filter:
+        asha = Ashaworker.objects.filter(ward=ward_filter)
+    else:
+        asha = PatientProfile.objects.none()  # Return an empty queryset
+    
+    # Assuming you want to display all available ward numbers for the member
+    ward_numbers = PatientProfile.objects.filter(ward=ward_filter).values_list('ward', flat=True).distinct()
+    
+    return render(request, 'member_temp/ashaworker_Details.html', {'asha': asha, 'ward_numbers': ward_numbers})
+
+#index page of member
+def member_index(request):
+    current_date = timezone.now().date()
+
+    # Retrieve Asha Workers
+    ashaworkers = Ashaworker.objects.all()
+
+    # Retrieve Patients
+    patients = PatientProfile.objects.all()
+    appointments = Appointment.objects.all()
+    
+    approved_appointments = Appointment.objects.filter(is_approved=True)
+
+
+    # Query the database to count the number of appointments for each patient
+    appointments_count = Appointment.objects.values('user__email').annotate(appointment_count=Count('id'))
+
+    # Extract the patient usernames and appointment counts for the chart
+    patient_usernames = [appointment['user__email'] for appointment in appointments_count]
+    appointment_counts = [appointment['appointment_count'] for appointment in appointments_count]
+
+    ashaworkers = Ashaworker.objects.annotate(appointment_count=Count('appointments'))
+    ashaworker_count = ashaworkers.count()
+    patients_count = patients.count()
+    appointments_count = appointments.count()
+    approved_appointments=approved_appointments.count()
+    # Create a DataFrame to store the data
+    data = {
+        'Ashaworker': [worker.Name for worker in ashaworkers],
+        'Appointment Count': [worker.appointment_count for worker in ashaworkers],
+    }
+
+    # Convert the data to a DataFrame
+    import pandas as pd
+    df = pd.DataFrame(data)
+
+    # Create a line chart
+    plt.figure(figsize=(6, 4))
+    plt.plot(data['Ashaworker'], data['Appointment Count'], marker='o', linestyle='-', color='b')
+    plt.title('Ashaworker Appointment Count')
+    plt.xlabel('Ashaworker')
+    plt.ylabel('Appointment Count')
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+    plt.tight_layout()
+
+    # Save the plot to a BytesIO object
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+
+    # Convert the plot to base64 for embedding in the HTML template
+    plot_data = base64.b64encode(buffer.read()).decode('utf-8')
+
+    return render(request, 'member_temp/member_index.html', {
+        'ashaworkers': ashaworkers,
+        'patients': patients,
+        'patient_usernames': patient_usernames,
+        'appointment_counts': appointment_counts,
+        'current_date': current_date,
+        'plot_data': plot_data,
+        'ashaworker_count': ashaworker_count,
+        'patients_count': patients_count,
+        'appointments_count': appointments_count,
+        'approved_appointments': approved_appointments,
+        
+        
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @login_required(login_url='login_page')
@@ -1358,6 +2037,12 @@ def login_page(request):
             elif user.role == CustomUser.HCA:
                 login(request, user)
                 return redirect('hca_index')
+            elif user.role == CustomUser.MEMBER:
+                login(request, user)
+                return redirect('member_index')
+            elif user.role == CustomUser.NURSE:
+                login(request, user)
+                return redirect('nurse_index')
             elif user.role == CustomUser.ADMIN:
                 login(request, user)
                 return redirect('admin_dashboard')
@@ -1464,13 +2149,36 @@ def dis_gallery(request):
 
 def index(request):
     
+    # Retrieve all Image objects
     images = Image.objects.all()
 
-    
+    # Check if the user is authenticated
+    if request.user.is_authenticated:
+        # Retrieve the CustomUser object for the authenticated user
+        user = get_object_or_404(CustomUser, pk=request.user.id)
+        print(user)
+        user_pk = user.pk
+        print(user_pk)
+
+        # Retrieve the PatientProfile object for the authenticated user
+        try:
+            patient = PatientProfile.objects.get(user=user)
+            print(patient)
+        except PatientProfile.DoesNotExist:
+            # Handle the case where the PatientProfile does not exist for the user
+            patient = None
+    else:
+        user = None
+        patient = None
+
+    # Prepare the context for rendering the template
     context = {
         'images': images,
+        'patient': patient,
+        'user': user,
     }
 
+    # Render the template with the context
     return render(request, 'index.html', context)
 
 def edit_gallery_image(request):
@@ -2297,3 +3005,98 @@ def check_approval_status(request, appointment_id):
             return JsonResponse({'approved': False})
     except Appointment.DoesNotExist:
         return JsonResponse({'message': 'Appointment not found'}, status=404)
+    
+
+# Medicine Section
+    
+def add_medicine_category(request):
+     if request.method == 'POST':
+         category_name = request.POST['category_name']  # Get the form field values
+         description  = request.POST['description']
+
+         ob = MedicineCategory()
+         ob.category_name = category_name
+         ob.description = description 
+         ob.save()
+                
+                 # Redirect to the view_medicine_category page after successful save
+         return redirect('view_medicine_category')
+        
+    
+     # Render the form page for GET requests
+     return render(request, 'admin_temp/add_medicine_category.html')
+
+def view_medicine_category(request):
+    categories = MedicineCategory.objects.filter(is_active=True)
+    return render(request, 'admin_temp/view_medicine_category.html', {'categories': categories})
+
+def delete_medicine_category(request, medcatid):
+    ob = get_object_or_404(MedicineCategory, MedCatId=medcatid)  # Replace 'MedicineCategory' with your actual model name
+
+    if request.method == 'POST':
+        # Delete the medicine category object
+        ob.is_active=False
+        ob.save()
+        # request.session['delete_category'] = True
+        return redirect('view_medicine_category')
+
+    return render(request, 'admin_temp/delete_medicine_category.html', {'ob': ob})
+
+def add_medicine(request):
+    if request.method == 'POST':
+        # Get data from the form
+        medicine_name = request.POST['medicineName']
+        details = request.POST['details']
+        company_name = request.POST['companyName']
+        expiry_date = request.POST['expiryDate']
+        contains = request.POST['contains']
+        dosage = request.POST['dosage']
+        price = request.POST['price']
+        category_id = request.POST['category']
+
+        # Get the MedicineCategory instance based on the selected category_id
+        category = get_object_or_404(MedicineCategory, pk=category_id)
+
+        # Create and save a Medicine object to the database with the category instance
+        medicine = Medicine(
+            medicineName=medicine_name,
+            details=details,
+            companyName=company_name,
+            expiryDate=expiry_date,
+            contains=contains,
+            dosage=dosage,
+            price=price,
+            MedCatId=category,
+        )
+        medicine.save()
+
+        return redirect('view_medicine')  # Redirect to a success page or another URL
+    medcat = MedicineCategory.objects.all()
+    print(medcat)
+    context = {'medcat': medcat}
+    return render(request, 'admin_temp/add_medicine.html', context)
+
+def view_medicine(request):
+    med = Medicine.objects.all()
+    print(med)
+    return render(request,'admin_temp/view_medicine.html',{'med': med})
+
+def delete_medicine(request, id):
+    med  = get_object_or_404(Medicine, id= id)
+
+    if request.method == 'POST':
+        # Set the is_active attribute to False instead of deleting
+        med.is_active = False
+        med.save()
+
+        # Add a success message to the session
+        request.session['delete_medicine'] = True
+
+        # Redirect to the 'ad_ashaworker' page (or adjust the URL as needed)
+        return redirect('add_medicine')
+
+    return render(request, 'admin_temp/delete_medicine.html', {'med':med})
+
+
+
+
