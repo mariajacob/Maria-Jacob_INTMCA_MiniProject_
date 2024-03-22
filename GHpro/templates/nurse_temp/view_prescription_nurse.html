@@ -33,7 +33,7 @@
                     <img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
                 </a>
             </div>
-             <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
             <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
             <ul class="nav user-menu float-right">
                 <li class="nav-item dropdown has-arrow">
@@ -61,66 +61,191 @@
                         <li class="menu-title">Main</li>
                         <li class="active">
                             <a href="{% url 'nurse_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
-                           
                         </li> 
-                       
-                         <li>
+                        <li>
                             <a href="{% url 'patient_list_nurse' %}"><i class="fa fa-user"></i> <span>Patient List</span></a>
                         </li>
-                       <li>
+                        <li>
                             <a href="{% url 'add_prescription' %}"><i class="fa fa-user"></i> <span>Prescription</span></a>
-
                         </li> 
                         <li>
                             <a href="{% url 'view_prescription_nurse' %}"><i class="fa fa-user"></i> <span> View Prescription</span></a>
-
                         </li> 
                     </ul>
                 </div>
             </div>
         </div>
         <div class="page-wrapper">
-    <div class="container">
-        <h1>View Prescriptions</h1>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Nurse</th>
-                    <th>Patient</th>
-                    <th>Medicine</th>
-                    <th>Morning</th>
-                    <th>Noon</th>
-                    <th>Evening</th>
-                    <th>Date of Prescription</th>
-                    <th>Quantity</th>
-                    <th>Duration</th>
-                    <th>Dosages</th>
-                    <!-- Add more table headers as needed -->
-                </tr>
-            </thead>
-            <tbody>
-                {% for prescription in prescriptions %}
-                    <tr>
-                        <td>{{ prescription.nurses.Name }}</td>
-                        <td>{{ prescription.patient.first_name }}</td>
-                        <td>{{ prescription.medicine.medicineName }}</td>
-                        <td>{{ prescription.morning }}</td>
-                        <td>{{ prescription.noon }}</td>
-                        <td>{{ prescription.evening }}</td>
-                        <td>{{ prescription.date_of_prescription }}</td>
-                        <td>{{ prescription.quantity }}</td>
-                        <td>{{ prescription.duration }}</td>
-                        <td>{{ prescription.dosages }}</td>
-                        <!-- Add more table data fields as needed -->
-                    </tr>
+            <div class="container">
+                <h1 style="margin-left:-230px; color:black; text-decoration:underline; font-size:40px;">View Prescriptions</h1>
+                <br> <br>
+                            
+                {% for patient_prescription in patient_prescriptions %}
+                <h2 style=" color:black;  font-size:27px;">{{ patient_prescription.patient.first_name }} {{ patient_prescription.patient.last_name }}'s Prescription : </h2>
+                <p>House Name: {{ patient_prescription.patient.house_name }} <BR>House Number: {{ patient_prescription.patient.house_no }} <BR>Email: {{ patient_prescription.patient.email }}</p>
+                <button class="custom-btn latestBtn" data-patient-id="{{ patient_prescription.patient.id }}" onclick="window.location.href = '{% url 'view_prescription_nurse' %}?show_latest=true'">Latest</button>
+                <button class="custom-btn previousBtn" data-patient-id="{{ patient_prescription.patient.id }}" onclick="window.location.href = '{% url 'view_prescription_nurse' %}?show_previous=true'">Previous</button>
+                <br> <br> 
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Medicine</th>
+                            <th>Morning</th>
+                            <th>Noon</th>
+                            <th>Evening</th>
+                            <th>Date of Prescription</th>
+                            <th>Quantity</th>
+                            <th>Duration</th>
+                            <th>Dosages</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prescription in patient_prescription.prescriptions %}
+                        <tr class="prescription-row" data-patient-id="{{ patient_prescription.patient.id }}">
+                            <td>{{ prescription.medicine.medicineName }}</td>
+                            <td>{{ prescription.morning }}</td>
+                            <td>{{ prescription.noon }}</td>
+                            <td>{{ prescription.evening }}</td>
+                            <td>{{ prescription.date_of_prescription }}</td>
+                            <td>{{ prescription.quantity }}</td>
+                            <td>{{ prescription.duration }}</td>
+                            <td>{{ prescription.dosages }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
                 {% endfor %}
-            </tbody>
-        </table>
+            </div>
+            
+        </div>  
     </div>
-</div>  
-</div>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+    {% comment %} <script>
+        document.getElementById("latestBtn").addEventListener("click", function() {
+            var patientId = document.querySelector('.prescription-row:not([style="display:none"])').getAttribute('data-patient-id');
+            var rows = document.querySelectorAll('.prescription-row[data-patient-id="' + patientId + '"]');
+            var latestDate = '';
+            for (var i = 0; i < rows.length; i++) {
+                var currentDate = rows[i].querySelector('td:nth-child(5)').innerText;
+                if (currentDate > latestDate) {
+                    latestDate = currentDate;
+                }
+            }
+            for (var i = 0; i < rows.length; i++) {
+                var currentDate = rows[i].querySelector('td:nth-child(5)').innerText;
+                if (currentDate != latestDate) {
+                    rows[i].style.display = 'none';
+                } else {
+                    rows[i].style.display = '';
+                }
+            }
+        });
+    
+        document.getElementById("previousBtn").addEventListener("click", function() {
+            var patientId = document.querySelector('.prescription-row:not([style="display:none"])').getAttribute('data-patient-id');
+            var rows = document.querySelectorAll('.prescription-row[data-patient-id="' + patientId + '"]');
+            var latestDate = '';
+            var secondLatestDate = '';
+            for (var i = 0; i < rows.length; i++) {
+                var currentDate = rows[i].querySelector('td:nth-child(5)').innerText;
+                if (currentDate > latestDate) {
+                    secondLatestDate = latestDate;
+                    latestDate = currentDate;
+                } else if (currentDate > secondLatestDate) {
+                    secondLatestDate = currentDate;
+                }
+            }
+            for (var i = 0; i < rows.length; i++) {
+                var currentDate = rows[i].querySelector('td:nth-child(5)').innerText;
+                if (currentDate == latestDate) {
+                    rows[i].style.display = 'none';
+                } else if (currentDate == secondLatestDate) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        });
+    </script>
+     {% endcomment %}
+
+     <script>
+        document.querySelectorAll(".latestBtn").forEach(function(button) {
+            button.addEventListener("click", function() {
+                var patientId = this.getAttribute('data-patient-id');
+                var rows = document.querySelectorAll('.prescription-row[data-patient-id="' + patientId + '"]');
+                var latestDate = '';
+                for (var i = 0; i < rows.length; i++) {
+                    var currentDate = rows[i].querySelector('td:nth-child(5)').innerText;
+                    if (currentDate > latestDate) {
+                        latestDate = currentDate;
+                    }
+                }
+                for (var i = 0; i < rows.length; i++) {
+                    var currentDate = rows[i].querySelector('td:nth-child(5)').innerText;
+                    if (currentDate != latestDate) {
+                        rows[i].style.display = 'none';
+                    } else {
+                        rows[i].style.display = '';
+                    }
+                }
+            });
+        });
+    
+        document.querySelectorAll(".previousBtn").forEach(function(button) {
+            button.addEventListener("click", function() {
+                var patientId = this.getAttribute('data-patient-id');
+                var rows = document.querySelectorAll('.prescription-row[data-patient-id="' + patientId + '"]');
+                var latestDate = '';
+                var secondLatestDate = '';
+                for (var i = 0; i < rows.length; i++) {
+                    var currentDate = rows[i].querySelector('td:nth-child(5)').innerText;
+                    if (currentDate > latestDate) {
+                        secondLatestDate = latestDate;
+                        latestDate = currentDate;
+                    } else if (currentDate > secondLatestDate) {
+                        secondLatestDate = currentDate;
+                    }
+                }
+                for (var i = 0; i < rows.length; i++) {
+                    var currentDate = rows[i].querySelector('td:nth-child(5)').innerText;
+                    if (currentDate == latestDate) {
+                        rows[i].style.display = 'none';
+                    } else if (currentDate == secondLatestDate) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            });
+        });
+    </script>
+
+    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+   
+    <style>
+        .custom-btn {
+            border: none;
+            border-radius: 10px; /* Adjust the border-radius to change the roundness of the button */
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    
+        .latestBtn {
+            background-color: green;
+            color: white;
+        }
+    
+        .previousBtn {
+            background-color: red;
+            color: white;
+        }
+    </style>
+
+
 </body>
 </html>

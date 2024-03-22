@@ -581,12 +581,12 @@ class Prescription_model(models.Model):
     patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE)
     
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
-    morning = models.BooleanField(default=False,null=True, blank=True)
-    noon = models.BooleanField(default=False,null=True, blank=True)
-    evening = models.BooleanField(default=False,null=True, blank=True)
+    morning = models.CharField(max_length=100,default=False,null=True, blank=True)
+    noon = models.CharField(max_length=100,default=False,null=True, blank=True)
+    evening = models.CharField(max_length=100,default=False,null=True, blank=True)
     date_of_prescription = models.DateField()
-    quantity = models.PositiveIntegerField()
-    duration = models.CharField(max_length=100)
+    quantity = models.PositiveIntegerField(default=False,null=True, blank=True)
+    duration = models.CharField(max_length=100,null=True, blank=True)
     dosages = models.CharField(max_length=100,null=True, blank=True)
     # dosage = models.ForeignKey(Medicine, on_delete=models.CASCADE, related_name='prescriptions')
 

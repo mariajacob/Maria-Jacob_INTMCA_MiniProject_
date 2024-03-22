@@ -111,13 +111,14 @@ urlpatterns = [
     path('add_nurse', add_nurse, name="add_nurse"),
     # path('add_prescription', views.add_prescription, name="add_prescription"),
     path('add_prescription/', views.add_prescription, name='add_prescription'),
+    path('view_past_prescriptions', views.view_past_prescriptions, name='view_past_prescriptions'),
     # view prescrption nurse
     path('view_prescription_nurse/', views.view_prescription_nurse, name='view_prescription_nurse'),
     path('patient_list_nurse', views.patient_list_nurse, name="patient_list_nurse"),
 
 
  # view prescrption paatients
-    path('patient_prescriptions/<int:patient_id>/', views.patient_prescriptions, name='patient_prescriptions'),
+     path('patient_prescriptions/<int:patient_id>/', views.patient_prescriptions, name='patient_prescriptions'),
 
 
 

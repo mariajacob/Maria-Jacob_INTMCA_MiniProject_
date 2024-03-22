@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Prescriptions</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h2>Past Prescriptions</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Medicine</th>
+                    <th>Morning</th>
+                    <th>Noon</th>
+                    <th>Evening</th>
+                    <th>Date of Prescription</th>
+                    <th>Quantity</th>
+                    <th>Duration</th>
+                    <th>Dosages</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prescription in past_prescriptions %}
+                <tr>
+                    <td>{{ prescription.medicine.medicineName  }}</td>
+                    <td>{{ prescription.morning }}</td>
+                    <td>{{ prescription.noon }}</td>
+                    <td>{{ prescription.evening }}</td>
+                    <td>{{ prescription.date_of_prescription }}</td>
+                    <td>{{ prescription.quantity }}</td>
+                    <td>{{ prescription.duration }}</td>
+                    <td>{{ prescription.dosages }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

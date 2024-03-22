@@ -142,10 +142,16 @@
                
 
                
+                <li>
+                    <a href="{% url 'view_medicine_category' %}"><i class="fa fa-list" id="catind"></i> <span>view Medicine Category</span></a>
+                </li>
+                <li>
+                    <a href="{% url 'view_medicine' %}"><i class="fa fa-list"></i> <span>View Medicine</span></a>
+                </li>
 
                 
 
-                <li class="submenu">
+                {% comment %} <li class="submenu">
                     <a href="#"><i class="fa fa-medkit"></i>
                         <span>Medicines </span> <span class="menu-arrow"></span></a>
                     <ul style="display: none;">
@@ -164,7 +170,7 @@
                         
                         
                     </ul>
-                </li>
+                </li> {% endcomment %}
 
 
                 
@@ -265,7 +271,7 @@
             <label for="description" class="form-label">Description</label>
             <textarea class="form-control" id="description" name="description" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary" id="create">Add Category</button>
+        <button type="submit" class="btn btn-primary" id="createcat">Add Category</button>
     </form>
 </div>
 </div>

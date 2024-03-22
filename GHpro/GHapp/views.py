@@ -48,14 +48,13 @@ patient_required
 from django.core.exceptions import ObjectDoesNotExist
 
 def index(request):
-    
     patients = PatientProfile.objects.all()  # Fetch all patients
     images = Image.objects.all()
     context = {
+        'patients': patients,
         'images': images,
-        
     }
-    return render(request, 'index.html', {'patients': patients},context)
+    return render(request, 'index.html', context)
 
 
 patient_required
@@ -1301,7 +1300,7 @@ def add_nurse(request):
         wardnurse = request.POST.get('wardnurse')
         
         phone = request.POST.get('phone')
-        profile_photo = request.FILES.get('profile_photo')
+        # profile_photo = request.FILES.get('profile_photo')
         role = CustomUser.NURSE
         print(role)
 
@@ -1321,7 +1320,7 @@ def add_nurse(request):
         user.save()
         nurses = Nurse(user=user, Name=name, email=email, date_of_birth=dob, date_of_join=doj,
                          gender=gender, address=address, taluk=taluk, Panchayat=panchayat, wardnurse=wardnurse,
-                         phone=phone, profile_photo=profile_photo)
+                         phone=phone)
         nurses.save()
 
         subject = 'Nurse Login Details'
@@ -1441,11 +1440,11 @@ def patient_list_nurse(request):
     return render(request, 'nurse_temp/patient_list_nurse.html', {'patients': patients, 'ward_numbers': ward_numbers})
 
 
-
 # @login_required
 # def add_prescription(request):
 #     nurse = Nurse.objects.get(user=request.user)
 #     nurse_name = nurse.Name  # Fetch the nurse's name
+#     patient_id = None  # Initialize patient_id
 
 #     if request.method == 'POST':
 #         patient_id = request.POST.get('patient_id')
@@ -1474,7 +1473,7 @@ def patient_list_nurse(request):
 #             dosages=dosages
 #         )
 
-#         return redirect('add_prescription')
+#         return redirect('view_prescription_nurse')
 
 #     patients = PatientProfile.objects.filter(ward=nurse.wardnurse)
 #     medicines = Medicine.objects.all()
@@ -1482,116 +1481,123 @@ def patient_list_nurse(request):
 #     return render(request, 'nurse_temp/add_prescription.html', {'nurse_name': nurse_name, 'patients': patients, 'medicines': medicines, 'patient_id': patient_id})
 
 
+from django.shortcuts import render, redirect
+from .models import Prescription_model
+
+from .models import PatientProfile, Medicine, Nurse
 
 @login_required
 def add_prescription(request):
-    nurse = Nurse.objects.get(user=request.user)
-    nurse_name = nurse.Name  # Fetch the nurse's name
-    patient_id = None  # Initialize patient_id
-
     if request.method == 'POST':
-        patient_id = request.POST.get('patient_id')
-        print(patient_id)
-        medicine_id = request.POST.get('medicine')
-        morning = request.POST.get('morning')
-        noon = request.POST.get('noon')
-        evening = request.POST.get('evening')
+        # Get data for each medicine
+        medicines = request.POST.getlist('medicines')
         date_of_prescription = request.POST.get('date_of_prescription')
-        quantity = request.POST.get('quantity')
-        duration = request.POST.get('duration')
-        dosages = request.POST.get('dosages')
 
+        # Your existing logic to get patient and nurse remains the same
+        patient_id = request.POST.get('patient_id')
         patient = PatientProfile.objects.get(id=patient_id)
+        nurse = Nurse.objects.get(user=request.user)
 
-        prescription = Prescription_model.objects.create(
-            nurses=nurse,
-            patient=patient,
-            medicine_id=medicine_id,
-            morning=morning,
-            noon=noon,
-            evening=evening,
-            date_of_prescription=date_of_prescription,
-            quantity=quantity,
-            duration=duration,
-            dosages=dosages
-        )
+        # Loop through selected medicines
+        for medicine_id in medicines:
+            morning = request.POST.get(f'morning_{medicine_id}')
+            noon = request.POST.get(f'noon_{medicine_id}')
+            evening = request.POST.get(f'evening_{medicine_id}')
+            quantity = request.POST.get(f'quantity_{medicine_id}')
+            duration = request.POST.get(f'duration_{medicine_id}')
+            dosages = request.POST.get(f'dosages_{medicine_id}')
 
-        return redirect('add_prescription')
+            # Create prescription for each selected medicine
+            prescription = Prescription_model.objects.create(
+                nurses=nurse,
+                patient=patient,
+                medicine=Medicine.objects.get(id=medicine_id),
+                morning=morning,
+                noon=noon,
+                evening=evening,
+                date_of_prescription=date_of_prescription,
+                quantity=quantity,
+                duration=duration,
+                dosages=dosages
+            )
 
-    patients = PatientProfile.objects.filter(ward=nurse.wardnurse)
-    medicines = Medicine.objects.all()
+        return redirect('view_prescription_nurse')
 
-    return render(request, 'nurse_temp/add_prescription.html', {'nurse_name': nurse_name, 'patients': patients, 'medicines': medicines, 'patient_id': patient_id})
+    else:
+        # Handle GET request
+        # Fetch necessary data for rendering the form
+        nurse = Nurse.objects.get(user=request.user)
+        patients = PatientProfile.objects.filter(ward=nurse.wardnurse)
+        medicines = Medicine.objects.all()
 
-
-
-
-
-
-
-
-# from django.shortcuts import render, redirect
-# from .models import Nurse, PatientProfile, Prescription_model
-# from django.contrib.auth.decorators import login_required
-
-# @login_required
-# def add_prescription(request):
-#     nurse = Nurse.objects.get(user=request.user)
-    
-
-#     if request.method == 'POST':
-#         nurse_id = request.POST.get('nurse_id')
-#         patient_id = request.POST.get('patient_id')
-        
-#         medicine_id = request.POST.get('medicine')
-#         morning = request.POST.get('morning')
-#         noon = request.POST.get('noon')
-#         evening = request.POST.get('evening')
-#         date_of_prescription = request.POST.get('date_of_prescription')
-#         quantity = request.POST.get('quantity')
-#         duration = request.POST.get('duration')
-#         dosages = request.POST.get('dosages')
-
-#         nurse = Nurse.objects.get(id=nurse_id)
-#         patient = PatientProfile.objects.get(id=patient_id)
-
-#         prescription = Prescription_model.objects.create(
-#             nurse=nurse,
-#             patient=patient,
-            
-#             medicine_id=medicine_id,
-#             morning=morning,
-#             noon=noon,
-#             evening=evening,
-#             date_of_prescription=date_of_prescription,
-#             quantity=quantity,
-#             duration=duration,
-#             dosages=dosages
-#         )
-
-#         return redirect('add_prescription')  # Assuming you have a URL named 'prescription_list'
-
-#     # nurses = Nurse.objects.all()
-#     # patients = PatientProfile.objects.all()
-#     ward_filter = nurse.wardnurse  # Assuming wardmem is the field containing the member's ward
-#     # patients = PatientProfile.objects.filter(ward__wardnurse=nurse)
-#     patients = PatientProfile.objects.filter(ward=ward_filter)
-#     medicines = Medicine.objects.all()
-#     appointments = Appointment.objects.all()
-    
-#     return render(request, 'nurse_temp/add_prescription.html', {'nurse': nurse, 'patients': patients, 'medicines': medicines, 'appointments': appointments})
+        return render(request, 'nurse_temp/add_prescription.html', {'nurse_name': nurse.Name, 'patients': patients, 'medicines': medicines})
 
 
-# views.py for view_prescription_nurse
 
 from django.shortcuts import render
 from .models import Prescription_model
-
 def view_prescription_nurse(request):
     nurse = Nurse.objects.get(user=request.user)
-    prescriptions = Prescription_model.objects.filter(nurses=nurse)
-    return render(request, 'nurse_temp/view_prescription_nurse.html', {'prescriptions': prescriptions})
+    patients = set(Prescription_model.objects.filter(nurses=nurse).values_list('patient', flat=True))
+    patient_prescriptions = []
+    show_latest = request.GET.get('show_latest')
+    show_previous = request.GET.get('show_previous')
+    
+    for patient_id in patients:
+        if show_latest:
+            # Get the latest prescription
+            latest_prescription = Prescription_model.objects.filter(nurses=nurse, patient_id=patient_id).order_by('-date_of_prescription').first()
+            if latest_prescription:
+                patient_prescriptions.append({
+                    'patient': PatientProfile.objects.get(id=patient_id),
+                    'prescriptions': [latest_prescription]
+                })
+        elif show_previous:
+            # Get all previous prescriptions except the latest one
+            latest_prescription = Prescription_model.objects.filter(nurses=nurse, patient_id=patient_id).order_by('-date_of_prescription').first()
+            previous_prescriptions = Prescription_model.objects.filter(nurses=nurse, patient_id=patient_id).exclude(id=latest_prescription.id)
+            if previous_prescriptions:
+                patient_prescriptions.append({
+                    'patient': PatientProfile.objects.get(id=patient_id),
+                    'prescriptions': previous_prescriptions.order_by('-date_of_prescription')
+                })
+        else:
+            # Get the latest prescription by default
+            latest_prescription = Prescription_model.objects.filter(nurses=nurse, patient_id=patient_id).order_by('-date_of_prescription').first()
+            if latest_prescription:
+                patient_prescriptions.append({
+                    'patient': PatientProfile.objects.get(id=patient_id),
+                    'prescriptions': [latest_prescription]
+                })
+    
+    return render(request, 'nurse_temp/view_prescription_nurse.html', {'patient_prescriptions': patient_prescriptions})
 
+# from django.shortcuts import render
+# from .models import Prescription_model
+
+# def view_past_prescriptions(request):
+#     if request.method == 'GET' and 'patient_id' in request.GET:
+#         patient_id = request.GET.get('patient_id')
+#         past_prescriptions = Prescription_model.objects.filter(patient_id=patient_id).order_by('-date_of_prescription')
+#         return render(request, 'nurse_temp/past_prescriptions.html', {'past_prescriptions': past_prescriptions})
+#     else:
+#         # Handle case when patient_id is not provided or POST request is made
+#         return render(request, 'error_page.html', {'error_message': 'Invalid request'})
+
+
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from .models import Prescription_model
+
+def view_past_prescriptions(request):
+    if request.method == 'GET' and 'patient_id' in request.GET:
+        patient_id = request.GET.get('patient_id')
+        past_prescriptions = Prescription_model.objects.filter(patient_id=patient_id).order_by('-date_of_prescription')
+        past_prescriptions_html = render_to_string('nurse_temp/past_prescriptions.html', {'past_prescriptions': past_prescriptions})
+        return HttpResponse(past_prescriptions_html)
+    else:
+        # Handle case when patient_id is not provided or POST request is made
+        return HttpResponse('Invalid request', status=400)
 
 # views.py for view_prescription_patient
 

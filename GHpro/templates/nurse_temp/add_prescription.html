@@ -85,34 +85,28 @@
                     <div class="card-body">
                         <form method="post">
                             {% csrf_token %}
-                            {% comment %} <div class="form-group row">
-                                <label for="nurse_id" class="col-sm-3 col-form-label">Nurse:</label>
-                                <div class="col-sm-9">
-                                    <input type="text" name="nurse_name" id="nurse_name" class="form-control" value="{{ nurse.Name }}" readonly>
-                                    
-                                </div> 
-                                
-                            </div> {% endcomment %}
-
-                            <div class="form-group row">
-                                <label for="nurse_id" class="col-sm-3 col-form-label">Nurse:</label>
-                                <div class="col-sm-9">
-                                    <input type="text" name="nurse_name" id="nurse_name" class="form-control" value="{{ nurse_name }}" readonly>
-                                </div> 
-                            </div>
                             
+
                             
                             <div class="form-group row">
                                 <label for="patient_id" class="col-sm-3 col-form-label">Patient:</label>
                                 <div class="col-sm-9">
                                     <select name="patient_id" id="patient_id" class="form-control">
+                                        <option value="Choose Patient">Choose Patient</option>
                                         {% for patient in patients %}
-                                            <option value="{{ patient.id }}">{{ patient.first_name }}</option>
+                                            <option value="{{ patient.id }}">{{ patient.first_name }} {{ patient.last_name }} , {{ patient.house_name }} , House No: {{ patient.house_no }} </option>
                                         {% endfor %}
                                     </select>
+                                    <br>
+                                    <button type="button" id="viewPastPrescriptionsBtn" class="btn btn-secondary">View Past Prescriptions</button>  
                                 </div>
+                                
                             </div>
-                            <div class="form-group row">
+
+                            {% comment %} <button type="button" id="viewPastPrescriptionsBtn" class="btn btn-secondary">View Past Prescriptions</button> {% endcomment %}
+                            
+                            <div id="pastPrescriptionsContainer"></div>
+                            {% comment %} <div class="form-group row">
                                 <label for="medicine" class="col-sm-3 col-form-label">Medicine:</label>
                                 <div class="col-sm-9">
                                     <select name="medicine" id="medicine" class="form-control">
@@ -123,10 +117,41 @@
                                     </select>
                                 </div>
                             </div>
-                            
-                           
+                             {% endcomment %}
+                             <div class="form-group row">
+                                <label for="medicines" class="col-sm-3 col-form-label">Medicine:</label>
+                                <div class="col-sm-9">
+                                    {% for medicine in medicines %}
+                                    <div class="form-check">
+                                        <input type="checkbox" name="medicines" id="medicine_{{ medicine.id }}" value="{{ medicine.id }}">
+                                        <label class="form-check-label" for="medicine_{{ medicine.id }}">{{ medicine.medicineName }}</label>
+                                        <!-- Input fields for individual attributes -->
+                                        <div class="row">
+                                            <div class="col-sm-2">
+                                                <input type="text" name="morning_{{ medicine.id }}" class="form-control" placeholder="Morning">
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <input type="text" name="noon_{{ medicine.id }}" class="form-control" placeholder="Noon">
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <input type="text" name="evening_{{ medicine.id }}" class="form-control" placeholder="Evening">
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <input type="text" name="quantity_{{ medicine.id }}" class="form-control" placeholder="Quantity">
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <input type="text" name="duration_{{ medicine.id }}" class="form-control" placeholder="Duration">
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <input type="text" name="dosages_{{ medicine.id }}" class="form-control" placeholder="Dosages">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
 
-                            <div class="form-group row">
+                            {% comment %} <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Frequency:</label>
                                 <div class="col-sm-9">
                                     <div class="form-check">
@@ -146,16 +171,17 @@
                                     </div>
                                 </div>
                             </div>
-                        
+                         {% endcomment %}
 
 
                             <div class="form-group row">
                                 <label for="date_of_prescription" class="col-sm-3 col-form-label">Date of Prescription:</label>
                                 <div class="col-sm-9">
-                                    <input type="date" name="date_of_prescription" id="date_of_prescription" class="form-control">
+                                    <input type="date" name="date_of_prescription" id="date_of_prescription" class="form-control" max="{% now "Y-m-d" %}">
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            
+                            {% comment %} <div class="form-group row">
                                 <label for="quantity" class="col-sm-3 col-form-label">Quantity:</label>
                                 <div class="col-sm-9">
                                     <input type="number" name="quantity" id="quantity" class="form-control">
@@ -172,7 +198,7 @@
                                 <div class="col-sm-9">
                                     <input type="text" name="dosages" id="dosages" class="form-control">
                                 </div>
-                            </div>
+                            </div> {% endcomment %}
                             <div class="form-group row">
                                 <div class="col-sm-12">
                                     <button type="submit" class="btn btn-primary btn-block">Submit</button>
@@ -185,9 +211,48 @@
             </div>
         </div>
     </div>
+    <script>
+        document.getElementById('viewPastPrescriptionsBtn').addEventListener('click', function() {
+            var patientId = document.getElementById('patient_id').value;
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        document.getElementById('pastPrescriptionsContainer').innerHTML = xhr.responseText;
+                    } else {
+                        console.error('Error fetching past prescriptions:', xhr.status);
+                    }
+                }
+            };
+            xhr.open('GET', '/view_past_prescriptions?patient_id=' + patientId);
+            xhr.send();
+        });
+    </script>
+    {% comment %} <script>
+        document.getElementById('viewPastPrescriptionsBtn').addEventListener('click', function() {
+            var patientId = document.getElementById('patient_id').value;
+            window.location.href = '/view_past_prescriptions?patient_id=' + patientId;
+        });
+    </script> {% endcomment %}
+    
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <style>
+        /* Style to move the button to the right side */
+        #viewPastPrescriptionsBtn {
+            float: right;
+            margin-right: 30px; /* Adjust margin as needed */
+        }
+    
+        /* Style to change the button color to green */
+        #viewPastPrescriptionsBtn {
+            background-color: green;
+            border-color: green;
+            color: white;
+        }
+    </style>
     </body>
     </html>
     

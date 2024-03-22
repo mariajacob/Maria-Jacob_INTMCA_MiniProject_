@@ -120,13 +120,19 @@
                     </li> 
                     
 
+                    <li>
+                        <a href="{% url 'view_medicine_category' %}"><i class="fa fa-list" id="catind"></i> <span>view Medicine Category</span></a>
+                    </li>
+                    <li>
+                        <a href="{% url 'view_medicine' %}"><i class="fa fa-list"></i> <span>View Medicine</span></a>
+                    </li>
                    
 
                    
 
                     
 
-                    <li class="submenu">
+                    {% comment %} <li class="submenu">
                         <a href="#"><i class="fa fa-medkit"></i>
                             <span>Medicines </span> <span class="menu-arrow"></span></a>
                         <ul style="display: none;">
@@ -145,7 +151,7 @@
                             
                             
                         </ul>
-                    </li>
+                    </li> {% endcomment %}
 
 
                     
@@ -238,10 +244,10 @@
 
        
         <div class="col-sm-12 col-9 text-right m-b-20">
-            <a href="{% url 'add_medicine_category' %}"  class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus" id="addasha"></i> Add Medicine Category</a>
+            <a href="{% url 'add_medicine_category' %}"  class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus" id="addcat"></i> Add Medicine Category</a>
         </div>
     </div>
-    <h2 class="text-center" id="list">Medicine Categories</h2>
+    <h2 class="text-center" id="catlist">Medicine Categories</h2>
     {% comment %} <form id="search-form" method="GET" action="{% url 'search_medicine_category' %}">
         <div class="input-group mb-3">
             <input type="text" class="form-control" name="category_name" placeholder="Search by medicine category name">

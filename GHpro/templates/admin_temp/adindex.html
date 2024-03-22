@@ -63,14 +63,18 @@
                             <a href="{% url 'admin_dashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li> 
 						
-
-                       
+                        <li>
+                            <a href="{% url 'view_medicine_category' %}"><i class="fa fa-list" id="catind"></i> <span>view Medicine Category</span></a>
+                        </li>
+                        <li>
+                            <a href="{% url 'view_medicine' %}"><i class="fa fa-list"></i> <span>View Medicine</span></a>
+                        </li>
 
                        
 
                         
 
-                        <li class="submenu">
+                        {% comment %} <li class="submenu">
 							<a href="#"><i class="fa fa-medkit"></i>
                                 <span>Medicines </span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
@@ -78,7 +82,7 @@
 								<a href="{% url 'add_medicine_category' %}"><i class="fa fa-plus"></i> <span>Add Category</span></a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'view_medicine_category' %}"><i class="fa fa-list"></i> <span>view Category</span></a>
+                                    <a href="{% url 'view_medicine_category' %}"><i class="fa fa-list" id="catind"></i> <span>view Category</span></a>
                                 </li>
                                 <li>
                                     <a href="{% url 'add_medicine' %}"><i class="fa fa-plus"></i> <span>Add Medicine</span></a>
@@ -89,7 +93,7 @@
 								
 								
 							</ul>
-						</li>
+						</li> {% endcomment %}
 
 
                         
@@ -111,7 +115,7 @@
                        
                         
                         <li>
-							<a href="{% url 'ad_nurse' %}"><i class="fa fa-user" id="ashaind"></i> <span>Nurses List </span> </a>
+							<a href="{% url 'ad_nurse' %}"><i class="fa fa-user" id="nurseind"></i> <span>Nurses List </span> </a>
 							
 						</li>
                         

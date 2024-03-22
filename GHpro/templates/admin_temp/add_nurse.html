@@ -273,40 +273,11 @@
 										<div class="col-sm-6 col-md-6 col-lg-3">
 											<div class="form-group">
 												<label>Taluk</label>
-												{% comment %} <select class="form-control select" name="taluk" id="taluk">
-                                                    <option></option>
-													<option>Kanjirappally</option>
-													
-												</select> {% endcomment %}
+												
                                                 <input class="form-control" value="Kanjirappally" id="taluk" name="taluk" type="text" readonly >
 											</div>
 										</div>
-										{% comment %} <div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>Panchayat</label>
-											
-                                                <input class="form-control" value="Parathodu" id="panchayat" name="panchayat" type="text" readonly>
-											</div>
-										</div>
-										 <div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>Ward</label>
-                                                <select class="form-control select" name="ward" id="ward" size="100">
-													<option>Ward 1-VENGATHANAM</option>
-													<option>Ward 2-PALAPRA</option>
-                                                    <option>Ward 3-VELICHIYANI</option>
-                                                    <option>Ward 4-CHOTTY</option>
-                                                    <option>Ward 5-MANGAPPARA</option>
-                                                    <option>Ward 6-VADAKKEMALA</option>
-                                                    <option>Ward 7-PARATHODU</option>
-                                                    <option>Ward 8-NADUKANI</option>
-                                                    <option>Ward 9-EDAKKUNNAM</option>
-                                                    
-
-												</select>
-                                                <div id="ward-validation-message"></div>
-											</div>
-										</div>  {% endcomment %}
+										
 
                                         <div class="col-sm-6 col-md-6 col-lg-3">
                                             <div class="form-group">
@@ -321,7 +292,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-sm-6 col-md-6 col-lg-3">
+                                        {% comment %} <div class="col-sm-6 col-md-6 col-lg-3">
                                             <div class="form-group">
                                                 <label>Ward</label>
                                                 <select class="form-control select" name="wardnurse" id="ward" size="100">
@@ -329,7 +300,7 @@
                                                 </select>
                                                 <div id="ward-validation-message"></div>
                                             </div>
-                                        </div>
+                                        </div> {% endcomment %}
 										
                                         
 									</div>
@@ -341,19 +312,19 @@
                                         <span class="text-danger" id="phone-error"></span>
                                     </div>
                                 </div>
-                               <div class="col-sm-6">
+                               {% comment %} <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Profile Photo</label>
                                         <input type="file" class="form-control" name="profile_photo">
                                     </div>
-                                </div> 
+                                </div>  {% endcomment %}
                                 
                                 
                             </div>
                             
                         <div>
                             <div class="m-t-20 text-center">
-                                <button  class="btn btn-primary submit-btn" id="createasha">Add Nurse</button>
+                                <button  class="btn btn-primary submit-btn" id="createnurse">Add Nurse</button>
                             </div>
                         </div>
                         </form>
