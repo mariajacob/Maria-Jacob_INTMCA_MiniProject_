@@ -77,10 +77,19 @@
                             <a href="{% url 'view_prescription_nurse' %}"><i class="fa fa-user"></i> <span> View Prescription</span></a>
 
                         </li> 
+                        <li>
+                            <a href="{% url 'nurse_approved_appo' %}"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                        </li>
+                        {% comment %} <li>
+                            <a href="{% url 'apply_leave' %}"><i class="fa fa-calendar" id="addleave" ></i> <span>Apply Leave</span></a>
+                        </li> {% endcomment %}
+                        <li>
+                            <a href="{% url 'view_leave' %}"><i class="fa fa-calendar" id="leaveind"></i> <span>View Leave</span></a>
+                        </li>
                 </div>
             </div>
         </div>
-        <div class="page-wrapper">
+        <div class="page-wrapper" >
             <div class="content">
                 <div class="row">
                     <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">

@@ -114,6 +114,9 @@ urlpatterns = [
     path('view_past_prescriptions', views.view_past_prescriptions, name='view_past_prescriptions'),
     # view prescrption nurse
     path('view_prescription_nurse/', views.view_prescription_nurse, name='view_prescription_nurse'),
+    path('nurse_approved_appo', views.nurse_approved_appointments, name='nurse_approved_appo'),
+
+
     path('patient_list_nurse', views.patient_list_nurse, name="patient_list_nurse"),
 
 
@@ -270,10 +273,23 @@ path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
 # Medicine Section
     path('add_medicine_category', views.add_medicine_category, name="add_medicine_category"),
     path('view_medicine_category', views.view_medicine_category, name="view_medicine_category"),
+    path('edit_medicine_category/<int:pk>/', views.edit_medicine_category, name='edit_medicine_category'),
     path('delete_medicine_category/<int:medcatid>/',views.delete_medicine_category,name='delete_medicine_category'),
+    path('generate_category_pdf/', views.generate_category_pdf, name='generate_category_pdf'),
     path('add_medicine', views.add_medicine, name="add_medicine"),
     path('view_medicine', views.view_medicine, name="view_medicine"),
-    path('delete_medicine', views.delete_medicine, name="delete_medicine"),
+    path('edit_medicine/<int:medicine_id>/', views.edit_medicine, name='edit_medicine'),
+    path('delete_medicine/<int:medicine_id>/', views.delete_medicine, name='delete_medicine'),
+    path('med_generate_pdf/', views.med_generate_pdf, name='med_generate_pdf'),
+    
+    # Apply Leave
+    path('apply_leave', views.apply_leave, name="apply_leave"),
+    path('view_leave', views.view_leave, name="view_leave"),
+    path('leave_list', views.leave_list, name="leave_list"), 
+    path('approve-leave/', views.approve_leave, name='approve_leave'),
+    path('reject-leave/', views.reject_leave, name='reject_leave'),
+    # path('approve-leave/<int:leave_id>/', views.approve_leave, name='approve_leave'),
+    # path('reject-leave/<int:leave_id>/', views.reject_leave, name='reject_leave'),
 ]
 
 if settings.DEBUG:

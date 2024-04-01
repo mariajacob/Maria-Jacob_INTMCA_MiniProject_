@@ -110,6 +110,10 @@
                       <a class="nav-link" href="{% url 'contact' %}">Contact</a>
                   </li>
               </ul>
+              <div ><span>Select Language: </span>
+
+                <div id="google_translate_element"></div></div>
+  
               </div>
               <div class="quote_btn-container">
                 <div class="quote_btn-container">
@@ -254,11 +258,19 @@
                         <label for="inputEmail">Gender</label>
                         <input type="text" name="gender" value="{{ patientprofile.gender }}" class="form-control" id="inputEmail" placeholder="Email Address" readonly>
                     </div>
-                    {% comment %} <div class="form-group col-lg-4">
-                        <label for="inputAddress">Ward</label>
-                        <input type="number" class="form-control" value="{{ patientprofile.ward }}" name="ward" readonly>
-                    </div> {% endcomment %}
-                    <!-- Add more fields for general information here -->
+                    <div class="form-group col-lg-4">
+                      <label for="inputEmail">Ward</label>
+                      <input type="text" name="ward" value="{{ patientprofile.ward }}" class="form-control"   readonly>
+                  </div>
+                  
+                  <div class="form-group col-lg-4">
+                    <label for="nurse">Select Your Nurse:</label>
+                    <!-- Display the Nurse's name in a text box -->
+                    <input type="text" class="form-control" id="nurse" name="nurse" value="{{ nurse.Name }}" readonly>
+                </div>
+                
+                
+                 
                 </div>
             </div>
                 <br>   <br> 
@@ -271,7 +283,7 @@
                     <label for="ashaworker" >Select Your Ashaworker:</label>
                     <select class="form-control" id="ashaworker" name="ashaworker" required>
                         <option value="" disabled selected>-Select Your Ashaworker-</option>
-                        {% for ashaworker in ashaworkers %}
+                        {% for ashaworker in ashaworker %}
                         <option value="{{ ashaworker.id }}">{{ ashaworker.Name }} : {{ ashaworker.ward }}</option>
    
                         {% comment %} <option value="{{ ashaworker.id }}" {% if selected_asha == ashaworker.id %} selected {% endif %}>{{ ashaworker.Name }} : {{ ashaworker.ward }}</option> {% endcomment %}
@@ -575,6 +587,14 @@
       });
       
     </script>
+    <script type="text/javascript"> 
+      function googleTranslateElementInit() {
+      new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+      }
+      </script>
+      <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+      
+      </script>
     {% comment %} {% if error_flag %}
 <script>
     alert("{{ error_message }}");
@@ -582,6 +602,56 @@
 {% endif %} {% endcomment %}
 
   <style>
+    
+ #google_translate_element .skiptranslate{
+  display: inline !important;
+
+}
+.goog-te-gadget{
+  color: transparent !important;
+}
+/* White Theme for the select dropdown */
+.goog-te-combo {
+  padding: 8px; /* Add padding for spacing */
+  font-size: 14px; /* Set font size */
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 4px; /* Add rounded corners */
+  background-color: #fff; /* White background color */
+  color: #333; /* Dark text color */
+}
+
+/* Style the select dropdown when it's hovered */
+.goog-te-combo:hover {
+  border-color: #999; /* Darker border color on hover */
+}
+
+/* Style the select dropdown when it's focused (clicked) */
+.goog-te-combo:focus {
+  outline: none; /* Remove the default focus outline */
+  border-color: #007bff; /* Change border color on focus */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a shadow on focus */
+}
+
+/* Style the dropdown arrow */
+.goog-te-combo-arrow {
+  font-size: 12px; /* Adjust arrow size */
+  color: #fff; /* Light arrow color */
+}
+
+/* Style the dropdown options */
+.goog-te-menu-value {
+  font-size: 14px; /* Set font size for options */
+  color: #fff; /* Light text color for options */
+  background-color: #333; /* Dark background color for options */
+}
+
+/* Style the dropdown options on hover */
+.goog-te-menu-value:hover {
+  background-color: #007bff; /* Change background color on hover */
+  color: #fff; /* Light text color on hover */
+}
+
+
     /* Add this CSS to your stylesheet */
     .quote_btn-container .dropdown-toggle {
         background-color: white;

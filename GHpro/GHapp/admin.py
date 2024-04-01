@@ -17,7 +17,7 @@ from . models import MedicineCategory
 from . models import Medicine
 from . models import Nurse
 from . models import Prescription_model
-
+from . models import Leave
 
 
 
@@ -42,6 +42,7 @@ admin.site.register(MedicineCategory)
 admin.site.register(Medicine)
 admin.site.register(Nurse)
 admin.site.register(Prescription_model)
+admin.site.register(Leave)
 
 
 

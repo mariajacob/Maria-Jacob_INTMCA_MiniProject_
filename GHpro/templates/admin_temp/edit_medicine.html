@@ -1,84 +1,21 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-        <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
-        <title>GentleHaloes Admin Dashboard</title>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-WA4tFPvW5MoyTTVkldf7u49tGbGVutHf9x6SKMYELR6Dqb5YkQZk8lpJCZH4qkOzmHYjGLteMSeZqXnRJcHOiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-        <!--[if lt IE 9]>
-            <script src="assets/js/html5shiv.min.js"></script>
-            <script src="assets/js/respond.min.js"></script>
-        <![endif]-->
-
-
-
-        <style>
-            body {
-                {% comment %} background-image: url('https://i.pinimg.com/736x/92/70/c1/9270c19eb7d37366c20da05e28844248.jpg'); /* Replace with your image path */ {% endcomment %}
-                background-size: cover;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-            }
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     
-            .container {
-                background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background for the form */
-                padding: 20px;
-                border-radius: 10px;
-                margin-top: 20px;
-            }
-            
-            /* Style the navbar background color */
-            .navbar {
-                background-color: black;
-            }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-    
-            th, td {
-                border: 1px solid black;
-                padding: 8px;
-                text-align: left;
-            }
-    
-            th {
-                background-color: #f2f2f2;
-            }
-        </style>
-    </head>
-
+</head>
 <body>
-{% comment %} <nav class="navbar navbar-expand-lg navbar-dark bg-black">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">Medicine Categories</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'phar_staff_page' %}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'add_medicine_category' %}">Add Category</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'view_medicine_category' %}">View Categories</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav> {% endcomment %}
+
 <div class="main-wrapper">
     <div class="header">
         <div class="header-left">
@@ -120,19 +57,13 @@
                     </li> 
                     
 
-                    <li>
-                        <a href="{% url 'view_medicine_category' %}"><i class="fa fa-list" id="catind"></i> <span>view Medicine Category</span></a>
-                    </li>
-                    <li>
-                        <a href="{% url 'view_medicine' %}"><i class="fa fa-list"></i> <span>View Medicine</span></a>
-                    </li>
                    
 
                    
 
                     
 
-                    {% comment %} <li class="submenu">
+                    <li class="submenu">
                         <a href="#"><i class="fa fa-medkit"></i>
                             <span>Medicines </span> <span class="menu-arrow"></span></a>
                         <ul style="display: none;">
@@ -151,7 +82,7 @@
                             
                             
                         </ul>
-                    </li> {% endcomment %}
+                    </li>
 
 
                     
@@ -238,44 +169,109 @@
             </div>
         </div>
     </div>
-    <br><br> <br><br> <br><br>
-    
+    <br> <br> <br> <br> <br>
     <div class="container">
-        <h1 class="mt-4">Delete Medicine Category</h1>
-        
-        <p class="mt-4">Are you sure you want to delete the following Medicine Category</p>
-        
-        <div class="mt-4">
-            <p><strong>Category Name:</strong> {{ ob.category_name }}</p>
-        </div>
-        
-        <form method="post" class="mt-4">
+        <h2>Edit Medicine Details</h2>
+        <form method="post">
             {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Delete</button>
-            <a href="{% url 'view_medicine_category' %}" class="btn btn-secondary ml-2">Cancel</a>
+            <div class="form-row">
+                <label for="medicineName">Medicine Name:</label>
+                <input type="text" id="medicineName" name="medicineName" value="{{ medicine.medicineName }}">
+            </div>
+            <div class="form-row">
+                <label for="details">Details:</label>
+                <textarea id="details" name="details">{{ medicine.details }}</textarea>
+            </div>
+            <div class="form-row">
+                <label for="companyName">Company Name:</label>
+                <input type="text" id="companyName" name="companyName" value="{{ medicine.companyName }}">
+            </div>
+            <div class="form-row">
+                <label for="expiryDate">Expiry Date:</label>
+                <input type="date" id="expiryDate" name="expiryDate" value="{{ medicine.expiryDate|date:'Y-m-d' }}">
+            </div>
+            <div class="form-row">
+                <label for="contains">Contains:</label>
+                <input type="text" id="contains" name="contains" value="{{ medicine.contains }}">
+            </div>
+            <div class="form-row">
+                <label for="dosage">Dosage:</label>
+                <input type="text" id="dosage" name="dosage" value="{{ medicine.dosage }}">
+            </div>
+            <div class="form-row">
+                <label for="price">Price:</label>
+                <input type="text" id="price" name="price" value="{{ medicine.price }}">
+            </div>
+            <div class="form-row">
+                <label for="category">Category:</label>
+                <select id="category" name="category">
+                    {% for category in medcat %}
+                        <option value="{{ category.pk }}" {% if medicine.MedCatId.pk == category.pk %} selected {% endif %}>{{ category.category_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit">Save Changes</button>
         </form>
     </div>
-
-
-</div>
-
-<div class="sidebar-overlay" data-reff=""></div>
-    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
-	<script src="{% static 'assets/js/popper.min.js' %}"></script>
-    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
-    <script src="{% static 'assets/js/Chart.bundle.js' %}"></script>
-    <script src="{% static 'assets/js/chart.js' %}"></script>
-    <script src="{% static 'assets/js/app.js' %}"></script>
-
-<!-- Include Bootstrap JS and jQuery -->
-<!-- Bootstrap JS (Optional - if needed for your project) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-
-
-
 </body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color:black;
+
+    }
+    .container {
+        text-align: center;
+        width: 1000px;
+       
+        padding: 50px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .form-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .form-row label {
+        width: 30%;
+        text-align: left;
+        margin-left: 40px;
+        font-weight: bold;
+    }
+    .form-row input[type="text"],
+    .form-row input[type="date"],
+    .form-row textarea,
+    .form-row select {
+        flex: 1;
+        padding:10px; /* Adjust padding to increase length */
+        border: 1px solid #ccc;
+        border-radius: 15px; /* Adjust border-radius to make the corners rounder */
+        box-sizing: border-box;
+        font-size: 16px;
+        margin-left: -75px;
+    }
+    button {
+        margin-left: 300px;
+        display: block;
+        padding: 10px 100px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
 </html>

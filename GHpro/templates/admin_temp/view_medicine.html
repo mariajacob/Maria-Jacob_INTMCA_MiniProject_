@@ -1,58 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-{% comment %} <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medicine Stock Details</title>
-    <!-- Include Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css">
-    <!-- Custom CSS for styling -->
-    <style>
-        body {
-            background-image: url('https://i.pinimg.com/736x/92/70/c1/9270c19eb7d37366c20da05e28844248.jpg'); /* Replace with your image path */
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }
 
-        .navbar {
-            background-color: black;
-        }
-
-        .navbar-dark .navbar-nav .nav-link {
-            color: #fff;
-        }
-
-        .container {
-            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background for the form */
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        .medicine-table {
-            width: 100%;
-        }
-
-        .medicine-table th {
-            background-color: #f0f0f0;
-        }
-
-        .medicine-card {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .medicine-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-    </style>
-</head> {% endcomment %}
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
@@ -63,35 +12,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
-    <!--[if lt IE 9]>
-        <script src="assets/js/html5shiv.min.js"></script>
-        <script src="assets/js/respond.min.js"></script>
-    <![endif]-->
+    
 </head>
 <body>
 
-{% comment %} <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">Medicine Stock Management</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'phar_staff_page' %}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'add_medicine' %}">Add Medicine</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'view_medicine' %}">View Stock</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav> {% endcomment %}
 <div class="main-wrapper">
     <div class="header">
         <div class="header-left">
@@ -246,22 +170,18 @@
         </div>
     </div>
     <br> <br> <br> <br> <br> <br> <br> <br>
-<div class="container">
+
+    <div class="container">
 
 
-    <div class="col-sm-12 col-9 text-right m-b-20">
-        <a href="{% url 'add_medicine' %}"  class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus" id="addasha"></i> Add Medicine </a>
-    </div>
-
-    <h2 class="text-center">Medicine Stock Details</h2>
-    {% comment %} <form id="search-form" method="GET" action="{% url 'search_medicine' %}">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" name="medicineName" placeholder="Search by medicine name">
-            <div class="input-group-append">
-                <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> Search</button>
-            </div>
+        <div class="col-sm-12 col-9 text-right m-b-20">
+            <a href="{% url 'add_medicine' %}" class="btn btn-primary btn-rounded float-right m-r-10"><i class="fa fa-plus" id="addmed"></i> Add Medicine </a>
+            <a href="{% url 'med_generate_pdf' %}" class="btn btn-primary btn-rounded float-right m-r-10"><i class="fa fa-download" ></i> Download PDF</a>
         </div>
-    </form> {% endcomment %}
+        
+
+    <h2 class="text-center" id="medlist">Medicine Stock Details</h2>
+    
     <table class="table medicine-table">
         <thead>
             <tr>
@@ -287,9 +207,22 @@
                 <td>{{ i.dosage }}</td>
                 <td>{{ i.price }}</td> <!-- Display the Price field -->
                 <td>{{ i.MedCatId.category_name }}</td>
+      
                 <td>
-                    <button class="btn btn-primary">Edit</button>
+                    <div class="btn-group" role="group" aria-label="Category Actions">
+                        <a class="btn btn-sm btn-primary" href="{% url 'edit_medicine' i.id  %}">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <form action="{% url 'delete_medicine' i.id %}" method="post" id="delete_form_{{ i.id }}">
+                        
+                            {% csrf_token %}
+                            <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ i.id }}')"><i class="fa fa-trash"></i> </button>
+                        </form>
+                    </div>
                 </td>
+                
+
+                
             </tr>
             {% empty %}
             <tr>
@@ -298,12 +231,19 @@
         {% endfor %}
         </tbody>
     </table>
-    {% comment %} <div class="text-center">
-        <a href="/generate_pdf/" class="btn btn-primary">Download PDF</a>
-    </div> {% endcomment %}
+    
 </div>
 </div>
+
 <div class="sidebar-overlay" data-reff=""></div>
+
+<script>
+    function confirmDelete(id) {
+        if (confirm("Are you sure you want to delete this medicine?")) {
+            document.getElementById("delete_form_" + id).submit();
+        }
+    }
+    </script>
     <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
 	<script src="{% static 'assets/js/popper.min.js' %}"></script>
     <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>

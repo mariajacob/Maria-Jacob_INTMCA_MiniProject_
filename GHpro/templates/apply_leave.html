@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply Leave</title>
+    <!-- Bootstrap CSS link (update with the correct path) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <title>Apply Leave</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+
+    <style>
+        /* Add custom styles here */
+        body {
+           
+            color: #fff; /* Text color */
+        }
+        .navbar {
+            background-color: #333; /* Navbar background color */
+        }
+        .navbar-brand, .navbar-nav .nav-link {
+            color: #fff; /* Navbar text color */
+        }
+        /* Additional styles for form container */
+        .form-container {
+            background-color: #57aba2; /* Form container background color with opacity */
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 50px;
+        }
+        .form-container h1 {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+            <div class="header-left">
+                <a href="{% url 'nurse_index' %}" class="logo">
+                    <img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+                </a>
+            </div>
+            <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{% url 'pro_ashaworker' %}">Profile</a>
+                        <a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+                    </div>
+                    {% else %}
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+                    </div>
+                    {% endif %}
+                </li>
+            </ul>
+        </div> 
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+                        <li class="active">
+                            <a href="{% url 'nurse_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                        </li> 
+                        <li>
+                            <a href="{% url 'patient_list_nurse' %}"><i class="fa fa-user"></i> <span>Patient List</span></a>
+                        </li>
+                        <li>
+                            <a href="{% url 'add_prescription' %}"><i class="fa fa-user"></i> <span>Prescription</span></a>
+                        </li> 
+                        <li>
+                            <a href="{% url 'view_prescription_nurse' %}"><i class="fa fa-user"></i> <span> View Prescription</span></a>
+                        </li> 
+                        <li>
+                            <a href="{% url 'view_leave' %}"><i class="fa fa-calendar" id="leaveind"></i> <span>View Leave</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="page-wrapper">
+            <div class="container">
+                <div class="form-container">
+                    <h1 class="mt-5">Apply Leave</h1>
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        {% comment %} <div class="form-group">
+                            <label for="staff_member">Staff Member:</label>
+                            <input type="text" class="form-control" id="staff_member" value="{{ request.user }}" readonly>
+                        </div> {% endcomment %}
+                        {% comment %} <div class="form-group">
+                            <label for="leave_type">Leave Type:</label>
+                            <select class="form-control" id="leave_type" name="leave_type">
+                                <option value="Sick Leave">Sick Leave</option>
+                                <option value="Vacation">Vacation</option>
+                                <option value="Personal Leave">Personal Leave</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div> {% endcomment %}
+                        
+                            <div class="form-group">
+                                <label for="leave_type">Leave Type:</label>
+                                <select class="form-control" id="leave_type" name="leave_type">
+                                <option value="Sick Leave">Sick Leave</option>
+                                <option value="Vacation">Vacation</option>
+                                <option value="Personal Leave">Personal Leave</option>
+                                <option value="Other">Other</option>
+                                </select>
+                            </div>
+                     
+                       
+                        {% comment %} <div class="form-group">
+                            <label for="start_date">Start Date:</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date">
+                        </div> {% endcomment %}
+                        <div class="form-group">
+                            <label for="start_date" class="form-label">Start Date:</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" required>
+                            <span id="start_dateError" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="end_date" class="form-label">End Date:</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" required>
+                            <span id="end_datedateError" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="reason">Reason:</label>
+                            <textarea class="form-control" id="reason" name="reason" rows="5"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="createleave">Submit</button>
+                    </form>
+                </div>
+            </div>
+    <!-- Your leave application form here -->
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+   
+</body>
+</html>

@@ -122,10 +122,12 @@
                                 <label for="medicines" class="col-sm-3 col-form-label">Medicine:</label>
                                 <div class="col-sm-9">
                                     {% for medicine in medicines %}
+                                    <br> <br> 
                                     <div class="form-check">
                                         <input type="checkbox" name="medicines" id="medicine_{{ medicine.id }}" value="{{ medicine.id }}">
                                         <label class="form-check-label" for="medicine_{{ medicine.id }}">{{ medicine.medicineName }}</label>
                                         <!-- Input fields for individual attributes -->
+                                        <br> <br> 
                                         <div class="row">
                                             <div class="col-sm-2">
                                                 <input type="text" name="morning_{{ medicine.id }}" class="form-control" placeholder="Morning">
@@ -151,28 +153,7 @@
                                 </div>
                             </div>
 
-                            {% comment %} <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Frequency:</label>
-                                <div class="col-sm-9">
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input type="checkbox" name="morning" id="morning" value="True"> Morning
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input type="checkbox" name="noon" id="noon" value="True"> Noon
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input type="checkbox" name="evening" id="evening" value="True"> Evening
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                         {% endcomment %}
-
+                            <br> <br> 
 
                             <div class="form-group row">
                                 <label for="date_of_prescription" class="col-sm-3 col-form-label">Date of Prescription:</label>
@@ -181,24 +162,7 @@
                                 </div>
                             </div>
                             
-                            {% comment %} <div class="form-group row">
-                                <label for="quantity" class="col-sm-3 col-form-label">Quantity:</label>
-                                <div class="col-sm-9">
-                                    <input type="number" name="quantity" id="quantity" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="duration" class="col-sm-3 col-form-label">Duration:</label>
-                                <div class="col-sm-9">
-                                    <input type="text" name="duration" id="duration" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="dosages" class="col-sm-3 col-form-label">Dosages:</label>
-                                <div class="col-sm-9">
-                                    <input type="text" name="dosages" id="dosages" class="form-control">
-                                </div>
-                            </div> {% endcomment %}
+                           
                             <div class="form-group row">
                                 <div class="col-sm-12">
                                     <button type="submit" class="btn btn-primary btn-block">Submit</button>

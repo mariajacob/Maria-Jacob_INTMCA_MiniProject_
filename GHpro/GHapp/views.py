@@ -6,7 +6,7 @@ from .models import Ashaworker,Nurse,Prescription_model,Member,Panchayath_Ward,B
 from .models import Appointment,Slots
 from .models import PatientProfile,home_visit
 from .models import MedicalRecord,Ashaworker
-from .models import Image 
+from .models import Image ,Leave
 from datetime import datetime, timedelta
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordResetView, PasswordChangeView
@@ -44,18 +44,6 @@ from django.contrib.auth.decorators import login_required
 
 User=get_user_model()
 
-patient_required
-from django.core.exceptions import ObjectDoesNotExist
-
-def index(request):
-    patients = PatientProfile.objects.all()  # Fetch all patients
-    images = Image.objects.all()
-    context = {
-        'patients': patients,
-        'images': images,
-    }
-    return render(request, 'index.html', context)
-
 
 patient_required
 def about(request):
@@ -72,11 +60,6 @@ def testimonial(request):
 patient_required
 def contact(request):
     return render(request,'contact.html')
-
-
-
-
-
 
 
 def schedule(request):
@@ -316,13 +299,10 @@ def delete_patients(request, patient_id):
 @login_required(login_url='login_page')
 def edit_patient_profile(request):
     
-    # user = request.user
-    # profile = PatientProfile.objects.get(user=user)
+    
     user = request.user
     profile = get_object_or_404(PatientProfile, user=user)
-    # panchyath_names = Panchayath_Ward.objects.values_list('panchayath', flat=True).distinct()
-    # for name in panchyath_names:
-    #     print(name)
+    
     
     
 
@@ -423,8 +403,7 @@ def print_patient_profile(request):
     profile = PatientProfile.objects.get(user=request.user)
     ward = profile.ward
     print(ward)
-    # ashaworker = Ashaworker.objects.get(ward=ward)
-    # print(ashaworker)
+    
     return render(request, 'print_patient_profile.html', {'profile': profile})
 
 
@@ -440,9 +419,7 @@ def edit_asha_pro(request):
     
     if request.method == "POST":
         print ('POST')
-        # user.first_name=request.POST.get('first_name')
-        # user.last_name=request.POST.get('last_name')
-        # Process the form data and save/update the profile
+       
 
         asha.Name = request.POST.get('name')
         
@@ -566,19 +543,19 @@ def pro_ashaworker(request):
     return render(request, 'asha_temp/pro_ashaworker.html', {'asha': [asha]})
 
 
-
 @login_required(login_url='login_page')
 def appointment_form(request, appointment_id=None):
     patientprofile = request.user.patientprofile
-    ashaworkers = Ashaworker.objects.all()
-
+    nurse = Nurse.objects.filter(wardnurse=patientprofile.ward).first()
+    ashaworker = Ashaworker.objects.all()
+    
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         email = request.POST.get('email')
         gender = request.POST.get('gender')
         address = request.POST.get('address')
-        ward_asha = request.POST.get('ward')
+        ward = request.POST.get('ward')
         phone_number = request.POST.get('phone_number')
         medical_conditions = request.POST.get('medical_conditions')
         urgency = request.POST.get('urgency')
@@ -589,52 +566,50 @@ def appointment_form(request, appointment_id=None):
         selected_time_slot = request.POST.get('time')
 
         try:
+            # Fetching the Nurse object associated with the patient's ward
+            
+            
+            # Fetching other required objects
             slot = Slots.objects.get(id=selected_time_slot)
             ashaworker = Ashaworker.objects.get(id=asha_id)
             user = CustomUser.objects.get(id=request.user.id)
 
+            # Creating the appointment object after all required objects are fetched
             appointment = Appointment(
                 first_name=first_name,
                 last_name=last_name,
                 email=email,
                 gender=gender,
                 address=address,
-                ward_asha=ward_asha,
+                ward=ward,
                 phone_number=phone_number,
                 medical_conditions=medical_conditions,
                 urgency=urgency,
                 medication_names=medication_names,
                 symptoms=symptoms,
                 ashaworker=ashaworker,
+                nurse=nurse,  # Assigning the Nurse object to the appointment
                 user=user,
                 slot=slot,
                 date=date_id,
-                
             )
-            # one_week_ago = datetime.now() - timedelta(days=7)
-            # existing_appointments = Appointment.objects.filter(
-            #     user=request.user,
-            #     date__gte=one_week_ago
-            # )
-
-            # if existing_appointments.exists():
-            #     error_message = 'You already have an appointment within the last week.'
-            #     return render(request, 'appointment.html', {'error_message': error_message, 'error_flag': True})
-
-            appointment.save()
+            appointment.save()  # Save the appointment object
+            
+            # Other existing code...
             subject = 'Appointment is Successful'
             message = f'Your appointment for home visit is successful. Wait for the appointment approval message. Once the appointments is approved the you will get an approval message. Your Scheduled date: {date_id}, Your Scheduled Time: {slot.start_time} {slot.end_time}'
             from_email = settings.EMAIL_HOST_USER
             recipient_list = [request.user.email]
             send_mail(subject, message, from_email, recipient_list)
             return redirect('appointment_view')
-
+       
         except Slots.DoesNotExist:
             return render(request, 'appointment.html', {'error_message': 'Time slot not found'})
         except ValueError:
             return render(request, 'appointment.html', {'error_message': 'Invalid time format'})
 
-    return render(request, 'appointment.html', {'patientprofile': patientprofile, 'appointment_id': appointment_id,'ashaworkers': ashaworkers})
+    return render(request, 'appointment.html', {'patientprofile': patientprofile, 'appointment_id': appointment_id, 'ashaworker': ashaworker, 'nurse': nurse})
+
 
 def get_times(request):
     selected_date_str = request.GET.get('selected_date', None)
@@ -654,127 +629,7 @@ def get_times(request):
         return JsonResponse({'times': []})
 
 
-
-
-
-
-
-
-
-
-
-# @login_required(login_url='login_page')
-# def appointment_form(request, appointment_id=None):
-    # patientprofile = request.user.patientprofile
-    # w = patientprofile.ward
-    # ashaworker = Ashaworker.objects.get(ward=w)
-    # print(ashaworker)
-
-    # slots = Slots.objects.filter(ashaworker=ashaworker).distinct()
-    # if request.method == 'POST':
-    #     first_name = request.POST.get('first_name')
-    #     print(first_name)      
-    #     last_name = request.POST.get('last_name')
-    #     print(last_name)
-    #     email = request.POST.get('email')
-    #     print(email)
-    #     gender = request.POST.get('gender')
-    #     print(gender)
-    #     address = request.POST.get('address')
-    #     print(address)
-    #     ward_asha = request.POST.get('ward')
-    #     print(ward_asha)
-    #     panchayath = request.POST.get('panchayath')
-    #     print(panchayath)
-    #     phone_number = request.POST.get('phone_number')
-    #     print(phone_number)
-    #     medical_conditions = request.POST.get('medical_conditions')
-    #     print(medical_conditions)
-    #     urgency = request.POST.get('urgency')
-    #     print(urgency)
-    #     medication_names = request.POST.get('medication_names')
-    #     print(medication_names)
-    #     symptoms = request.POST.get('symptoms')
-    #     print(symptoms)
-    #     asha_id = request.POST.get('ashaworker')
-    #     print(asha_id)
-    #     date_id = request.POST.get('date')
-    #     print(date_id)
-    #     selected_time_slot = request.POST.get('time')
-    #     print(selected_time_slot)
-
-    #     try:
-    #         slot = Slots.objects.get(id=selected_time_slot)
-    #         # ashaworker = Ashaworker.objects.get(id=asha_id)
-    #         user = CustomUser.objects.get(id=request.user.id)
-
-    #         appointment = Appointment(
-    #             first_name=first_name,
-    #             last_name=last_name,
-    #             email=email,
-    #             gender=gender,
-    #             address=address,
-    #             ward_asha=ward_asha,
-    #             asha_id=asha_id,
-    #             panchayath=panchayath,
-    #             phone_number=phone_number,
-    #             medical_conditions=medical_conditions,
-    #             urgency=urgency,
-    #             medication_names=medication_names,
-    #             symptoms=symptoms,
-    #             ashaworker=ashaworker,
-    #             user=user,
-    #             slot=slot,
-    #             date=date_id,
-                
-    #         )
-            # one_week_ago = datetime.now() - timedelta(days=7)
-            # existing_appointments = Appointment.objects.filter(
-            #     user=request.user,
-            #     date__gte=one_week_ago
-            # )
-
-            # if existing_appointments.exists():
-            #     error_message = 'You already have an appointment within the last week.'
-            #     return render(request, 'appointment.html', {'error_message': error_message, 'error_flag': True})
-
-#             appointment.save()
-#             # print(ap)
-#             subject = 'Appointment is Successful'
-#             message = f'Your appointment for home visit is successful. Wait for the appointment approval message. Once the appointments is approved the you will get an approval message. Your Scheduled date: {date_id}, Your Scheduled Time: {slot.start_time} {slot.end_time}'
-#             from_email = settings.EMAIL_HOST_USER
-#             recipient_list = [request.user.email]
-#             send_mail(subject, message, from_email, recipient_list)
-#             return redirect('appointment_view')
-
-#         except Slots.DoesNotExist:
-#             return render(request, 'appointment.html', {'error_message': 'Time slot not found'})
-#         except ValueError:
-#             return render(request, 'appointment.html', {'error_message': 'Invalid time format'})
-
-#     return render(request, 'appointment.html', {'patientprofile': patientprofile, 'appointment_id': appointment_id,'ashaworker': ashaworker,'slots':slots})
-
-# # def get_times(request):
-#     selected_date_str = request.GET.get('selected_date', None)
-    
-#     if selected_date_str:
-#         # Convert the string date to a datetime object
-#         try:
-#             selected_date = datetime.strptime(selected_date_str, '%b. %d, %Y').date()
-#         except ValueError:
-#             return JsonResponse({'times': []})
-        
-#         # Query the database to get times for the selected date
-#         slots = Slots.objects.filter(date=selected_date)
-#         times = [f"{slot.start_time.strftime('%H:%M:%S')} - {slot.end_time.strftime('%H:%M:%S')}" for slot in slots]
-#         return JsonResponse({'times': times})
-#     else:
-#         return JsonResponse({'times': []})
-
-
-
 from datetime import datetime
-
 from django.utils import timezone
 @login_required(login_url='login_page')
 def ad_appointment(request):
@@ -792,17 +647,6 @@ def ad_appointment(request):
     })
 
 
-# def ad_appointment(request):
-#     current_date = timezone.now().date()
-#     current_appointments = Appointment.objects.filter(date=current_date).order_by('date', 'slot__start_time')
-#     future_appointments = Appointment.objects.filter(date__gt=current_date).order_by('date', 'slot__start_time')
-#     past_appointments = Appointment.objects.filter(date__lt=current_date).order_by('-date', 'slot__start_time')
-    
-#     return render(request, 'admin_temp/appointments.html', {
-#         'current_appointments': current_appointments,
-#         'future_appointments': future_appointments,
-#         'past_appointments': past_appointments,
-#     })
 
 def current_appointment(request):
     current_date = timezone.now().date()
@@ -846,10 +690,21 @@ def asha_approved_appointments(request):
     approved_appointments = Appointment.objects.filter(is_approved=True, ashaworker__email=current_asha_worker.email)
 
     return render(request, 'asha_temp/asha_approved_appo.html', {'approved_appointments': approved_appointments})
-# def asha_approved_appointments(request):
-#     approved_appointments = Appointment.objects.filter(is_approved=True)
-#     print(approved_appointments)
-#     return render(request, 'asha_temp/asha_approved_appo.html', {'approved_appointments': approved_appointments})
+
+
+
+
+# @login_required(login_url='login_page')
+# def nurse_approved_appointments(request):
+#     # Get the currently logged-in Asha worker
+#     current_nurse = request.user
+
+#     # Filter approved appointments based on the logged-in Asha worker's email
+#     approved_appointments = Appointment.objects.filter(is_approved=True, nurse__email=current_nurse.email)
+
+#     return render(request, 'nurse_temp/nurse_approved_appo.html', {'approved_appointments': approved_appointments})
+
+
 
 from django.shortcuts import get_object_or_404, redirect
 def approve_appointment(request, appointment_id):
@@ -916,18 +771,6 @@ def search_patient(request):
 
 
 
-
-
-# def get_dates_for_ashaworker(request):
-#     ashaworker_id = request.GET.get('ashaworker_id')
-#     try:
-#         ashaworker = Ashaworker.objects.get(id=ashaworker_id)
-#         slots = Slots.objects.filter(ashaworker=ashaworker)
-#         date_options = [slot.date.strftime('%Y-%m-%d') for slot in slots]
-#         return JsonResponse({'date_options': date_options})
-#     except Ashaworker.DoesNotExist:
-#         return JsonResponse({'error_message': 'Ashaworker not found'})
-
 from django.http import JsonResponse
 from datetime import datetime
 
@@ -963,29 +806,6 @@ def get_dates_for_ashaworker(request):
     except Ashaworker.DoesNotExist:
         return JsonResponse({'error_message': 'Ashaworker not found'})
 
-
-
-# def get_dates_for_ashaworker(request):
-#     ashaworker_id = request.GET.get('ashaworker_id')
-#     try:
-#         ashaworker = Ashaworker.objects.get(id=ashaworker_id)
-        
-#         # Get all available date options for the Ashaworker
-#         slots = Slots.objects.filter(ashaworker=ashaworker)
-#         date_options = [slot.date.strftime('%Y-%m-%d') for slot in slots]
-        
-#         # Get the selected dates for the Ashaworker from previous appointments
-#         selected_dates = Appointment.objects.filter(
-#             ashaworker=ashaworker,
-#             date__in=date_options,
-#         ).values_list('date', flat=True)
-        
-#         # Filter out already selected dates
-#         date_options = [date for date in date_options if date not in selected_dates]
-        
-#         return JsonResponse({'date_options': date_options})
-#     except Ashaworker.DoesNotExist:
-#         return JsonResponse({'error_message': 'Ashaworker not found'})
 
 
 @login_required
@@ -1050,10 +870,6 @@ def ad_panward(request):
         pan = Panchayath_Ward.objects.all()
 
     return render(request, 'admin_temp/ad_panward.html', {'pan': pan, 'panchayaths': panchayaths})
-
-
-
-
 
 
 
@@ -1161,38 +977,6 @@ def ad_ashaworker(request):
     return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers, 'unique_panchayaths': unique_panchayaths})
     
     
-    # member.Name = name
-    #     member.email = email
-    #     member.set_password(password)
-        
-    #     member.gender = gender
-    #     member.address = address
-    #     member.taluk = taluk
-    #     member.Panchayat = panchayat
-    #     member.wardmem = wardmem
-
-    # member.Name = name
-    #     member.email = email
-    #     member.set_password(password)
-        
-    #     member.gender = gender
-    #     member.address = address
-    #     member.taluk = taluk
-    #     member.Panchayat = panchayat
-    #     member.wardmem = wardmem
-        
-
-
-# @login_required(login_url='login_page')
-# def ad_ashaworker(request):
-#     ashaworkers = Ashaworker.objects.all()
-#     return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers})
-
-# @login_required(login_url='login_page')
-# def ad_ashaworker(request):
-#     ashaworkers = Ashaworker.objects.all().order_by('ward')
-#     return render(request, 'admin_temp/ad_ashaworker.html', {'ashaworkers': ashaworkers})
-
 
 def ad_ashaworker(request):
     # Retrieve the unique Panchayath values from the Ashaworker model
@@ -1440,47 +1224,6 @@ def patient_list_nurse(request):
     return render(request, 'nurse_temp/patient_list_nurse.html', {'patients': patients, 'ward_numbers': ward_numbers})
 
 
-# @login_required
-# def add_prescription(request):
-#     nurse = Nurse.objects.get(user=request.user)
-#     nurse_name = nurse.Name  # Fetch the nurse's name
-#     patient_id = None  # Initialize patient_id
-
-#     if request.method == 'POST':
-#         patient_id = request.POST.get('patient_id')
-#         print(patient_id)
-#         medicine_id = request.POST.get('medicine')
-#         morning = request.POST.get('morning')
-#         noon = request.POST.get('noon')
-#         evening = request.POST.get('evening')
-#         date_of_prescription = request.POST.get('date_of_prescription')
-#         quantity = request.POST.get('quantity')
-#         duration = request.POST.get('duration')
-#         dosages = request.POST.get('dosages')
-
-#         patient = PatientProfile.objects.get(id=patient_id)
-
-#         prescription = Prescription_model.objects.create(
-#             nurses=nurse,
-#             patient=patient,
-#             medicine_id=medicine_id,
-#             morning=morning,
-#             noon=noon,
-#             evening=evening,
-#             date_of_prescription=date_of_prescription,
-#             quantity=quantity,
-#             duration=duration,
-#             dosages=dosages
-#         )
-
-#         return redirect('view_prescription_nurse')
-
-#     patients = PatientProfile.objects.filter(ward=nurse.wardnurse)
-#     medicines = Medicine.objects.all()
-
-#     return render(request, 'nurse_temp/add_prescription.html', {'nurse_name': nurse_name, 'patients': patients, 'medicines': medicines, 'patient_id': patient_id})
-
-
 from django.shortcuts import render, redirect
 from .models import Prescription_model
 
@@ -1572,18 +1315,6 @@ def view_prescription_nurse(request):
     
     return render(request, 'nurse_temp/view_prescription_nurse.html', {'patient_prescriptions': patient_prescriptions})
 
-# from django.shortcuts import render
-# from .models import Prescription_model
-
-# def view_past_prescriptions(request):
-#     if request.method == 'GET' and 'patient_id' in request.GET:
-#         patient_id = request.GET.get('patient_id')
-#         past_prescriptions = Prescription_model.objects.filter(patient_id=patient_id).order_by('-date_of_prescription')
-#         return render(request, 'nurse_temp/past_prescriptions.html', {'past_prescriptions': past_prescriptions})
-#     else:
-#         # Handle case when patient_id is not provided or POST request is made
-#         return render(request, 'error_page.html', {'error_message': 'Invalid request'})
-
 
 from django.template.loader import render_to_string
 from django.http import HttpResponse
@@ -1599,6 +1330,22 @@ def view_past_prescriptions(request):
         # Handle case when patient_id is not provided or POST request is made
         return HttpResponse('Invalid request', status=400)
 
+
+# approved appointments in nurse page
+
+    
+@login_required(login_url='login_page')
+def nurse_approved_appointments(request):
+    # Get the currently logged-in Nurse
+    current_nurse = request.user
+
+    # Filter approved appointments based on the logged-in Nurse's email
+    approved_appointments = Appointment.objects.filter(is_approved=True, nurse__email=current_nurse.email)
+
+    return render(request, 'nurse_temp/nurse_approved_appo.html', {'approved_appointments': approved_appointments})
+
+
+
 # views.py for view_prescription_patient
 
 from django.shortcuts import render, redirect
@@ -1609,12 +1356,6 @@ def patient_prescriptions(request, patient_id):
     patient = get_object_or_404(PatientProfile, pk=patient_id)
     prescriptions = Prescription_model.objects.filter(patient=patient)
     return render(request, 'patient_prescriptions.html', {'patient': patient, 'patient_id':patient_id,'prescriptions': prescriptions})
-
-
-
-
-
-
 
 
 
@@ -1861,19 +1602,6 @@ def member_index(request):
     })
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 @login_required(login_url='login_page')
 def admin_dashboard(request):
     # Get the current date and time
@@ -2015,12 +1743,6 @@ def asha_index(request):
         
     })
 
-    
-
-# @ashaworker_required
-# def asha_profile(request):
-#     return render(request, 'asha_temp/asha_profile.html')
-
 
 def login_page(request):
     if request.method == "POST":
@@ -2142,16 +1864,7 @@ def dis_gallery(request):
     }
 
     return render(request, 'admin_temp/edit_gallery.html', context)
-# def dis_gallery(request):
-    
-#     images = Image.objects.all()
 
-    
-#     context = {
-#         'images': images,
-#     }
-
-#     return render(request, 'admin_temp/edit_gallery.html', context)
 
 def index(request):
     
@@ -2443,9 +2156,7 @@ def add_home_visit(request, patient_id):
         start_time= request.POST.get("start_time")
         end_time= request.POST.get("end_time")
 
-        # Create a new MedicalRecord object with the associated patient
-        # You need to ensure that user field receives a CustomUser instance
-        # Assuming that patient.user is the related CustomUser instance
+        
         home_visit.objects.create(
             user=patient.user,
             date=date,
@@ -2991,14 +2702,7 @@ def cancel_appointment(request, appointment_id):
     except Appointment.DoesNotExist:
         return JsonResponse({'message': 'Appointment not found'}, status=404)
 
-# def cancel_appointment(request, appointment_id):
-#     try:
-#         appointment = Appointment.objects.get(id=appointment_id)
-#         appointment.status = False  # Update the status to canceled
-#         appointment.save()
-#         return JsonResponse({'message': 'Appointment canceled successfully', 'appointment_id': appointment_id})
-#     except Appointment.DoesNotExist:
-#         return JsonResponse({'message': 'Appointment not found'}, status=404)
+
 
 from django.http import JsonResponse
 
@@ -3036,6 +2740,21 @@ def view_medicine_category(request):
     categories = MedicineCategory.objects.filter(is_active=True)
     return render(request, 'admin_temp/view_medicine_category.html', {'categories': categories})
 
+
+
+from django.shortcuts import get_object_or_404, redirect
+
+def edit_medicine_category(request, pk):
+    category = get_object_or_404(MedicineCategory, pk=pk)
+    if request.method == 'POST':
+        category.category_name = request.POST['category_name']
+        category.description = request.POST['description']
+        category.save()
+        return redirect('view_medicine_category')
+    return render(request, 'admin_temp/edit_medicine_category.html', {'category': category})
+
+
+
 def delete_medicine_category(request, medcatid):
     ob = get_object_or_404(MedicineCategory, MedCatId=medcatid)  # Replace 'MedicineCategory' with your actual model name
 
@@ -3048,13 +2767,63 @@ def delete_medicine_category(request, medcatid):
 
     return render(request, 'admin_temp/delete_medicine_category.html', {'ob': ob})
 
+
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from django.http import HttpResponse
+from .models import MedicineCategory
+
+def generate_category_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="medicine_category_details.pdf"'
+
+    # Create a PDF document
+    doc = SimpleDocTemplate(response, pagesize=letter)
+
+    # Get sample style sheet
+    styles = getSampleStyleSheet()
+    normal_style = styles["Normal"]
+    heading_style = styles["Heading1"]
+    subheading_style = ParagraphStyle(name='SubHeading', parent=styles["Normal"])
+    subheading_style.fontSize = 16
+    subheading_style.textColor = colors.blue
+    subheading_style.spaceAfter = 10
+    subheading_style.alignment = 1 
+    heading_style.alignment = 1 
+
+    main_heading = Paragraph("<center>Gentle Haloes Palliative Care Services</center>", heading_style)
+    content = [main_heading]
+
+    # Add subheading
+    sub_heading = Paragraph("<center>Medicine Category Details</center>", subheading_style)
+    content.append(sub_heading)
+    content.append(Spacer(1, 20))
+    
+
+    # Get medicine categories
+    categories = MedicineCategory.objects.filter(is_active=True)
+    for index, category in enumerate(categories, start=1):
+        content.append(Paragraph(f"<b>Medicine {index}</b>", normal_style))
+        content.append(Spacer(1, 12))
+        content.append(Paragraph(f"<b>Category Name:</b> {category.category_name}", normal_style))
+        content.append(Paragraph(f"<b>Description:</b> {category.description}", normal_style))
+        content.append(Paragraph("<u>--------------------------------------------------------</u>", normal_style))  # Separator between categories
+        content.append(Spacer(1, 10)) 
+    # Add content to the PDF document
+    doc.build(content)
+
+    return response
+
+
 def add_medicine(request):
     if request.method == 'POST':
         # Get data from the form
         medicine_name = request.POST['medicineName']
         details = request.POST['details']
         company_name = request.POST['companyName']
-        expiry_date = request.POST['expiryDate']
+        expiryDate = request.POST['expiryDate']
         contains = request.POST['contains']
         dosage = request.POST['dosage']
         price = request.POST['price']
@@ -3068,7 +2837,7 @@ def add_medicine(request):
             medicineName=medicine_name,
             details=details,
             companyName=company_name,
-            expiryDate=expiry_date,
+            expiryDate=expiryDate,
             contains=contains,
             dosage=dosage,
             price=price,
@@ -3087,22 +2856,217 @@ def view_medicine(request):
     print(med)
     return render(request,'admin_temp/view_medicine.html',{'med': med})
 
-def delete_medicine(request, id):
-    med  = get_object_or_404(Medicine, id= id)
+from django.shortcuts import render, get_object_or_404
+
+def edit_medicine(request, medicine_id):
+    medicine = get_object_or_404(Medicine, pk=medicine_id)
 
     if request.method == 'POST':
-        # Set the is_active attribute to False instead of deleting
-        med.is_active = False
-        med.save()
+        # Update medicine details
+        medicine.medicineName = request.POST['medicineName']
+        medicine.details = request.POST['details']
+        medicine.companyName = request.POST['companyName']
+        medicine.expiryDate = request.POST['expiryDate']
+        medicine.contains = request.POST['contains']
+        medicine.dosage = request.POST['dosage']
+        medicine.price = request.POST['price']
+        medicine.MedCatId = MedicineCategory.objects.get(pk=request.POST['category'])
+        medicine.save()
 
-        # Add a success message to the session
-        request.session['delete_medicine'] = True
+        return redirect('view_medicine')  # Redirect to view medicine page
 
-        # Redirect to the 'ad_ashaworker' page (or adjust the URL as needed)
-        return redirect('add_medicine')
-
-    return render(request, 'admin_temp/delete_medicine.html', {'med':med})
+    medcat = MedicineCategory.objects.all()
+    context = {'medicine': medicine, 'medcat': medcat}
+    return render(request, 'admin_temp/edit_medicine.html', context)
 
 
+from django.shortcuts import redirect, get_object_or_404
 
+def delete_medicine(request, medicine_id):
+    medicine = get_object_or_404(Medicine, pk=medicine_id)
+    medicine.delete()
+    return redirect('view_medicine')  # Redirect to view medicine page after deletion
+
+
+
+
+
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from django.http import HttpResponse
+
+def med_generate_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="medicine_details.pdf"'
+
+    # Create a PDF document
+    doc = SimpleDocTemplate(response, pagesize=letter)
+
+    # Get sample style sheet
+    styles = getSampleStyleSheet()
+    normal_style = styles["Normal"]
+    heading_style = styles["Heading1"]
+    subheading_style = ParagraphStyle(name='SubHeading', parent=styles["Normal"])
+    subheading_style.fontSize = 16
+    subheading_style.textColor = colors.blue
+    subheading_style.spaceAfter = 10
+    subheading_style.alignment = 1 
+    heading_style.alignment = 1 
+
+    main_heading = Paragraph("<center>Gentle Haloes Palliative Care Services</center>", heading_style)
+    content = [main_heading]
+
+    # Add subheading
+    sub_heading = Paragraph("<center>Medicine Details</center>", subheading_style)
+    content.append(sub_heading)
+    content.append(Spacer(1, 20))
+    
+
+    # Add medicine details to the document
+    medicines = Medicine.objects.all()
+    for medicine in medicines:
+        content.append(Paragraph(f"<b>Medicine Name:</b> {medicine.medicineName}", normal_style))
+        content.append(Paragraph(f"<b>Details:</b> {medicine.details}", normal_style))
+        content.append(Paragraph(f"<b>Company:</b> {medicine.companyName}", normal_style))
+        content.append(Paragraph(f"<b>Expiry Date:</b> {medicine.expiryDate}", normal_style))
+        content.append(Paragraph(f"<b>Contains:</b> {medicine.contains}", normal_style))
+        content.append(Paragraph(f"<b>Dosage:</b> {medicine.dosage}", normal_style))
+        content.append(Paragraph(f"<b>Price:</b> {medicine.price}", normal_style))
+        content.append(Paragraph(f"<b>Category:</b> {medicine.MedCatId.category_name}", normal_style))
+        content.append(Paragraph("<u>--------------------------------------------------------</u>", normal_style))  # Separator between medicines
+        content.append(Spacer(1, 10))  
+    # Add content to the PDF document
+    doc.build(content)
+
+    return response
+
+
+# Apply Leave 
+from django.shortcuts import render
+from django.http import HttpResponseNotAllowed
+def apply_leave(request):
+    if request.method == 'GET':
+        # If it's a GET request, render the template for applying leave
+        return render(request, 'apply_leave.html')  # Replace 'apply_leave.html' with the actual template name
+
+    elif request.method == 'POST':
+        # Your existing POST request handling code
+        user = request.user
+        
+        # Determine the staff member type and retrieve the corresponding staff instance
+        try:
+            staff_member = Nurse.objects.get(user=user)
+        except Nurse.DoesNotExist:
+            try:
+                staff_member = Ashaworker.objects.get(user=user)
+            except Ashaworker.DoesNotExist:
+                staff_member = Member.objects.get(user=user)
+        
+        leave_type = request.POST.get('leave_type')
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        reason = request.POST.get('reason')
+        
+        # Create a new leave instance
+        leave = Leave.objects.create(
+            nurse_member=staff_member if isinstance(staff_member, Nurse) else None,
+            asha_member=staff_member if isinstance(staff_member, Ashaworker) else None,
+            mem_member=staff_member if isinstance(staff_member, Member) else None,
+            leave_type=leave_type,
+            start_date=start_date,
+            end_date=end_date,
+            reason=reason
+        )
+        return redirect('apply_leave')
+
+    else:
+        # Handle other request methods if necessary
+        return HttpResponseNotAllowed(['GET', 'POST'])
+
+def view_leave(request):
+    user = request.user
+    staff_member = None
+    
+    # Determine the staff member type and retrieve the corresponding staff instance
+    try:
+        staff_member = Nurse.objects.get(user=user)
+    except Nurse.DoesNotExist:
+        try:
+            staff_member = Ashaworker.objects.get(user=user)
+        except Ashaworker.DoesNotExist:
+            staff_member = Member.objects.get(user=user)
+    
+    if staff_member:
+        if isinstance(staff_member, Nurse):
+            leaves = Leave.objects.filter(nurse_member=staff_member)
+        elif isinstance(staff_member, Ashaworker):
+            leaves = Leave.objects.filter(asha_member=staff_member)
+        elif isinstance(staff_member, Member):
+            leaves = Leave.objects.filter(me1m_member=staff_member)
+    else:
+        leaves = []
+
+    return render(request, 'view_leave.html', {'leaves': leaves})
+
+# leave list in admin panel
+
+def leave_list(request):
+    # Retrieve all leave entries for doctors, receptionists, and pharmacists
+    nurse_leaves = Leave.objects.filter(nurse_member__isnull=False)
+    asha_leaves = Leave.objects.filter(asha_member__isnull=False)
+    mem_leaves = Leave.objects.filter(mem_member__isnull=False)
+    
+    context = {
+        'nurse_leaves': nurse_leaves,
+        'asha_leaves': asha_leaves,
+        'mem_leaves': mem_leaves
+    }
+    
+    return render(request, 'admin_temp/leave_list.html', context)
+
+from django.http import JsonResponse
+
+def approve_leave(request):
+    if request.method == 'POST':
+        leave_id = request.POST.get('leave_id')
+        leave = Leave.objects.get(id=leave_id)
+        leave.status = 'Approved'
+        leave.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+def reject_leave(request):
+    if request.method == 'POST':
+        leave_id = request.POST.get('leave_id')
+        leave = Leave.objects.get(id=leave_id)
+        leave.status = 'Rejected'
+        leave.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+
+
+# from django.http import JsonResponse
+
+# def approve_leave(request, leave_id):
+#     leave = Leave.objects.filter(pk=leave_id).first()
+#     if not leave:
+#         return JsonResponse({'error': 'Leave not found'}, status=404)
+    
+#     leave.status = 'Approved'
+#     leave.save()
+#     # Here you can send a notification to the staff if needed
+#     return JsonResponse({'message': 'Leave approved successfully'})
+
+# def reject_leave(request, leave_id):
+#     leave = Leave.objects.filter(pk=leave_id).first()
+#     if not leave:
+#         return JsonResponse({'error': 'Leave not found'}, status=404)
+    
+#     leave.status = 'Rejected'
+#     leave.save()
+#     # Here you can send a notification to the staff if needed
+#     return JsonResponse({'message': 'Leave rejected successfully'})
 
