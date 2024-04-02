@@ -1,0 +1,280 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.min.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+			<div class="header-left">
+				<a href="{% url 'asha_index' %}" class="logo">
+					<img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+				</a>
+			</div>
+			 <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+           
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu">
+						{% comment %} <a class="dropdown-item" href="{% url 'pro_ashaworker' %}">Profile</a> {% endcomment %}
+						<a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+					</div>
+                    {% else %}
+
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+					</div>
+                    
+                    {% endif %}
+                </li>
+           
+        </div> 
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+                        <li class="active">
+                            <a href="{% url 'nurse_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                           
+                        </li> 
+                       
+                         <li>
+                            <a href="{% url 'patient_list_nurse' %}"><i class="fa fa-user"></i> <span>Patient List</span></a>
+                        </li>
+                       <li>
+                            <a href="{% url 'add_prescription' %}"><i class="fa fa-user"></i> <span>Add Prescription</span></a>
+
+                        </li> 
+                        <li>
+                            <a href="{% url 'view_prescription_nurse' %}"><i class="fa fa-user"></i> <span> View Prescription</span></a>
+
+                        </li> 
+                        <li>
+                            <a href="{% url 'nurse_approved_appo' %}"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                        </li>
+                        
+                        <li>
+                            <a href="{% url 'view_leave' %}"><i class="fa fa-calendar" id="leaveind"></i> <span>View Leave</span></a>
+                        </li>
+                        <li>
+                            <a href="{% url 'add_view_rec_nurse' %}"><i class="fa fa-calendar"></i> <span>Add Medical Record</span></a> 
+                        </li>
+                </div>
+            </div>
+        </div>
+       
+
+     
+
+
+
+        
+
+    <BR><BR><BR>
+     
+    <h1>Medical Record Details</h1>
+    
+    
+<BR><BR>
+   <h2>Name Of The Patient: {{ patient.first_name }} {{ patient.last_name }}</h2> 
+   <BR><BR>
+  <div class="row doctor-grid">
+    {% for medical_record in medical_record %}
+            <div class="col-md-4 col-sm-4 col-lg-3">
+                <div class="profile-widget">
+                  
+                    <h4 class="doctor-name text-ellipsis"><a href="profile.html"><i class="fa fa-calendar"> </i> {{ medical_record.date }}</a></h4>
+                      
+                    <div class="user-country">
+                         <br>
+                    </div>
+                    <div>
+                      
+                        
+                        <p class="card-text"><strong>Doctor's Notes:</strong><br> {{ medical_record.doctor_notes }}</p> 
+                        <p class="card-text"><strong>Medications Needed:</strong><br> {{ medical_record.medications_needed }}</p>
+                        <p class="card-text"><strong>Treatments:</strong><br> {{ medical_record.treatments }}</p>
+                        <p class="card-text"><strong>Current Conditions:</strong><br> {{ medical_record.current_conditions }}</p>
+                        
+                    </div>
+                </div>
+            </div>
+           
+        {% endfor %}
+   </div>
+    
+<style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            margin-left: 250px;
+            padding:20px;
+         
+            
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            color:black;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+            color:black;
+            font-weight: bold;
+            font-size:30px;
+            
+        }
+
+       
+        /* Add this CSS to your stylesheet */
+  .quote_btn-container .dropdown-toggle {
+      background-color: white;
+      color: #333; /* You can change this color to your preference */
+      border-radius: 50px; /* Adjust the value for more or less roundness */
+      padding: 10px 20px; /* Adjust padding as needed */
+      border: 1px solid #ccc; /* Add a border for better visibility */
+  }
+  
+  /* Style the dropdown menu items */
+  .dropdown-menu a.dropdown-item {
+      color: #333; /* You can change this color to your preference */
+  }
+  
+  .dropdown-menu a.dropdown-item:hover {
+      background-color: #f7f7f7; /* Change color on hover if desired */
+  }
+
+.quote_btn-container {
+    margin-bottom:10px; 
+    margin-top:10px; 
+    margin-right:25px; 
+    margin-left:10px; 
+}
+
+
+.dropdown-menu a.dropdown-item {
+    color: #333;
+}
+
+.dropdown-menu a.dropdown-item:hover {
+    background-color: #f7f7f7;
+}
+.button-container {
+  text-align: center; /* Center the content horizontally */
+  margin-top: 20px; /* Add margin to separate the table and button */
+}
+
+
+
+/* Style the search bar container */
+{% comment %} .search-bar {
+    background-color: #f4f4f4;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between; /* Align content to both ends */
+    align-items: center; /* Center vertically */
+}
+
+/* Style the back button */
+.back-button {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* Style the label */
+.search-bar label {
+    margin-right: 10px;
+    font-weight: bold;
+} {% endcomment %}
+
+/* Style the date input */
+.date-input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 16px;
+}
+
+/* Style the filter button */
+{% comment %} .search-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Hover effect for the filter button */
+.search-button:hover {
+    background-color: #0056b3;
+} {% endcomment %}
+
+/* Center content within the search bar */
+{% comment %} .center-content {
+    display: flex;
+    align-items: center;
+} {% endcomment %}
+.profile-widget {
+  color:black;
+  background-color:#dcf7ef; /* Add your desired background color */
+  font-size: 20px; /* Set the font size to 20px */
+  padding:10px; /* Add padding for spacing */
+  
+}
+
+/* Apply styles to the label elements inside "profile-widget" */
+  .profile-widget label {
+  font-weight: bold; /* Make the label text bold */
+}
+
+    </style>
+
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/select2.min.js' %}"></script>
+    <script src="{% static 'ssets/js/moment.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+     
+</body>
+</html>

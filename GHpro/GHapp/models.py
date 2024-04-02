@@ -372,20 +372,6 @@ class Slots(models.Model):
         return f"Slot for Ashaworker {self.ashaworker.Name} on {self.date} at {self.start_time}-{self.end_time}"
 
 
-
-#     def __str__(self):
-#         return self.email
-
-# class MedicalRecord(models.Model):
-#     first_name = models.CharField(max_length=255,null=True,blank=True)
-#     last_name = models.CharField(max_length=255,null=True,blank=True)
-#     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
-#     date = models.DateField()
-#     doctor_notes = models.TextField()
-#     medications_needed = models.TextField()
-#     treatments = models.TextField()
-#     current_conditions = models.TextField()
-
 class MedicalRecord(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(max_length=255, null=True, blank=True)

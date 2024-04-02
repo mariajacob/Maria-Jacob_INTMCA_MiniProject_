@@ -52,10 +52,6 @@ urlpatterns = [
     path('edit_blog/<int:blog_id>/', views.edit_blog, name='edit_blog'),
     
 
-
-
-
-
     
     # path('medical_record', views.medical_record, name="medical_record"),
     path('medical_record/<int:patient_id>/', views.medical_record, name='medical_record'),
@@ -290,6 +286,14 @@ path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
     path('reject-leave/', views.reject_leave, name='reject_leave'),
     # path('approve-leave/<int:leave_id>/', views.approve_leave, name='approve_leave'),
     # path('reject-leave/<int:leave_id>/', views.reject_leave, name='reject_leave'),
+
+    # medical record in nurse
+
+    
+    path('nurse_medical_record/<int:patient_id>/', views.nurse_medical_record, name='nurse_medical_record'),
+    path('nurse_view_medical_record/<int:patient_id>/', views.nurse_view_medical_record, name='nurse_view_medical_record'),
+    path('add_view_rec_nurse/', views.add_view_rec_nurse, name='add_view_rec_nurse'),
+
 ]
 
 if settings.DEBUG:

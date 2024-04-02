@@ -80,11 +80,16 @@
 								
 								<li><a href="{% url 'patient_users' %}">All Patients List</a></li>
                                 <li><a href="{% url 'patients_by_ward' %}"> Patients By Ward</a></li>
-                                
-								
-								
+                             	
 							</ul>
+
 						</li>
+                        <li>
+                            <a href="{% url 'add_view_rec' %}"><i class="fa fa-calendar"></i> <span>Add Medical Record</span></a> 
+                        </li>
+                        <li>
+                            <a href="{% url 'Home_visit'%}"><i class="fa fa-calendar"></i> <span>Home Visit</span></a> 
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -113,7 +118,7 @@
                         </form>
                     </div>
                 </div><br><br>
-                <div class="search-bar">
+                {% comment %} <div class="search-bar">
                     <form method="GET" action="{% url 'add_view_rec' %}">
                         <label for="ward">Select Ward:</label>
                         <select name="ward" id="ward">
@@ -124,7 +129,7 @@
                         </select>
                         <button type="submit">Apply</button>
                     </form>
-                </div>
+                </div> {% endcomment %}
                 
                 <div class="row doctor-grid">
                     {% comment %} <form method="GET" action="{% url 'patients_by_ward' %}">

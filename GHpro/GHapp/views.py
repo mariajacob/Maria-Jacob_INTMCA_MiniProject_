@@ -739,12 +739,11 @@ def patients_by_ward(request):
     return render(request, 'asha_temp/patients_by_ward.html', {'patients': patients, 'ward_numbers': ward_numbers})
 
 def add_view_rec(request):
-    ward_filter = request.GET.get('ward')
+   
+    ashaworker = Ashaworker.objects.get(user=request.user)
+    ward = ashaworker.ward
     
-    if ward_filter:
-        patients = PatientProfile.objects.filter(ward=ward_filter)
-    else:
-        patients = PatientProfile.objects.all()
+    patients = PatientProfile.objects.filter(ward=ward, is_active=True)
     
     ward_numbers = PatientProfile.objects.values_list('ward', flat=True).distinct()
     
@@ -3047,26 +3046,59 @@ def reject_leave(request):
     return JsonResponse({'success': False})
 
 
+# meical record section in nurse page
 
-# from django.http import JsonResponse
-
-# def approve_leave(request, leave_id):
-#     leave = Leave.objects.filter(pk=leave_id).first()
-#     if not leave:
-#         return JsonResponse({'error': 'Leave not found'}, status=404)
+@login_required
+def nurse_medical_record(request, patient_id):
     
-#     leave.status = 'Approved'
-#     leave.save()
-#     # Here you can send a notification to the staff if needed
-#     return JsonResponse({'message': 'Leave approved successfully'})
+    try:
+        patient = PatientProfile.objects.get(pk=patient_id)
+    except PatientProfile.DoesNotExist:
+        return HttpResponse("Patient not found", status=404)
 
-# def reject_leave(request, leave_id):
-#     leave = Leave.objects.filter(pk=leave_id).first()
-#     if not leave:
-#         return JsonResponse({'error': 'Leave not found'}, status=404)
+    if request.method == "POST":
+        # Get the data from the form
+        date = request.POST.get("date")
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        doctor_notes = request.POST.get("doctor_notes")
+        medications_needed = request.POST.get("medications_needed")
+        treatments = request.POST.get("treatments")
+        current_conditions = request.POST.get("current_conditions")
+
+        
+        MedicalRecord.objects.create(
+            user=patient.user,
+            date=date,
+            first_name=first_name,
+            last_name=last_name,
+            doctor_notes=doctor_notes,
+            medications_needed=medications_needed,
+            treatments=treatments,
+            current_conditions=current_conditions,
+        )
+
+        return redirect(reverse("nurse_view_medical_record", args=[patient_id]))
+
+    return render(request, "nurse_temp/medical_record_nurse.html", {"patient": patient,"medical_record": medical_record})
+
+def nurse_view_medical_record(request, patient_id):
+    # Retrieve the patient based on the patient_id
+    patient = get_object_or_404(PatientProfile, pk=patient_id)
+
+    # Retrieve the patient's medical records
+    medical_record = MedicalRecord.objects.filter(user=patient.user).order_by('-date')
+
+    return render(request, "nurse_temp/nurse_med_rec.html", {"patient": patient, "medical_record": medical_record})
+
+def add_view_rec_nurse(request):
+   
+    nurse = Nurse.objects.get(user=request.user)
+    ward = nurse.wardnurse
     
-#     leave.status = 'Rejected'
-#     leave.save()
-#     # Here you can send a notification to the staff if needed
-#     return JsonResponse({'message': 'Leave rejected successfully'})
+    patients = PatientProfile.objects.filter(ward=ward, is_active=True)
+    
+    ward_numbers = PatientProfile.objects.values_list('ward', flat=True).distinct()
+    
+    return render(request, 'nurse_temp/add_view_rec_nurse.html', {'patients': patients, 'ward_numbers': ward_numbers})
 

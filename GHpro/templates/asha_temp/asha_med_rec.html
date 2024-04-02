@@ -79,12 +79,18 @@
 							<ul style="display: none;">
 								
 								<li><a href="{% url 'patient_users' %}">All Patients List</a></li>
-                                <li><a href="{% url 'patients_by_ward' %}"> Patients By Ward</a></li>
+                                {% comment %} <li><a href="{% url 'patients_by_ward' %}"> Patients By Ward</a></li> {% endcomment %}
                                 <li><a href="{% url 'add_view_rec' %}"> Medical Record</a></li>
 								
 								
 							</ul>
 						</li>
+                        <li>
+                            <a href="{% url 'add_view_rec' %}"><i class="fa fa-calendar"></i> <span>Add Medical Record</span></a> 
+                        </li>
+                        <li>
+                            <a href="{% url 'Home_visit'%}"><i class="fa fa-calendar"></i> <span>Home Visit</span></a> 
+                        </li>
                     </ul>
                 </div>
             </div>

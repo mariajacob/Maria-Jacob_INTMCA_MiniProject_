@@ -1,0 +1,199 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <title>GentleHaloes Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.min.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+			<div class="header-left">
+				<a href="{% url 'index' %}" class="logo">
+					<img src="{% static 'images/ghbc1.png' %}" width="100" height="55" alt=""><span>GentleHaloes</span>
+				</a>
+			</div>
+			 <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+           
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>{{ user.email }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu">
+						{% comment %} <a class="dropdown-item" href="{% url 'edit_asha_profile' %}">Profile</a> {% endcomment %}
+						            {% comment %} <a class="dropdown-item" href="{% url 'pro_ashaworker' %}">Profile</a> {% endcomment %}
+                        <a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
+					              </div>
+                    {% else %}
+
+                    <div class="dropdown-menu">
+						
+						<a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+					</div>
+                    
+                    {% endif %}
+                </li>
+           
+        </div> 
+        <div class="sidebar" id="sidebar">
+          <div class="sidebar-inner slimscroll">
+              <div id="sidebar-menu" class="sidebar-menu">
+                  <ul>
+                      <li class="menu-title">Main</li>
+                      <li class="active">
+                          <a href="{% url 'nurse_index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                         
+                      </li> 
+                     
+                       <li>
+                          <a href="{% url 'patient_list_nurse' %}"><i class="fa fa-user"></i> <span>Patient List</span></a>
+                      </li>
+                     <li>
+                          <a href="{% url 'add_prescription' %}"><i class="fa fa-user"></i> <span>Add Prescription</span></a>
+
+                      </li> 
+                      <li>
+                          <a href="{% url 'view_prescription_nurse' %}"><i class="fa fa-user"></i> <span> View Prescription</span></a>
+
+                      </li> 
+                      <li>
+                          <a href="{% url 'nurse_approved_appo' %}"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                      </li>
+                      
+                      <li>
+                          <a href="{% url 'view_leave' %}"><i class="fa fa-calendar" id="leaveind"></i> <span>View Leave</span></a>
+                      </li>
+                      <li>
+                        <a href="{% url 'add_view_rec_nurse' %}"><i class="fa fa-calendar"></i> <span>Add Medical Record</span></a> 
+                    </li>
+              </div>
+          </div>
+      </div>
+  <section class="contact_section layout_padding-bottom">
+    <div class="container">
+      <br><br><br>
+      <div class="heading_container">
+        <h2>
+          Medical Record
+        </h2>
+      </div>
+      <div class="row">
+        <div class="col-md-7">
+          <div class="form_container">
+            <form method="POST" action="{% url 'nurse_medical_record' patient.id %}">
+
+              {% csrf_token %}
+              <div>
+                  <input type="email" id="email" name="email" class="text-input" value="{{ patient.email }}" placeholder="Email" required >
+              </div>
+              <div>
+                  <input type="text" id="first_name" name="first_name" class="text-input" value="{{ patient.first_name }}" placeholder="First name" required >
+              </div>
+              <div>
+                  <input type="text" id="last_name" name="last_name" class="text-input" value="{{ patient.last_name }}" placeholder="Last name" required >
+              </div>
+              <div>
+                  <input type="date" id="date" name="date" class="text-input" placeholder="Date" required>
+              </div>
+              <div>
+                  <textarea id="doctor_notes" name="doctor_notes" rows="4" class="text-input" placeholder="Doctor's Notes" required></textarea>
+              </div>
+              <div>
+                  <textarea id="medications_needed" class="text-input" name="medications_needed" rows="4" placeholder="Medications Needed" required></textarea>
+              </div>
+              <div>
+                  <textarea id="treatments" class="text-input" name="treatments" rows="4" placeholder="Treatments" required></textarea>
+              </div>
+              <div>
+                  <textarea id="current_conditions" class="text-input" name="current_conditions" rows="4" placeholder="Current Conditions" required></textarea>
+              </div>
+              <div class="btn_box">
+                <button type="submit">Save</button>
+              </div>
+          </form>
+  
+          
+            
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <div class="sidebar-overlay" data-reff=""></div>
+  <script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'assets/js/popper.min.js' %}"></script>
+  <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+  <script src="{% static 'assets/js/Chart.bundle.js' %}"></script>
+  <script src="{% static 'assets/js/chart.js' %}"></script>
+  <script src="{% static 'assets/js/app.js' %}"></script>
+<style>
+
+/* Style the text input fields */
+.text-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #00c6a9;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* Style the placeholder text for all text input fields */
+.text-input::placeholder {
+  color: #00c6a9;
+}
+
+/* Style the placeholder text specifically for date input */
+.text-input[type="date"]::placeholder {
+  color: #00c6a9; /* Set the placeholder color to #00c6a9 for date input */
+}
+/* Style for the button */
+  .btn_box button {
+    background-color: #00c6a9; /* Blue background color */
+    color: #fff; /* White text color */
+    padding: 10px 20px; /* Padding for height and width */
+    border-color:black; /* Remove border */
+    cursor: pointer; /* Add a pointer cursor on hover */
+    border-radius: 5px; /* Rounded corners */
+    height:50px;
+    width:200px;
+    margin-left:200px;
+  }
+
+  /* Hover effect */
+  .btn_box button:hover {
+    background-color: black; /* Darker blue on hover */
+  }
+  h2{
+    color:black;
+    text-decoration:bold;
+  }
+  .container{
+    margin-left:700px;
+  }
+</style>
+
+</body>
+
+</html>
