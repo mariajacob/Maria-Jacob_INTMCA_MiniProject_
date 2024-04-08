@@ -43,7 +43,7 @@
                     </a>
                     {% if user.is_authenticated %}
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{% url 'pro_ashaworker' %}">Profile</a>
+                       
                         <a class="dropdown-item" href="{% url 'loggout' %}">Logout</a>
                     </div>
                     {% else %}
@@ -77,6 +77,9 @@
                         
                         <li>
                             <a href="{% url 'view_leave' %}"><i class="fa fa-calendar" id="leaveind"></i> <span>View Leave</span></a>
+                        </li>
+                        <li>
+                            <a href="{% url 'add_view_rec_nurse' %}"><i class="fa fa-calendar"></i> <span>Add Medical Record</span></a> 
                         </li>
                     </ul>
                 </div>

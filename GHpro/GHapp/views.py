@@ -2238,88 +2238,76 @@ def ashaworker_view_medical_record(request, patient_id):
     return render(request, "asha_temp/asha_med_rec.html", {"patient": patient, "medical_record": medical_record})
 
 
-
-from django.http import HttpResponse, FileResponse
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from io import BytesIO
+from django.http import FileResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
 
 def generate_medical_record_pdf(request):
-    # Get the logged-in user's medical records
+    # Assuming you have imported MedicalRecord model and defined the user's relationship
     medical_records = MedicalRecord.objects.filter(user=request.user).order_by('-date')
-
-    # Retrieve the patient's first name and last name
     patient_profile = request.user.patientprofile  # Assuming you have a one-to-one relationship
     first_name = patient_profile.first_name
     last_name = patient_profile.last_name
-    # Get the user's full name
 
-    # Create a BytesIO buffer to receive the PDF data
     buffer = BytesIO()
-
-    # Create the PDF object, using the BytesIO buffer as its "file."
-    pdf = SimpleDocTemplate(buffer, pagesize=letter)
-
-    # Create a list to hold the data for the table
-    data = [["Date", "Doctor's Notes", "Medications Needed", "Treatments", "Current Conditions"]]
-
-    # Populate the data list with medical record information
-    for record in medical_records:
-        data.append([
-            str(record.date),
-            record.doctor_notes,
-            record.medications_needed,
-            record.treatments,
-            record.current_conditions
-        ])
-
-    # Create a table style and apply it to the table
-    table_style = TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black)
-    ])
-    
-    table = Table(data)
-    table.setStyle(table_style)
-
-    # Create a Paragraph for the heading and the user's name
+    pdf = SimpleDocTemplate(buffer, pagesize=letter, title="Medical Record")
     styles = getSampleStyleSheet()
-    main_heading_style = ParagraphStyle(
-        name='MainHeadingStyle',
-        parent=styles['Heading1'],
-        alignment=1  # Center alignment
-    )
-    main_heading_text = Paragraph("<b>Gentle Haloes Palliative Care</b>", main_heading_style)
-    
-    sub_heading_style = ParagraphStyle(
-        name='SubHeadingStyle',
-        parent=styles['Heading2'],
-        alignment=1  # Center alignment
-    )
-    sub_heading_text = Paragraph("<b>Parathodu Grama Panchayath</b>", sub_heading_style)
 
-    sub_heading_medical_record = Paragraph("<b>Medical Record</b>", sub_heading_style)  # Converted to subheading
+    elements = []
 
-    user_name_text = Paragraph("<b>Patient Name:</b> {} {}".format(first_name, last_name), styles['Normal'])
+    main_heading_text = "<center><b>Gentle Haloes Palliative Care</b></center>"
+    main_heading = Paragraph(main_heading_text, styles['Heading1'])
+    elements.append(main_heading)
+    elements.append(Spacer(1, 10))
 
-    # Build the PDF document with the desired structure and reduced spacing
-    elements = [main_heading_text, sub_heading_text, Spacer(1, 5), sub_heading_medical_record, Spacer(1, 5), user_name_text, Spacer(1, 10), table]
+    sub_heading_text = "<center><b>Parathodu Grama Panchayath</b></center>"
+    sub_heading = Paragraph(sub_heading_text, styles['Heading2'])
+    elements.append(sub_heading)
+
+    sub_heading_medical_record = "<center><b>Medical Record</b></center>"
+    sub_heading_medical = Paragraph(sub_heading_medical_record, styles['Heading2'])
+    elements.append(sub_heading_medical)
+
+    patient_name_text = "<b>Patient Name:</b> {} {}".format(first_name, last_name)
+    patient_name = Paragraph(patient_name_text, styles['Normal'])
+    elements.append(patient_name)
+    elements.append(Spacer(1, 20))
+
+    for record in medical_records:
+        elements.append(Paragraph("<b>Date:</b> {}".format(record.date), styles['Normal']))
+        elements.append(Spacer(1, 20))
+        elements.append(Paragraph("<b>Doctor's Notes:</b> {}".format(record.doctor_notes), styles['Normal']))
+        elements.append(Spacer(1, 20))
+        elements.append(Paragraph("<b>Medications Needed:</b> {}".format(record.medications_needed), styles['Normal']))
+        elements.append(Spacer(1, 20))
+        elements.append(Paragraph("<b>Treatments:</b> {}".format(record.treatments), styles['Normal']))
+        elements.append(Spacer(1, 20))
+        elements.append(Paragraph("<b>Current Conditions:</b> {}".format(record.current_conditions), styles['Normal']))
+        elements.append(Spacer(1, 10))
+
     pdf.build(elements)
-
-    # Move the buffer position to the beginning
     buffer.seek(0)
 
-    # Create a response with the PDF data
     response = FileResponse(buffer, as_attachment=True, filename="medical_record.pdf")
-
     return response
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   # Import the User model
 
